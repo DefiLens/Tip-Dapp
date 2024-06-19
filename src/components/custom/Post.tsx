@@ -37,13 +37,16 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
     const [loading, setLoading] = useState(false);
     const { data: walletClient } = useWalletClient();
     const { wallets } = useWallets();
+    const [txHash, setTxhash] = useState("");
 
     useEffect(() => {
+        if(txHash) {
+            alert("tx success: " + txHash);
+        }
         if (data) {
-            // alert("data.Wallet.addresses[0]: " + data.Wallet.addresses[0]);
             setAddress(data.Wallet.addresses[0]);
         }
-    }, [data]);
+    }, [data, txHash]);
 
     const handleSubmit = async () => {
         const newErrors: { address?: string; message?: string; amount?: string } = {};
@@ -54,6 +57,7 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length === 0) {
+            setTxhash("")
             setLoading(true);
             console.log("Form submitted successfully!");
             // Handle form submission
@@ -134,9 +138,9 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
                 ...withSponsorship,
             });
 
-            const { success } = await wait();
-            console.log("success: ", success);
-
+            const success = await wait();
+            console.log("success: ", success.receipt.transactionHash);
+            setTxhash(`https://polygonscan.com/tx/${success.receipt.transactionHash}`)
             setLoading(false);
         }
     };
@@ -232,7 +236,7 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
                 >
                     {loading ? "Sending..." : "Tip"}
                 </button>
-                {hash && <p className="mt-4 text-green-500">Transaction hash: {hash}</p>}
+                {txHash && <p className="mt-4 text-green-500">Transaction hash: {txHash}</p>}
                 <button
                     onClick={onClose}
                     className="mt-4 w-full px-4 py-2 bg-gray-500 text-white rounded-md transition-colors duration-300 hover:bg-gray-600"
