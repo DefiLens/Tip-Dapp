@@ -11,6 +11,8 @@ import { Address } from "viem";
 import { useWalletClient } from "wagmi";
 import CustomButton from "./custom/CustomButtons";
 import { shorten } from "@/utils/constants";
+import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, POLYGON_BICONOMY_AA_KEY } from "@/utils/keys";
+require("dotenv").config();
 
 interface IFarcaster {
     fid: number;
@@ -28,16 +30,14 @@ const Header = () => {
     const [smartAccountAddress, setSmartAccountAddress] = useState<Address>();
 
     const createSmartAccount = async () => {
-        if (!walletClient) return;
-
         const multiChainModule = await createMultiChainValidationModule({
-            signer: walletClient,
+            signer: walletClient as any,
             moduleAddress: DEFAULT_MULTICHAIN_MODULE,
         });
 
-        const bundelUrl: string = process.env.BICONOMY_BUNDLER_URL || "";
-        const paymasterApiKey: string = process.env.BICONOMY_PAYMASTER_API_KEY || "";
-        const rpcUrl: string = process.env.RPC_URL || "";
+        const bundelUrl: string = BICONOMY_MAINNET_BUNDLAR_KEY || "";
+        const paymasterApiKey: string = POLYGON_BICONOMY_AA_KEY || "";
+        const rpcUrl: string = MAINNET_INFURA || "";
 
         const biconomySmartAccount = await createSmartAccountClient({
             signer: walletClient,
@@ -53,7 +53,12 @@ const Header = () => {
     };
 
     useEffect(() => {
-        createSmartAccount();
+        async function check() {
+            if (walletClient?.account) {
+                createSmartAccount();
+            }
+        }
+        check();
     }, [walletClient]);
 
     const acc: any = authenticated && user?.linkedAccounts.find((account) => account.type === "farcaster");
