@@ -37,10 +37,43 @@ query MyQuery($address: Identity!) {
       profileName
       profileCreatedAtBlockTimestamp
       userAssociatedAddresses
+      profileImage
     }
   }
 }
 `;
+
+const SocialProfileCard = ({ profile }: any) => {
+    const imageUrl = profile.profileImage.startsWith("ipfs://")
+        ? profile.profileImage.replace("ipfs://", "https://ipfs.io/ipfs/")
+        : profile.profileImage;
+
+    return (
+        <div className="flex gap-2 rounded w-full shadow-lg p-4 bg-white">
+            <img
+                className="h-32 w-32 rounded-lg object-cover"
+                // src={profile.profileImage}
+                src={imageUrl}
+                alt={`${profile?.profileName} profile`}
+            />
+            <div className="text-sm">
+                <div className="font-bold text-lg">{profile.profileName}</div>
+                <p className="">from: {profile.dappName}</p>
+                <p className="">Created At: {new Date(profile.profileCreatedAtBlockTimestamp).toLocaleDateString()}</p>
+                <div className="">
+                    <h4 className="font-semibold">Associated Addresses:</h4>
+                    <ul className="list-disc list-inside">
+                        {profile.userAssociatedAddresses.map((address, index) => (
+                            <li key={index} className="text-gray-700 text-sm list-none">
+                                {address}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const InputForm = () => {
     const [inputValue, setInputValue] = useState("");
@@ -94,10 +127,10 @@ const InputForm = () => {
         console.log("usersSmartAccount: ", usersSmartAccount);
         const smartAccountAddress = await usersSmartAccount.getAccountAddress();
 
-        // const sessionLocalStorage = new SessionLocalStorage(smartAccountAddress);
+        const sessionLocalStorage = new SessionLocalStorage(smartAccountAddress);
         // const data = await sessionLocalStorage.clearPendingSessions()
-        // const sessiondata = await sessionLocalStorage.getAllSessionData();
-        // console.log("sessiondata: ", sessiondata);
+        const sessiondata = await sessionLocalStorage.getAllSessionData();
+        console.log("sessiondata: ", sessiondata);
 
         const { sessionKeyAddress, sessionStorageClient }: any = await createSessionKeyEOA(usersSmartAccount, polygon);
 
@@ -157,7 +190,7 @@ const InputForm = () => {
     };
 
     return (
-        <div className="flex justify-center items-center h-screen">
+        <div className="flex flex-col justify-center items-center">
             <div className="flex flex-col items-center w-2/3">
                 <input
                     type="text"
@@ -166,9 +199,6 @@ const InputForm = () => {
                     className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
                     placeholder="Seach ENS for Tip..."
                 />
-
-
-
                 <button
                     onClick={handleSubmit}
                     className={`mt-4 px-4 py-2 text-white rounded-md transition-colors duration-300 ${
@@ -176,7 +206,7 @@ const InputForm = () => {
                     }`}
                     disabled={loading}
                 >
-                    {loading ? "Loading..." : "Submit"}
+                    {loading ? "Loading..." : "Search"}
                 </button>
                 <button
                     onClick={createSessions}
@@ -187,7 +217,11 @@ const InputForm = () => {
                     CreateSessions
                 </button>
             </div>
-            {showModal && <Post onClose={() => setShowModal(false)} data={data} />}
+            {showModal &&
+                data?.Wallet?.socials.map((social: any, index: number) => (
+                    <SocialProfileCard key={index} profile={social} />
+                ))}
+            {/* {showModal && <Post onClose={() => setShowModal(false)} data={data} />} */}
         </div>
     );
 };

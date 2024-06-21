@@ -7,6 +7,7 @@ export const ARBITRUM_ETHERSCAN_API_KEY = process.env.NEXT_PUBLIC_ARBITRUM_ETHER
 export const OPTIMISM_ETHERSCAN_API_KEY = process.env.NEXT_PUBLIC_OPTIMISM_ETHERSCAN_API_KEY;
 export const BASE_ETHERSCAN_API_KEY = process.env.NEXT_PUBLIC_BASE_ETHERSCAN_API_KEY;
 
+
 export const POLYGON_BICONOMY_AA_KEY = process.env.NEXT_PUBLIC_POLYGON_BICONOMY_AA_KEY;
 export const ARBITRUM_ONE_BICONOMY_AA_KEY = process.env.NEXT_PUBLIC_ARBITRUM_ONE_BICONOMY_AA_KEY;
 export const OPTIMISM_BICONOMY_AA_KEY = process.env.NEXT_PUBLIC_OPTIMISM_BICONOMY_AA_KEY;
@@ -14,13 +15,17 @@ export const ETHEREUM_BICONOMY_AA_KEY = process.env.NEXT_PUBLIC_ETHEREUM_BICONOM
 export const AVALANCHE_BICONOMY_AA_KEY = process.env.NEXT_PUBLIC_AVALANCHE_BICONOMY_AA_KEY;
 export const BASE_BICONOMY_AA_KEY = process.env.NEXT_PUBLIC_BASE_BICONOMY_AA_KEY;
 
+
 export const BICONOMY_MAINNET_BUNDLAR_KEY = process.env.NEXT_PUBLIC_BICONOMY_MAINNET_BUNDLAR_KEY;
+
 
 export const TENDERLY_ACCESS_KEY = process.env.NEXT_PUBLIC_TENDELY_ACCESS_TOKEN;
 export const TENDERLY_USER = process.env.NEXT_PUBLIC_TENDERLY_USER;
 export const TENDERLY_PROJECT = process.env.NEXT_PUBLIC_TENDERLY_PROJECT;
 
+
 export const PIMLICO_API_KEY = process.env.NEXT_PUBLUC_PIMLICO_API_KEY;
+
 
 export const NETLIFY_NODE_URL = "https://apichainping.defilens.tech/.netlify/functions/server";
 export const STACKUP_POLYGON_MAINNET_RPC_NODE_URL: any = process.env.NEXT_PUBLIC_STACKUP_POLYGON_MAINNET_RPC_NODE_URL;
@@ -54,9 +59,9 @@ const getBaseURL = (NODE_ENV: string | undefined) => {
         return 'https://backend-staging-cohr.onrender.com/api/v1';
 
       case 'dev':
-        return 'http://localhost:8080/api/v1';
+        return 'http://localhost:9090/api';
 
-      default: return 'http://localhost:8080/api/v1';
+      default: return 'http://localhost:9090/api';
     }
   };
 
