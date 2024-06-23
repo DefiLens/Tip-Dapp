@@ -11,7 +11,7 @@ import { Address } from "viem";
 import { useWalletClient } from "wagmi";
 import CustomButton from "./custom/CustomButtons";
 import { shorten } from "@/utils/constants";
-import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, POLYGON_BICONOMY_AA_KEY } from "@/utils/keys";
+import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, BASE_BICONOMY_AA_KEY } from "@/utils/keys";
 require("dotenv").config();
 
 interface IFarcaster {
@@ -36,7 +36,7 @@ const Header = () => {
         });
 
         const bundelUrl: string = BICONOMY_MAINNET_BUNDLAR_KEY || "";
-        const paymasterApiKey: string = POLYGON_BICONOMY_AA_KEY || "";
+        const paymasterApiKey: string = BASE_BICONOMY_AA_KEY || "";
         const rpcUrl: string = MAINNET_INFURA || "";
 
         const biconomySmartAccount = await createSmartAccountClient({
@@ -64,12 +64,12 @@ const Header = () => {
     const acc: any = authenticated && user?.linkedAccounts.find((account) => account.type === "farcaster");
 
     return (
-        <header className="mx-auto flex justify-between items-center py-4 px-6 bg-dark-10 text-white">
+        <header className="mx-auto flex justify-between items-center py-4 px-6 bg-blue-500 text-white">
             <div className="text-2xl font-bold">
-                Logo
-                <span className="ml-3">{acc?.username}</span>
+                Tipit
+                <span className="ml-3">{acc?.username  && ` (Farcaster ${acc?.username})`}</span>
             </div>
-            <nav className="space-x-6">
+            {/* <nav className="space-x-6">
                 <a href="#what-we-do" className="hover:text-gray-400">
                     What We Do
                 </a>
@@ -85,7 +85,7 @@ const Header = () => {
                 <a href="#about-us" className="hover:text-gray-400">
                     About Us
                 </a>
-            </nav>
+            </nav> */}
 
             <div className="flex gap-2 items-center">
                 {ready && !authenticated && <CustomButton onClick={login}>Login</CustomButton>}

@@ -11,12 +11,13 @@ import { WagmiProvider, createConfig } from "@privy-io/wagmi";
 const queryClient = new QueryClient();
 
 export const wagmiConfig = createConfig({
-  chains: [mainnet, polygon, arbitrum, optimism, base],
+  chains: [base],
+  // chains: [mainnet, polygon, arbitrum, optimism, base],
   transports: {
-    [mainnet.id]: http(),
-    [polygon.id]: http(),
-    [arbitrum.id]: http(),
-    [optimism.id]: http(),
+    // [mainnet.id]: http(),
+    // [polygon.id]: http(),
+    // [arbitrum.id]: http(),
+    // [optimism.id]: http(),
     [base.id]: http(),
   },
 });

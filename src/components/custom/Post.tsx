@@ -12,9 +12,9 @@ import {
     SessionLocalStorage,
 } from "@biconomy/account";
 import { encodeFunctionData, parseAbi, parseUnits } from "viem";
-import { polygon } from "viem/chains";
+import { base } from "viem/chains";
 import { useWallets } from "@privy-io/react-auth";
-import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, POLYGON_BICONOMY_AA_KEY } from "@/utils/keys";
+import { BASE_BICONOMY_AA_KEY, BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA } from "@/utils/keys";
 import { BigNumber as bg } from "bignumber.js";
 bg.config({ DECIMAL_PLACES: 10 });
 
@@ -40,7 +40,7 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
     const [txHash, setTxhash] = useState("");
 
     useEffect(() => {
-        if(txHash) {
+        if (txHash) {
             alert("tx success: " + txHash);
         }
         if (data) {
@@ -48,99 +48,104 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
         }
     }, [data, txHash]);
 
-    const handleSubmit = async () => {
-        const newErrors: { address?: string; message?: string; amount?: string } = {};
-        if (!address) newErrors.address = "Address is required.";
-        if (!message) newErrors.message = "Message is required.";
-        if (!amount || isNaN(Number(amount)) || Number(amount) <= 0)
-            newErrors.amount = "Amount must be a number greater than zero.";
-        setErrors(newErrors);
+    const giveTip = async () => {
+        try {
+            const newErrors: { address?: string; message?: string; amount?: string } = {};
+            if (!address) newErrors.address = "Address is required.";
+            if (!message) newErrors.message = "Message is required.";
+            if (!amount || isNaN(Number(amount)) || Number(amount) <= 0)
+                newErrors.amount = "Amount must be a number greater than zero.";
+            setErrors(newErrors);
 
-        if (Object.keys(newErrors).length === 0) {
-            setTxhash("")
-            setLoading(true);
-            console.log("Form submitted successfully!");
-            // Handle form submission
-            const largeNumber = 1e6; // 1 million
-            // alert(bg(amount).multipliedBy(largeNumber))
+            if (Object.keys(newErrors).length === 0) {
+                setTxhash("");
+                setLoading(true);
+                console.log("Form submitted successfully!");
+                // Handle form submission
+                const largeNumber = 1e6; // 1 million
+                // alert(bg(amount).multipliedBy(largeNumber))
 
-            // await writeContract({
-            //     address: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
-            //     abi: erc20,
-            //     functionName: "transfer",
-            //     args: [data.Wallet.addresses[0], bg(amount).multipliedBy(largeNumber)],//BigInt(amount) * BigInt(largeNumber)
-            // });
-            // console.log("account-: ", wallets[0], walletClient);
+                // await writeContract({
+                //     address: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+                //     abi: erc20,
+                //     functionName: "transfer",
+                //     args: [data.Wallet.addresses[0], bg(amount).multipliedBy(largeNumber)],//BigInt(amount) * BigInt(largeNumber)
+                // });
+                // console.log("account-: ", wallets[0], walletClient);
 
-            const multiChainModule = await createMultiChainValidationModule({
-                signer: walletClient as any,
-                moduleAddress: DEFAULT_MULTICHAIN_MODULE,
-            });
-            const bundelUrl: string = BICONOMY_MAINNET_BUNDLAR_KEY || "";
-            const paymasterApiKey: string = POLYGON_BICONOMY_AA_KEY || "";
-            const rpcUrl: string = MAINNET_INFURA || "";
+                const multiChainModule = await createMultiChainValidationModule({
+                    signer: walletClient as any,
+                    moduleAddress: DEFAULT_MULTICHAIN_MODULE,
+                });
+                const bundelUrl: string = BICONOMY_MAINNET_BUNDLAR_KEY || "";
+                const paymasterApiKey: string = BASE_BICONOMY_AA_KEY || "";
+                const rpcUrl: string = MAINNET_INFURA || "";
 
-            const usersSmartAccount = await createSmartAccountClient({
-                signer: walletClient,
-                bundlerUrl: bundelUrl,
-                biconomyPaymasterApiKey: paymasterApiKey,
-                rpcUrl: rpcUrl,
-                defaultValidationModule: multiChainModule,
-                activeValidationModule: multiChainModule,
-            });
-            console.log("usersSmartAccount", usersSmartAccount);
-            const { sessionKeyAddress, sessionStorageClient }: any = await createSessionKeyEOA(
-                usersSmartAccount,
-                polygon
-            );
+                const usersSmartAccount = await createSmartAccountClient({
+                    signer: walletClient,
+                    bundlerUrl: bundelUrl,
+                    biconomyPaymasterApiKey: paymasterApiKey,
+                    rpcUrl: rpcUrl,
+                    defaultValidationModule: multiChainModule,
+                    activeValidationModule: multiChainModule,
+                });
+                console.log("usersSmartAccount", usersSmartAccount);
+                const { sessionKeyAddress, sessionStorageClient }: any = await createSessionKeyEOA(
+                    usersSmartAccount,
+                    base
+                );
 
-            const withSponsorship = {
-                paymasterServiceData: { mode: PaymasterMode.SPONSORED },
-            };
-            const usersSmartAccountAddress = sessionStorageClient.smartAccountAddress;
-            console.log("usersSmartAccountAddress1-: ", usersSmartAccountAddress);
-            // const usersSmartAccountAddress = await usersSmartAccount.getAccountAddress()
-            // console.log("usersSmartAccountAddress: ", usersSmartAccountAddress)
+                const withSponsorship = {
+                    paymasterServiceData: { mode: PaymasterMode.SPONSORED },
+                };
+                const usersSmartAccountAddress = sessionStorageClient.smartAccountAddress;
+                console.log("usersSmartAccountAddress1-: ", usersSmartAccountAddress);
+                // const usersSmartAccountAddress = await usersSmartAccount.getAccountAddress()
+                // console.log("usersSmartAccountAddress: ", usersSmartAccountAddress)
 
-            const emulatedUsersSmartAccount = await createSessionSmartAccountClient(
-                {
-                    accountAddress: usersSmartAccountAddress, // Dapp can set the account address on behalf of the user
-                    bundlerUrl: BICONOMY_MAINNET_BUNDLAR_KEY as string,
-                    paymasterUrl: `https://paymaster.biconomy.io/api/v1/137/${POLYGON_BICONOMY_AA_KEY}`,
-                    chainId: 137,
-                },
-                usersSmartAccountAddress // Storage client, full Session or simply the smartAccount address if using default storage for your environment
-            );
-            const transferTx = {
-                to: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
-                data: encodeFunctionData({
-                    abi: parseAbi(["function transfer(address,uint256)"]),
-                    functionName: "transfer",
-                    args: [data.Wallet.addresses[0], BigInt(bg(amount).multipliedBy(largeNumber).toString())], // BigInt(amount) * BigInt(largeNumber)
-                }),
-            };
-            console.log("transferTx: ", transferTx);
+                const emulatedUsersSmartAccount = await createSessionSmartAccountClient(
+                    {
+                        accountAddress: usersSmartAccountAddress, // Dapp can set the account address on behalf of the user
+                        bundlerUrl: BICONOMY_MAINNET_BUNDLAR_KEY as string,
+                        paymasterUrl: `https://paymaster.biconomy.io/api/v1/8453/${BASE_BICONOMY_AA_KEY}`,
+                        chainId: 8453,
+                    },
+                    usersSmartAccountAddress // Storage client, full Session or simply the smartAccount address if using default storage for your environment
+                );
+                const transferTx = {
+                    // to: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+                    to: "0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA",
+                    data: encodeFunctionData({
+                        abi: parseAbi(["function transfer(address,uint256)"]),
+                        functionName: "transfer",
+                        args: [data.Wallet.addresses[0], BigInt(bg(amount).multipliedBy(largeNumber).toString())], // BigInt(amount) * BigInt(largeNumber)
+                    }),
+                };
+                console.log("transferTx: ", transferTx);
 
-            // const sessionLocalStorage = new SessionLocalStorage(usersSmartAccountAddress);
-            // const data3 = await sessionLocalStorage.clearPendingSessions()
-            // const data2 = await sessionLocalStorage.getAllSessionData();
-            // console.log("data-: ", data2);
+                const sessionLocalStorage = new SessionLocalStorage(usersSmartAccountAddress);
+                // const data3 = await sessionLocalStorage.clearPendingSessions()
+                const data2 = await sessionLocalStorage.getAllSessionData();
+                console.log("data--: ", data2);
 
-            const params = await getSingleSessionTxParams(
-                usersSmartAccountAddress,
-                polygon,
-                0 // index of the relevant policy leaf to the tx
-            );
-            console.log("Params: ", params);
+                const params = await getSingleSessionTxParams(
+                    usersSmartAccountAddress,
+                    base,
+                    12 // index of the relevant policy leaf to the tx
+                );
+                console.log("Params: ", params);
 
-            const { wait } = await emulatedUsersSmartAccount.sendTransaction(transferTx, {
-                ...params,
-                ...withSponsorship,
-            });
+                const { wait } = await emulatedUsersSmartAccount.sendTransaction(transferTx, {
+                    ...params,
+                    ...withSponsorship,
+                });
 
-            const success = await wait();
-            console.log("success: ", success.receipt.transactionHash);
-            setTxhash(`https://polygonscan.com/tx/${success.receipt.transactionHash}`)
+                const success = await wait();
+                console.log("success: ", success.receipt.transactionHash);
+                setTxhash(`https://basescan.org/tx/${success.receipt.transactionHash}`);
+                setLoading(false);
+            }
+        } catch (error) {
             setLoading(false);
         }
     };
@@ -154,7 +159,7 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
                         <ul className="list-disc list-inside">
                             {data.Wallet.addresses.map((address: string, index: number) => (
                                 <li key={index} className="text-gray-600">
-                                    {address}
+                                    <b>Recipient:</b> {address}
                                 </li>
                             ))}
                         </ul>
@@ -165,10 +170,16 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
                     <div>
                         <h3 className="text-lg font-semibold mb-2">Socials</h3>
                         <ul className="list-disc list-inside">
-                            {data.Wallet.socials.map(({ dappName, profileName }: any, index: number) => (
-                                <li key={index} className="text-gray-600">
-                                    {dappName}: {profileName}
-                                </li>
+                            {data.Wallet.socials.map(({ dappName, profileName, profileBio }: any, index: number) => (
+                                <>
+                                    <h3 className="text-lg"><b>{dappName}</b></h3>
+                                    <li key={index} className="text-gray-600">
+                                        <b>Username of {dappName}:</b> {profileName}
+                                    </li>
+                                    <li key={index} className="text-gray-600">
+                                        <b>Bio of {dappName}:</b> {profileBio}
+                                    </li>
+                                </>
                             ))}
                         </ul>
                     </div>
@@ -200,7 +211,7 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                    placeholder="Enter message"
+                    placeholder="Enter message. Why Tip?"
                 />
                 {errors.message && <p className="text-red-500">{errors.message}</p>}
                 <div className="flex items-center space-x-2">
@@ -209,7 +220,8 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
                         onChange={(e) => setToken(e.target.value as "usdc" | "eth" | "dai")}
                         className="px-4 py-2 border border-gray-300 rounded-md"
                     >
-                        <option value="0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174">USDC</option>
+                        {/* <option value="0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174">USDC</option> */}
+                        <option value="0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA">USDC</option>
                         <option value="eth" disabled>
                             ETH
                         </option>
@@ -228,21 +240,33 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
                 {errors.amount && <p className="text-red-500">{errors.amount}</p>}
 
                 <button
-                    onClick={handleSubmit}
+                    onClick={giveTip}
                     className={`mt-4 w-full px-4 py-2 text-white bg-blue-500 rounded-md transition-colors duration-300 hover:bg-blue-600 ${
                         loading ? "bg-gray-500" : "bg-blue-500 hover:bg-blue-600"
                     }`}
                     disabled={loading}
                 >
-                    {loading ? "Sending..." : "Tip"}
+                    {loading ? "Sending..." : "Tip Without Wallet Sign"}
                 </button>
-                {txHash && <p className="mt-4 text-green-500">Transaction hash: {txHash}</p>}
+
                 <button
                     onClick={onClose}
                     className="mt-4 w-full px-4 py-2 bg-gray-500 text-white rounded-md transition-colors duration-300 hover:bg-gray-600"
                 >
                     Close
                 </button>
+
+                {txHash && (
+                    <a href={txHash} className="mt-4 text-blue-500">
+                        <button
+                            className={`mt-4 w-full px-4 py-2 text-white bg-blue-500 rounded-md transition-colors duration-300 hover:bg-blue-600
+                        bg-blue-500 hover:bg-blue-600
+                    `}
+                        >
+                            View on basescan
+                        </button>
+                    </a>
+                )}
             </div>
         </div>
 
@@ -326,7 +350,7 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
         //         </div>
         //         {errors.amount && <p className="text-red-500">{errors.amount}</p>}
         //         <button
-        //             onClick={handleSubmit}
+        //             onClick={giveTip}
         //             className={`mt-4 px-4 py-2 text-white rounded-md transition-colors duration-300
 
         //             bg-blue-500 hover:bg-blue-600
