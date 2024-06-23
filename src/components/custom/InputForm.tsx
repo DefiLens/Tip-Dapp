@@ -63,7 +63,7 @@ const SocialProfileCard = ({ profile }: any) => {
                 <div className="">
                     <h4 className="font-semibold">Associated Addresses:</h4>
                     <ul className="list-disc list-inside">
-                        {profile.userAssociatedAddresses.map((address, index) => (
+                        {profile.userAssociatedAddresses.map((address: any, index: any) => (
                             <li key={index} className="text-gray-700 text-sm list-none">
                                 {address}
                             </li>
@@ -221,7 +221,7 @@ const InputForm = () => {
                 data?.Wallet?.socials.map((social: any, index: number) => (
                     <SocialProfileCard key={index} profile={social} />
                 ))}
-            {/* {showModal && <Post onClose={() => setShowModal(false)} data={data} />} */}
+            {showModal && <Post onClose={() => setShowModal(false)} data={data} />}
         </div>
     );
 };

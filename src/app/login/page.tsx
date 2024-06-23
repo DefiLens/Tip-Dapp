@@ -1,23 +1,53 @@
 "use client";
 import CustomButton from "@/components/custom/CustomButtons";
+import { DataState } from "@/context/dataProvider";
+import { iGlobal, useGlobalStore } from "@/context/globalStore";
+import axiosInstance from "@/utils/axiosInstance";
 import { useLogin, usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const Login = () => {
     const [isWalletConnected, setIsWalletConnected] = useState(false);
+    const [isFarcasterConnected, setIsFarcasterConnected] = useState(false);
     const router = useRouter();
 
+    const { createSmartAccount } = DataState();
+
+    // alert(privySession?.toString())
     const { ready, authenticated } = usePrivy();
     const { login } = useLogin({
-        onComplete: (user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount) => {
+        onComplete: async (user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount) => {
             console.log(user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount);
-            setIsWalletConnected(true);
+
+            const address = await createSmartAccount();
+            const userData = {
+                id: user.id,
+                createdAt: user.createdAt,
+                linkedAccounts: user.linkedAccounts,
+                wallet: user.wallet,
+                smartAccountAddress: address,
+            };
+
+            sendUserDataToBackend(userData);
         },
         onError: (error) => {
             console.log(error);
         },
     });
+
+    const sendUserDataToBackend = async (data: any) => {
+        try {
+            const response = await axiosInstance.post("/user", data);
+            if (response.data.alreadyReg) {
+                router.push("/");
+            } else {
+                setIsWalletConnected(true);
+            }
+        } catch (error) {
+            console.error("Error sending user data:", error);
+        }
+    };
 
     const handleRedirectToDeposit = () => {
         router.push("/deposit");
@@ -27,8 +57,8 @@ const Login = () => {
         <div className="flex h-screen">
             {/* Left side */}
             <div className="w-1/2 bg-white p-8 flex flex-col justify-center items-center">
-                <div className="bg-sky-200 p-5 rounded-3xl text-gray-700 flex flex-col items-center justify-center">
-                    <img src={"https://www.base.org/_next/static/media/ocs_banner.686b35dd.svg"} className="mb-4"/>
+                <div className="bg-purple-200 p-5 rounded-3xl text-gray-700 flex flex-col items-center justify-center">
+                    <img src={"https://www.base.org/_next/static/media/ocs_banner.686b35dd.svg"} className="mb-4" />
                     <h2 className="text-6xl text-center font-bold mb-10">Welcome to Base Chain DApp</h2>
                     <p className="text-center text-lg mb-4 w-3/4 ">
                         Join our decentralized platform where you can create posts, give tips, and earn tips on your own

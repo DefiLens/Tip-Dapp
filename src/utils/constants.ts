@@ -1,3 +1,7 @@
+import { BigNumberish } from "@biconomy/account";
+import { BigNumber as bg } from "bignumber.js";
+
+
 export const shorten = (address: string | undefined) => {
     if (!address) return "";
     return `${address.substring(0, 6)}...${address.substring(address.length - 4, address.length)}`;
@@ -37,3 +41,22 @@ export const postDateFormat = (isoDate: Date | string): string => {
         return date.toLocaleString("en-US", { year: "numeric" });
     }
 };
+
+export const usdcByChain = {
+    "137": {
+        usdc: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+    },
+    "42161": {
+        usdc: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+    },
+    "10": {
+        usdc: "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+    },
+    "8453": {
+        usdc: "0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA",
+    },
+};
+
+export function decreasePowerByDecimals(amount: BigNumberish | string, decimals: number) {
+    return bg(amount.toString()).dividedBy(bg(10).pow(decimals)).toString();
+}
