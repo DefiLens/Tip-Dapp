@@ -141,7 +141,7 @@ const PostCard = ({ post }: any) => {
                     </div>
                 </div>
                 <p className="text-base text-gray-500">{post.content}</p>
-                <img src="https://pbs.twimg.com/media/GQprNFVakAAQs1R?format=jpg&name=small" className="wfull md:w-2/4 mx-auto rounded-lg"/>
+                {/* <img src="https://pbs.twimg.com/media/GQprNFVakAAQs1R?format=jpg&name=small" className="wfull md:w-2/4 mx-auto rounded-lg"/> */}
                 {post.links && post.links.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                         {post.links.map((link: string, index: number) => (
