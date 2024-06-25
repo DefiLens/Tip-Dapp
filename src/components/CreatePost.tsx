@@ -97,7 +97,7 @@ const GetEnsProfile = ({ setDappName, setProfileImage, setProfileName, setUserPr
                     type="text"
                     value={inputValue}
                     onChange={handleInputChange}
-                    className="px-4 py-2 border border-purple-100 outline-none rounded-md w-full focus:outline-none focus:ring focus:ring-purple-300"
+                    className="px-4 py-2 border border-fuchsia-100 outline-none rounded-md w-full focus:outline-none focus:ring focus:ring-fuchsia-300"
                     placeholder="Seach ENS Profile for Tip..."
                 />
                 <CustomButton onClick={handleSubmit} disabled={loading}>
@@ -148,7 +148,7 @@ const CreatePost: React.FC = () => {
         };
 
         try {
-            const response = await axiosInstance.post("/user/post", postData);
+            const response = await axiosInstance.post("/post", postData);
 
             const data = await response.data;
 
@@ -166,7 +166,7 @@ const CreatePost: React.FC = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="w-full mx-auto p-4 bg-white rounded-lg shadow-md">
+        <form onSubmit={handleSubmit} className="w-full mx-auto p-4 bg-white rounded-2xl border border-fuchsia-100 max-w-md mt-10">
             {forOther && (
                 <div className="mb-4">
                     <div className="flex flex-col gap-2 mb-4">
@@ -188,7 +188,7 @@ const CreatePost: React.FC = () => {
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     required
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-purple-300 resize-none"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-fuchsia-300 resize-none"
                     maxLength={500}
                     rows={5}
                 />
@@ -203,24 +203,24 @@ const CreatePost: React.FC = () => {
                         type="text"
                         value={link}
                         onChange={(e) => setLink(e.target.value)}
-                        className="flex-grow px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-purple-300"
+                        className="flex-grow px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-fuchsia-300"
                     />
                     <button
                         type="button"
                         onClick={handleAddLink}
-                        className="ml-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 focus:outline-none focus:ring focus:ring-purple-300"
+                        className="ml-2 px-4 py-2 bg-fuchsia-500 text-white rounded-lg hover:bg-fuchsia-600 focus:outline-none focus:ring focus:ring-fuchsia-300"
                     >
                         Add
                     </button>
                 </div>
                 <div className="flex flex-wrap gap-2">
                     {links.map((link, index) => (
-                        <div key={index} className="flex items-center bg-purple-200 text-purple-700 px-3 py-1 rounded-full">
+                        <div key={index} className="flex items-center bg-fuchsia-200 text-fuchsia-800 px-3 py-1 rounded-full">
                             <span>{shorten(link)}</span>
                             <button
                                 type="button"
                                 onClick={() => handleRemoveLink(index)}
-                                className="ml-2 text-purple-500 hover:text-purple-700 focus:outline-none"
+                                className="ml-2 text-fuchsia-500 hover:text-fuchsia-700 focus:outline-none"
                             >
                                 ✕
                             </button>
@@ -234,7 +234,7 @@ const CreatePost: React.FC = () => {
             </div>
             <button
                 type="submit"
-                className="w-full px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 focus:outline-none focus:ring focus:ring-purple-300"
+                className="w-full px-4 py-2 bg-fuchsia-500 text-white rounded-lg hover:bg-fuchsia-600 focus:outline-none focus:ring focus:ring-fuchsia-300"
             >
                 Create Post
             </button>

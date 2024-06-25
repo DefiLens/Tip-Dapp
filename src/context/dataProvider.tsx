@@ -4,29 +4,27 @@ import {
     createMultiChainValidationModule,
     createSmartAccountClient,
     DEFAULT_MULTICHAIN_MODULE,
+    SessionLocalStorage,
 } from "@biconomy/account";
 import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, POLYGON_BICONOMY_AA_KEY } from "@/utils/keys";
 import { Address } from "viem";
 import axios from "axios";
 import { decreasePowerByDecimals, usdcByChain } from "@/utils/constants";
 import BigNumber from "bignumber.js";
+import axiosInstance from "@/utils/axiosInstance";
 BigNumber.config({ DECIMAL_PLACES: 10 });
 
 export const DataContext = createContext<any | null>(null);
 
 const DataProvider = ({ children }: any) => {
+    const { data: walletClient } = useWalletClient();
+
     const [privySession, setPrivySession] = useState<string | null>(null);
+    const [smartAccount, setSmartAccount] = useState<any>();
     const [smartAccountAddress, setSmartAccountAddress] = useState<Address | undefined>(undefined);
     const [usdcBalance, setUsdcBalance] = useState<number | string>();
-
-    useEffect(() => {
-        const token = cookieStorage.getItem("privy-token");
-        if (token) {
-            setPrivySession(token);
-        }
-    }, []);
-
-    const { data: walletClient } = useWalletClient();
+    const [user, setUser] = useState(null);
+    const [isGettingUserData, setIsGettingUserData] = useState<boolean>(false);
 
     const createSmartAccount = async () => {
         if (!walletClient) {
@@ -54,22 +52,13 @@ const DataProvider = ({ children }: any) => {
             });
 
             const saAddress: Address = await biconomySmartAccount.getAccountAddress();
+            setSmartAccount(biconomySmartAccount);
             setSmartAccountAddress(saAddress);
             return saAddress;
         } catch (error) {
             console.error("Error creating smart account:", error);
         }
     };
-
-    useEffect(() => {
-        async function check() {
-            if (walletClient?.account) {
-                createSmartAccount();
-                getUscdBalance();
-            }
-        }
-        check();
-    }, [walletClient]);
 
     const getUscdBalance = async () => {
         const chainId = "137";
@@ -84,14 +73,64 @@ const DataProvider = ({ children }: any) => {
             setUsdcBalance(totalDecimal);
         }
     };
+
+    const checkSession = async () => {
+        if (smartAccountAddress) {
+            const sessionLocalStorage = new SessionLocalStorage(smartAccountAddress);
+            const data2 = await sessionLocalStorage.getAllSessionData();
+            console.log(data2);
+        } else {
+            console.log("smartAccountAddress is undefined");
+        }
+    };
+
+    //Setting privy token
+    useEffect(() => {
+        const token = cookieStorage.getItem("privy-token");
+        if (token) {
+            setPrivySession(token);
+        }
+    }, []);
+
+    //Create smart account
+    useEffect(() => {
+        async function check() {
+            if (walletClient?.account) {
+                createSmartAccount();
+            }
+        }
+        check();
+    }, [walletClient]);
+
+    //Get usdc balance + check user session.
     useEffect(() => {
         if (smartAccountAddress !== undefined) {
             getUscdBalance();
+            checkSession();
         }
     }, [smartAccountAddress]);
 
+    // fetch user info
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                setIsGettingUserData(true)
+                const response = await axiosInstance.get("/user");
+                setUser(response.data);
+                setIsGettingUserData(false)
+            } catch (err) {
+                console.error("Error fetching user data:", err);
+                setIsGettingUserData(false)
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
     return (
-        <DataContext.Provider value={{ createSmartAccount, privySession, smartAccountAddress, usdcBalance }}>
+        <DataContext.Provider
+            value={{ createSmartAccount, privySession, smartAccountAddress, smartAccount, usdcBalance, user,isGettingUserData }}
+        >
             {children}
         </DataContext.Provider>
     );

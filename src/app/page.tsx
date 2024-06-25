@@ -63,9 +63,10 @@ const PostList = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await axiosInstance.get("/user/post", {
+                const response = await axiosInstance.get("/post", {
                     params: {
                         page,
+                        limit: 10,
                         userId: filters.userId,
                         dappName: filters.dappName,
                     },
@@ -95,8 +96,9 @@ const PostList = () => {
         });
     };
 
+    console.log(posts)
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto">
             {/* <div className="mb-4 flex gap-4">
                 <input
                     type="text"
@@ -142,6 +144,83 @@ const PostList = () => {
         </div>
     );
 };
+
+import React, { useCallback } from 'react';
+import { useInView } from 'react-intersection-observer';
+
+const PostList2 = () => {
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [filters, setFilters] = useState({ userId: "", dappName: "" });
+    const { ref, inView } = useInView();
+
+    const fetchPosts = useCallback(async () => {
+        try {
+            const response = await axiosInstance.get("/post", {
+                params: {
+                    page,
+                    limit: 2,
+                    userId: filters.userId,
+                    dappName: filters.dappName,
+                },
+            });
+            setPosts(prevPosts => [...prevPosts, ...response.data.posts]);
+            setTotalPages(response.data.totalPages);
+        } catch (error) {
+            console.error("Error fetching posts:", error);
+        }
+    }, [page, filters]);
+
+    useEffect(() => {
+        fetchPosts();
+    }, [fetchPosts]);
+
+    useEffect(() => {
+        if (inView && page < totalPages) {
+            setPage(prevPage => prevPage + 1);
+        }
+    }, [inView, page, totalPages]);
+
+    const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFilters({
+            ...filters,
+            [e.target.name]: e.target.value,
+        });
+        setPosts([]); // Reset posts when filters change
+        setPage(1); // Reset page to 1 when filters change
+    };
+
+    return (
+        <div className="container mx-auto">
+            {/* <div className="mb-4 flex gap-4">
+                <input
+                    type="text"
+                    name="userId"
+                    value={filters.userId}
+                    onChange={handleFilterChange}
+                    placeholder="Filter by User ID"
+                    className="border px-2 py-1 rounded"
+                />
+                <input
+                    type="text"
+                    name="dappName"
+                    value={filters.dappName}
+                    onChange={handleFilterChange}
+                    placeholder="Filter by DApp Name"
+                    className="border px-2 py-1 rounded"
+                />
+            </div> */}
+            <div className="grid gap-4">
+                {posts.map((post, index) => (
+                    <PostCard key={index} post={post} />
+                ))}
+            </div>
+            <div ref={ref} />
+        </div>
+    );
+};
+
 
 const MainLayout = () => {
     return (

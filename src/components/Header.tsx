@@ -11,9 +11,9 @@ const Header = () => {
     const { usdcBalance } = DataState();
 
     return (
-        <header className="mx-auto flex justify-between items-center py-4 px-4 text-black bg-white bg-opacity-55 backdrop-blur-sm border-b border-blue-100">
+        <header className="mx-auto flex justify-between items-center py-4 px-4 text-black bg-white bg-opacity-55 backdrop-blur-sm border-b border-blue-100 h-16">
             <div className="text-2xl font-bold">
-                <span className="">${usdcBalance}</span>
+               {/* <span className="">${usdcBalance}</span> */}
             </div>
             {ready && authenticated && <CustomButton onClick={logout}>Logout</CustomButton>}
             {ready && !authenticated && <CustomButton onClick={() => router.push("/login")}>Login</CustomButton>}

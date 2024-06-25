@@ -1,183 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* body {
-  @apply bg-[#040b04] text-white;
-} */
-
-.sidebar-bg {
-  background: linear-gradient(135deg, var(--tw-gradient-from-primary-start), var(--tw-gradient-to-primary-end));
+* {
+  font-family: "Nunito Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100,
+    "YTLC" 500;
 }
-
-.hero-bg {
-  background: linear-gradient(135deg, #120e05, #1e1707, #241c09, #2b200a);
-  background-size: 400% 400%;
-  animation: gradient 15s ease infinite;
-}
-
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
 /* 
+h1 {
+  font-size: 3.5rem;
+}
 
-050402, 0c0903, 120e05, 181206, 1e1707, 241c09, 2b200a, 31250b, 37290d, 3d2e0e
-#050402, #0c0903, #120e05, #181206, #1e1707, #241c09, #2b200a, #31250b, #37290d, #3d2e0e
+h2 {
+  font-size: 3rem;
+}
 
-050402,0c0903,120e05,181206,1e1707,241c09,2b200a,31250b,37290d,3d2e0e
-#050402,#0c0903,#120e05,#181206,#1e1707,#241c09,#2b200a,#31250b,#37290d,#3d2e0e
+h3 {
+  font-size: 2.5rem;
+}
 
-["050402","0c0903","120e05","181206","1e1707","241c09","2b200a","31250b","37290d","3d2e0e"]
-["#050402","#0c0903","#120e05","#181206","#1e1707","#241c09","#2b200a","#31250b","#37290d","#3d2e0e"] */
+h4 {
+  font-size: 1.75rem;
+}
 
+h5 {
+  font-size: 1.5rem;
+}
 
-
-/* .styles {
-  color: #050402;
-  color: #0c0903;
-  color: #120e05;
-  color: #181206;
-  color: #1e1707;
-  color: #241c09;
-  color: #2b200a;
-  color: #31250b;
-  color: #37290d;
-  color: #3d2e0e;
+h6 {
+  font-size: 1.25rem;
 } */
-.styles {
-  background: linear-gradient(to right, #050402, #0c0903, #120e05, #181206, #1e1707, #241c09, #2b200a, #31250b, #37290d, #3d2e0e);
-  color: white;
-  /* Set a contrasting text color */
-}
-
-
-.primary {
-  color: #3d2e0e;
-  color: #37290d;
-  color: #31250b;
-  color: #2b200a;
-  color: #241c09;
-  color: #1e1707;
-  color: #181206;
-  color: #120e05;
-  color: #0c0903;
-  color: #050402;
-}
-
-.neutral {
-  color: #F9FAFB;
-  color: #F3F4F6;
-  color: #E5E7EB;
-  color: #D1D5DB;
-  color: #9CA3AF;
-  color: #6B7280;
-  color: #4B5563;
-  color: #374151;
-  color: #1F2937;
-  color: #111827;
-}
-
-.secondary {
-  color: #FFFAF0;
-  color: #FEF3C7;
-  color: #FDE68A;
-  color: #FCD34D;
-  color: #FBBF24;
-  color: #F59E0B;
-  color: #D97706;
-  color: #B45309;
-  color: #92400E;
-}
-
-.a {
-  color: #1467cc;
-  color: #125cb6;
-  color: #10509f;
-  color: #0d4589;
-  color: #0b3a72;
-  color: #092e5c;
-  color: #072345;
-  color: #05182f;
-  color: #020c18;
-  color: #000000;
-}
-
-
-
-
-
-
-
-
-
-.hero-bg {
-  background: url('/path-to-your-image.jpg') no-repeat center center;
-  background-size: cover;
-  height: 100vh;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.hero-bg::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  /* Add a dark overlay */
-  z-index: 0;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 1;
-  color: white;
-}
-
-.circle {
-  width: 200px;
-  height: 200px;
-  /* background: radial-gradient(circle at center, #1e1707, #181206); */
-  background: rgba(5, 188, 5, 0.1);
-
-  border-radius: 50%;
-  box-shadow: 0 0 30px 0px rgba(0, 255, 0, 0.5), inset 0 0 50px 10px rgba(0, 255, 0, 0.5);
-}
-
-.w {
-  color: #f2f2f2;
-  color: #e6e6e6;
-  color: #d9d9d9;
-  color: #cccccc;
-  color: #bfbfbf;
-  color: #b3b3b3;
-  color: #a6a6a6;
-  color: #999999;
-  color: #8c8c8c;
-  color: #808080;
-  color: #737373;
-  color: #666666;
-  color: #595959;
-  color: #4d4d4d;
-  color: #404040;
-  color: #333333;
-  color: #262626;
-  color: #1a1a1a;
-  color: #0d0d0d;
-}

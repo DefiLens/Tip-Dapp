@@ -40,13 +40,13 @@ const Deposit: React.FC = () => {
 
     return (
         <NavigationLayout>
-            <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-2xl border border-purple-100">
+            <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-2xl border border-fuchsia-100">
                 <h1 className="text-2xl font-bold mb-4">Deposit USDC</h1>
-                <div className="bg-purple-50 mb-4 rounded-xl px-3 py-2">
+                <div className="bg-fuchsia-50 mb-4 rounded-xl px-3 py-2">
                     <label className="block text-gray-700">Your Address</label>
                     <div className="p-2 rounded">{shorten(userAddress)}</div>
                 </div>
-                <div className="bg-purple-50 mb-4 rounded-xl px-3 py-2">
+                <div className="bg-fuchsia-50 mb-4 rounded-xl px-3 py-2">
                     <label className="block text-gray-700">Recipient Address</label>
                     <div className="p-2 rounded">{shorten(smartAccountAddress)}</div>
                 </div>
@@ -58,13 +58,13 @@ const Deposit: React.FC = () => {
                             type="number"
                             value={amount}
                             onChange={(e) => setAmount(e.target.value)}
-                            className="w-full p-2 border border-purple-200 rounded-xl outline-none"
+                            className="w-full p-2 border border-fuchsia-200 rounded-xl outline-none"
                         />
                     </div>
                     <button
                         onClick={send}
                         disabled={isPending}
-                        className="bg-purple-500 hover:bg-purple-700 text-white px-4 py-2 rounded-xl transition-all duration-300"
+                        className="bg-fuchsia-500 hover:bg-fuchsia-700 text-white px-4 py-2 rounded-xl transition-all duration-300"
                     >
                         {isPending ? "waiting" : "Send"}
                     </button>
