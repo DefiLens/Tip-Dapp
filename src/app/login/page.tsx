@@ -45,7 +45,6 @@ const Login = () => {
                 setIsWalletConnected(true);
             }
             setIsWalletConnected(true);
-
         } catch (error) {
             console.error("Error sending user data:", error);
         }
@@ -58,10 +57,10 @@ const Login = () => {
     return (
         <div className="flex h-screen">
             {/* Left side */}
-            <div className="w-1/2 bg-white p-8 flex flex-col justify-center items-center">
-                <div className="bg-fuchsia-200 p-5 rounded-3xl text-gray-700 flex flex-col items-center justify-center">
+            <div className="w-1/2 bg-fuchsia-200 p-8 flex flex-col justify-center items-center">
+                <div className="p-5 rounded-3xl bg-white bg bg-opacity-30 bg-blur-lg text-gray-700 flex flex-col items-center justify-center h-[90%] w-[90%]">
                     {/* <img src={"https://www.base.org/_next/static/media/ocs_banner.686b35dd.svg"} className="mb-4" /> */}
-                    <h2 className="text-6xl text-center font-bold mb-10">Welcome to Base Chain DApp</h2>
+                    <h2 className="text-6xl text-center font-bold mb-10 text-black">Welcome to Base Chain DApp</h2>
                     <p className="text-center text-lg mb-4 w-3/4 ">
                         Join our decentralized platform where you can create posts, give tips, and earn tips on your own
                         posts.
@@ -73,15 +72,20 @@ const Login = () => {
             </div>
 
             {/* Right side */}
-            <div className="w-1/2 bg-gray-100 p-8 flex flex-col justify-center items-center">
+            <div className="w-1/2 bg-fuchsia-100 p-8 flex flex-col justify-center items-center">
                 {!isWalletConnected ? (
                     <div className="text-center">
-                        <h2 className="text-3xl font-semibold mb-4">Welcome to Our Platform</h2>
-                        <p className="mb-8">Please connect your wallet to get started.</p>
+                        <h2 className="text-3xl font-semibold mb-4">
+                            Please connect your wallet
+                            <br /> to get started.
+                        </h2>
                         {ready && !authenticated && <CustomButton onClick={login}>Connect Wallet</CustomButton>}
                         <div className="mt-8 text-sm text-gray-500">
-                            <p>By connecting your wallet, you agree to our Terms and Conditions.</p>
-                            <p className="mt-2">Protected by Privy.</p>
+                            <p>
+                                By connecting your wallet,
+                                <br /> you agree to our Terms and Conditions.
+                            </p>
+                            <p className="">Protected by Privy.</p>
                         </div>
                     </div>
                 ) : (

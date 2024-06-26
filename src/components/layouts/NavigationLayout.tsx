@@ -110,7 +110,7 @@ const NavigationLayout = ({ children }: any) => {
                         </div>
                         <div className="flex flex-col gap-1 justify-center p-4">
                             <p className="text-primary-text font-bold text-lg">Your Balance</p>
-                            <span className="text-secondary-text text-sm">{usdcBalance} . USDC</span>
+                            <span className="text-secondary-text text-sm">{usdcBalance} • USDC</span>
                         </div>
                     </div>
                 </div>

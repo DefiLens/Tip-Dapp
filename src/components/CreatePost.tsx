@@ -1,5 +1,5 @@
 import axiosInstance from "@/utils/axiosInstance";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLazyQuery, useLazyQueryWithPagination } from "@airstack/airstack-react";
 import { init } from "@airstack/airstack-react";
 import CustomButton from "./custom/CustomButtons";
@@ -7,7 +7,8 @@ import InputForm from "./custom/InputForm";
 import { shorten } from "@/utils/constants";
 import { DataState } from "@/context/dataProvider";
 import { useRouter } from "next/navigation";
-
+import { FaLink } from "react-icons/fa";
+import { FaRegImage } from "react-icons/fa6";
 init("10414e57f4ac344a787f5d6ad0035ded4");
 
 const UNIVERSAL_RESOLVER = `
@@ -108,9 +109,84 @@ const GetEnsProfile = ({ setDappName, setProfileImage, setProfileName, setUserPr
     );
 };
 
+const EditAvatar = ({ avatar }: any) => {
+    const imageRef = useRef(null);
+
+    function useDisplayImage() {
+        const [result, setResult] = useState(false);
+
+        function uploader(e) {
+            const imageFile = e.target.files[0];
+
+            const reader = new FileReader();
+            reader.addEventListener("load", (e) => {
+                setResult(e.target.result);
+            });
+
+            reader.readAsDataURL(imageFile);
+        }
+
+        return { result, uploader };
+    }
+    const { result, uploader } = useDisplayImage();
+
+    const handleProfilePic = async () => {
+        try {
+            const newAvatar = result ? result : avatar;
+
+            const formData = new FormData();
+            formData.append("picture", newAvatar);
+
+            const response = await axiosInstance.put(`/upload-img`, formData);
+
+            if (response.status === 200) {
+                console.log(response.data.msg);
+            } else {
+                console.error(response.data.error);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    return (
+        <>
+            <div className="">
+                <div>{result ? <img ref={imageRef} src={result} /> : <img src={avatar} />}</div>
+                <button className="h-10 w-10 bg-fuchsia-50 hover:bg-fuchsia-100 rounded-lg transition-all duration-300 text-secondary-text relative flex items-center justify-center cursor-pointer overflow-hidden">
+                    <FaRegImage />
+                    <div className="absolute h-20 w-10 bottom-0 left-0 cursor-pointer">
+                        {!result ? (
+                            <input
+                                type="file"
+                                name="image"
+                                onChange={(e) => uploader(e)}
+                                className="h-full w-10 opacity-25 cursor-pointer"
+                            />
+                        ) : (
+                            <input
+                                type="file"
+                                name="image"
+                                onChange={(e) => uploader(e)}
+                                className="h-10 w-10 opacity-25 cursor-pointer"
+                            />
+                        )}
+                    </div>
+                </button>
+                {result && (
+                    <div className="editAvatar__submit" onClick={handleProfilePic} style={{ marginLeft: "1rem" }}>
+                        Save
+                    </div>
+                )}
+            </div>
+        </>
+    );
+};
+
 const CreatePost: React.FC = () => {
     const router = useRouter();
     const { smartAccountAddress } = DataState();
+    const [showLinkSelection, setShowLinkSelection] = useState<boolean>(false);
 
     const [content, setContent] = useState("");
     const [link, setLink] = useState("");
@@ -122,6 +198,11 @@ const CreatePost: React.FC = () => {
     const [smartWalletAddress, setSmartWalletAddress] = useState("");
     const [userProfile, setUserProfile] = useState(null);
     const [userWalletAddress, setUserWalletAddress] = useState(null);
+
+    const { result, uploader } = useDisplayImage();
+    const [imgUrl, setImgUrl] = useState<string>("");
+    const [uploadImageLoading, setUploadImageLoading] = useState<boolean>(false);
+    const imageRef = useRef(null);
 
     const handleAddLink = () => {
         if (link && links.length < 5) {
@@ -140,10 +221,11 @@ const CreatePost: React.FC = () => {
         const postData = {
             // userId: "YOUR_USER_ID", // Replace with actual user ID
             content,
-            links,
+            links: links || [],
             forOther,
             otherUserProfile: forOther ? { dappName, profileImage, profileName } : null,
             smartWalletAddress: forOther ? userWalletAddress : smartAccountAddress,
+            imgUrl: imgUrl,
             tips: [], // Initial tips array
         };
 
@@ -153,7 +235,7 @@ const CreatePost: React.FC = () => {
             const data = await response.data;
 
             if (data.success) {
-                router.push("/")
+                router.push("/");
                 // Handle successful post creation
                 console.log("Post created successfully:", data.data);
             } else {
@@ -165,8 +247,51 @@ const CreatePost: React.FC = () => {
         }
     };
 
+    function useDisplayImage() {
+        const [result, setResult] = useState(false);
+
+        function uploader(e: any) {
+            const imageFile = e.target.files[0];
+
+            const reader = new FileReader();
+            reader.addEventListener("load", (e) => {
+                setResult(e.target.result);
+            });
+
+            reader.readAsDataURL(imageFile);
+        }
+
+        return { result, uploader };
+    }
+
+    const handleProfilePic = async () => {
+        try {
+            setUploadImageLoading(true);
+            const formData = new FormData();
+            formData.append("picture", result);
+
+            const response = await axiosInstance.put(`/post/upload-img`, formData);
+
+            if (response.status === 200) {
+                setImgUrl(response.data.url);
+            }
+            setUploadImageLoading(false);
+        } catch (error) {
+            console.error(error);
+            setUploadImageLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (result) {
+            handleProfilePic();
+        }
+    }, [result]);
     return (
-        <form onSubmit={handleSubmit} className="w-full mx-auto p-4 bg-white rounded-2xl border border-fuchsia-100 max-w-md mt-10">
+        <form
+            onSubmit={handleSubmit}
+            className="w-full mx-auto p-4 bg-white rounded-2xl border border-fuchsia-100 max-w-md mt-10"
+        >
             {forOther && (
                 <div className="mb-4">
                     <div className="flex flex-col gap-2 mb-4">
@@ -196,40 +321,113 @@ const CreatePost: React.FC = () => {
                     {content.length}/{500}
                 </div>
             </div>
-            <div className="mb-4">
-                <label className="block text-gray-700">Links:</label>
-                <div className="flex items-center mb-2">
-                    <input
-                        type="text"
-                        value={link}
-                        onChange={(e) => setLink(e.target.value)}
-                        className="flex-grow px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-fuchsia-300"
-                    />
-                    <button
-                        type="button"
-                        onClick={handleAddLink}
-                        className="ml-2 px-4 py-2 bg-fuchsia-500 text-white rounded-lg hover:bg-fuchsia-600 focus:outline-none focus:ring focus:ring-fuchsia-300"
-                    >
-                        Add
+            {/* <div className="mb-4 flex gap-3">
+                <div>{imgUrl !== "" && <img ref={imageRef} src={imgUrl} className="w-full mx-auto rounded-lg" />}</div>
+            </div>
+            <div className="mb-4 flex gap-3">
+                <button
+                    className="h-10 w-10 flex items-center justify-center bg-fuchsia-50 hover:bg-fuchsia-100 rounded-lg transition-all duration-300 text-secondary-text"
+                    onClick={() => setShowLinkSelection(true)}
+                >
+                    <FaLink />
+                </button>
+                <div className="">
+                    <button className="h-10 w-10 bg-fuchsia-50 hover:bg-fuchsia-100 rounded-lg transition-all duration-300 text-secondary-text relative flex items-center justify-center cursor-pointer overflow-hidden">
+                        <FaRegImage />
+                        <div className="absolute h-20 w-10 bottom-0 left-0 cursor-pointer">
+                            <input
+                                type="file"
+                                name="image"
+                                onChange={(e) => uploader(e)}
+                                className="h-full w-10 opacity-25 cursor-pointer"
+                            />
+                        </div>
                     </button>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                    {links.map((link, index) => (
-                        <div key={index} className="flex items-center bg-fuchsia-200 text-fuchsia-800 px-3 py-1 rounded-full">
-                            <span>{shorten(link)}</span>
-                            <button
-                                type="button"
-                                onClick={() => handleRemoveLink(index)}
-                                className="ml-2 text-fuchsia-500 hover:text-fuchsia-700 focus:outline-none"
-                            >
-                                ✕
-                            </button>
-                        </div>
-                    ))}
+            </div> */}
+            <div>
+                <div className="mb-4 flex gap-3">
+                    {uploadImageLoading ? (
+                        <>Uploading</>
+                    ) : (
+                        <div>{imgUrl && <img src={imgUrl} className="w-full mx-auto rounded-lg" alt="Uploaded" />}</div>
+                    )}
                 </div>
+                <div className="mb-4 flex gap-3">
+                    <button
+                        className="h-10 w-10 flex items-center justify-center bg-fuchsia-50 hover:bg-fuchsia-100 rounded-lg transition-all duration-300 text-secondary-text"
+                        onClick={() => setShowLinkSelection(true)}
+                    >
+                        <FaLink />
+                    </button>
+                    <div>
+                        <button className="h-10 w-10 bg-fuchsia-50 hover:bg-fuchsia-100 rounded-lg transition-all duration-300 text-secondary-text relative flex items-center justify-center cursor-pointer overflow-hidden">
+                            <FaRegImage />
+                            <div className="absolute h-20 w-10 bottom-0 left-0 cursor-pointer">
+                                <input
+                                    type="file"
+                                    name="image"
+                                    onChange={(e) => uploader(e)}
+                                    className="h-full w-10 opacity-25 cursor-pointer"
+                                />
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                {/* {uploadImageLoading && (
+                    <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                        <div
+                            className="bg-blue-600 h-2.5 rounded-full transition-width duration-300"
+                            style={{ width: `${uploadProgress}%` }}
+                        ></div>
+                    </div>
+                )} */}
             </div>
+
+            {showLinkSelection && (
+                <div className="mb-4">
+                    <label className="block text-gray-700">Links:</label>
+                    <div className="flex items-center mb-2">
+                        <input
+                            type="text"
+                            value={link}
+                            onChange={(e) => setLink(e.target.value)}
+                            className="flex-grow px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-fuchsia-300"
+                        />
+                        <button
+                            type="button"
+                            onClick={handleAddLink}
+                            className="ml-2 px-4 py-2 bg-fuchsia-500 text-white rounded-lg hover:bg-fuchsia-600 focus:outline-none focus:ring focus:ring-fuchsia-300"
+                        >
+                            Add
+                        </button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                        {links.map((link, index) => (
+                            <div
+                                key={index}
+                                className="flex items-center bg-fuchsia-200 text-fuchsia-800 px-3 py-1 rounded-full"
+                            >
+                                <span>{shorten(link)}</span>
+                                <button
+                                    type="button"
+                                    onClick={() => handleRemoveLink(index)}
+                                    className="ml-2 text-fuchsia-500 hover:text-fuchsia-700 focus:outline-none"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
             <div className="mb-4 flex items-center gap-2">
-                <input type="checkbox" checked={forOther} onChange={(e) => setForOther(e.target.checked)} />
+                <input
+                    type="checkbox"
+                    checked={forOther}
+                    onChange={(e) => setForOther(e.target.checked)}
+                    className="cursor-pointer"
+                />
                 <label className="text-gray-700 text-sm">Create post for someone</label>
             </div>
             <button

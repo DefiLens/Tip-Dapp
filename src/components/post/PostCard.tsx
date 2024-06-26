@@ -73,12 +73,12 @@ const PostCard = ({ post }: any) => {
 
     useEffect(() => {
         if (post) {
-            setIsFollowing(post?.userId?.followers?.includes(user._id));
+            setIsFollowing(post?.userId?.followers?.includes(user?._id));
             console.log(post?.userId?._id);
         }
     }, [post]);
 
-    console.log(post?.userId?._id === user?._id, post?.userId?._id, user?._id)
+    console.log(post?.userId?._id === user?._id, post?.userId?._id, user?._id);
 
     return (
         <div className="relative">
@@ -114,8 +114,8 @@ const PostCard = ({ post }: any) => {
                             </span>
                             {post.forOther && <span className="text-xs">created by</span>}
                             {post.forOther && (
-                                <span>
-                                    ({" "}
+                                <span className="text-base">
+                                    (
                                     {post?.userId?.name
                                         ? post?.userId?.name
                                         : shorten(post?.userId?.smartAccountAddress)}
@@ -141,7 +141,7 @@ const PostCard = ({ post }: any) => {
                     </div>
                 </div>
                 <p className="text-base text-gray-500">{post.content}</p>
-                {/* <img src="https://pbs.twimg.com/media/GQprNFVakAAQs1R?format=jpg&name=small" className="wfull md:w-2/4 mx-auto rounded-lg"/> */}
+                {post?.imgUrl && <img src={post?.imgUrl} className="wfull md:w-2/4 rounded-lg" />}
                 {post.links && post.links.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                         {post.links.map((link: string, index: number) => (
