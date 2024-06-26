@@ -25,6 +25,9 @@ const DataProvider = ({ children }: any) => {
     const [usdcBalance, setUsdcBalance] = useState<number | string>();
     const [user, setUser] = useState(null);
     const [isGettingUserData, setIsGettingUserData] = useState<boolean>(false);
+    const [isBiconomySession, setIsBiconomySession] = useState<boolean>(false);
+
+    const [biconomySession, setBiconomySession] = useState<any>(null);
 
     const createSmartAccount = async () => {
         if (!walletClient) {
@@ -77,8 +80,9 @@ const DataProvider = ({ children }: any) => {
     const checkSession = async () => {
         if (smartAccountAddress) {
             const sessionLocalStorage = new SessionLocalStorage(smartAccountAddress);
-            const data2 = await sessionLocalStorage.getAllSessionData();
-            console.log(data2);
+            const data = await sessionLocalStorage.getAllSessionData();
+            setIsBiconomySession(data?.length > 0);
+            setBiconomySession(data);
         } else {
             console.log("smartAccountAddress is undefined");
         }
@@ -114,22 +118,33 @@ const DataProvider = ({ children }: any) => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                setIsGettingUserData(true)
+                setIsGettingUserData(true);
                 const response = await axiosInstance.get("/user");
                 setUser(response.data);
-                setIsGettingUserData(false)
+                setIsGettingUserData(false);
             } catch (err) {
                 console.error("Error fetching user data:", err);
-                setIsGettingUserData(false)
+                setIsGettingUserData(false);
             }
         };
 
         fetchUserData();
     }, []);
 
+    console.log(biconomySession);
     return (
         <DataContext.Provider
-            value={{ createSmartAccount, privySession, smartAccountAddress, smartAccount, usdcBalance, user,isGettingUserData }}
+            value={{
+                createSmartAccount,
+                privySession,
+                smartAccountAddress,
+                smartAccount,
+                usdcBalance,
+                user,
+                isGettingUserData,
+                biconomySession,
+                isBiconomySession,
+            }}
         >
             {children}
         </DataContext.Provider>

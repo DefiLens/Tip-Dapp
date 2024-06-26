@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { FaLink } from "react-icons/fa";
 import { FaRegImage } from "react-icons/fa6";
 init("10414e57f4ac344a787f5d6ad0035ded4");
+import { CgSpinner } from "react-icons/cg";
 
 const UNIVERSAL_RESOLVER = `
 query MyQuery($address: Identity!) {
@@ -109,80 +110,6 @@ const GetEnsProfile = ({ setDappName, setProfileImage, setProfileName, setUserPr
     );
 };
 
-const EditAvatar = ({ avatar }: any) => {
-    const imageRef = useRef(null);
-
-    function useDisplayImage() {
-        const [result, setResult] = useState(false);
-
-        function uploader(e) {
-            const imageFile = e.target.files[0];
-
-            const reader = new FileReader();
-            reader.addEventListener("load", (e) => {
-                setResult(e.target.result);
-            });
-
-            reader.readAsDataURL(imageFile);
-        }
-
-        return { result, uploader };
-    }
-    const { result, uploader } = useDisplayImage();
-
-    const handleProfilePic = async () => {
-        try {
-            const newAvatar = result ? result : avatar;
-
-            const formData = new FormData();
-            formData.append("picture", newAvatar);
-
-            const response = await axiosInstance.put(`/upload-img`, formData);
-
-            if (response.status === 200) {
-                console.log(response.data.msg);
-            } else {
-                console.error(response.data.error);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    return (
-        <>
-            <div className="">
-                <div>{result ? <img ref={imageRef} src={result} /> : <img src={avatar} />}</div>
-                <button className="h-10 w-10 bg-fuchsia-50 hover:bg-fuchsia-100 rounded-lg transition-all duration-300 text-secondary-text relative flex items-center justify-center cursor-pointer overflow-hidden">
-                    <FaRegImage />
-                    <div className="absolute h-20 w-10 bottom-0 left-0 cursor-pointer">
-                        {!result ? (
-                            <input
-                                type="file"
-                                name="image"
-                                onChange={(e) => uploader(e)}
-                                className="h-full w-10 opacity-25 cursor-pointer"
-                            />
-                        ) : (
-                            <input
-                                type="file"
-                                name="image"
-                                onChange={(e) => uploader(e)}
-                                className="h-10 w-10 opacity-25 cursor-pointer"
-                            />
-                        )}
-                    </div>
-                </button>
-                {result && (
-                    <div className="editAvatar__submit" onClick={handleProfilePic} style={{ marginLeft: "1rem" }}>
-                        Save
-                    </div>
-                )}
-            </div>
-        </>
-    );
-};
-
 const CreatePost: React.FC = () => {
     const router = useRouter();
     const { smartAccountAddress } = DataState();
@@ -198,6 +125,7 @@ const CreatePost: React.FC = () => {
     const [smartWalletAddress, setSmartWalletAddress] = useState("");
     const [userProfile, setUserProfile] = useState(null);
     const [userWalletAddress, setUserWalletAddress] = useState(null);
+    const [postSending, setPostSending] = useState<boolean>(false);
 
     const { result, uploader } = useDisplayImage();
     const [imgUrl, setImgUrl] = useState<string>("");
@@ -217,19 +145,19 @@ const CreatePost: React.FC = () => {
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
-
-        const postData = {
-            // userId: "YOUR_USER_ID", // Replace with actual user ID
-            content,
-            links: links || [],
-            forOther,
-            otherUserProfile: forOther ? { dappName, profileImage, profileName } : null,
-            smartWalletAddress: forOther ? userWalletAddress : smartAccountAddress,
-            imgUrl: imgUrl,
-            tips: [], // Initial tips array
-        };
-
         try {
+            setPostSending(true);
+            const postData = {
+                // userId: "YOUR_USER_ID", // Replace with actual user ID
+                content,
+                links: links || [],
+                forOther,
+                otherUserProfile: forOther ? { dappName, profileImage, profileName } : null,
+                smartWalletAddress: forOther ? userWalletAddress : smartAccountAddress,
+                imgUrl: imgUrl,
+                tips: [], // Initial tips array
+            };
+
             const response = await axiosInstance.post("/post", postData);
 
             const data = await response.data;
@@ -237,12 +165,11 @@ const CreatePost: React.FC = () => {
             if (data.success) {
                 router.push("/");
                 // Handle successful post creation
+                setPostSending(false);
                 console.log("Post created successfully:", data.data);
-            } else {
-                // Handle error in post creation
-                console.error("Error creating post:", data.error);
             }
         } catch (error) {
+            setPostSending(false);
             console.error("Error:", error);
         }
     };
@@ -348,7 +275,10 @@ const CreatePost: React.FC = () => {
             <div>
                 <div className="mb-4 flex gap-3">
                     {uploadImageLoading ? (
-                        <>Uploading</>
+                        <div className="w-full h-52 flex flex-col gap-3 items-center justify-center">
+                            <CgSpinner className="animate-spin h-5 w-5" />
+                            <span className="text-sm text-secondary-text">Uploading...</span>
+                        </div>
                     ) : (
                         <div>{imgUrl && <img src={imgUrl} className="w-full mx-auto rounded-lg" alt="Uploaded" />}</div>
                     )}
@@ -433,6 +363,7 @@ const CreatePost: React.FC = () => {
             <button
                 type="submit"
                 className="w-full px-4 py-2 bg-fuchsia-500 text-white rounded-lg hover:bg-fuchsia-600 focus:outline-none focus:ring focus:ring-fuchsia-300"
+                disabled={postSending}
             >
                 Create Post
             </button>

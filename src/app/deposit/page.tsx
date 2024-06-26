@@ -8,6 +8,7 @@ import CustomButton from "@/components/custom/CustomButtons";
 import BigNumber from "bignumber.js";
 import { shorten } from "@/utils/constants";
 import { DataState } from "@/context/dataProvider";
+import CopyButton from "@/components/custom/CopyButton";
 
 BigNumber.config({ DECIMAL_PLACES: 10 });
 
@@ -42,13 +43,17 @@ const Deposit: React.FC = () => {
         <NavigationLayout>
             <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-2xl border border-fuchsia-100">
                 <h1 className="text-2xl font-bold mb-4">Deposit USDC</h1>
-                <div className="bg-fuchsia-50 mb-4 rounded-xl px-3 py-2">
+                {/* <div className="bg-fuchsia-50 mb-4 rounded-xl px-3 py-2">
                     <label className="block text-gray-700">Your Address</label>
-                    <div className="p-2 rounded">{shorten(userAddress)}</div>
-                </div>
+                    <div className="p-2 rounded flex items-center gap-2">
+                        <span className="overflow-hidden text-ellipsis">{userAddress}</span> <CopyButton copy={userAddress} />
+                    </div>
+                </div> */}
                 <div className="bg-fuchsia-50 mb-4 rounded-xl px-3 py-2">
-                    <label className="block text-gray-700">Recipient Address</label>
-                    <div className="p-2 rounded">{shorten(smartAccountAddress)}</div>
+                    <label className="block text-gray-700">To your defi wallet</label>
+                    <div className="p-2 rounded flex items-center gap-2">
+                        <span className="overflow-hidden text-ellipsis">{smartAccountAddress}</span> <CopyButton copy={smartAccountAddress} />
+                    </div>
                 </div>
 
                 <div className="flex items-end gap-2">

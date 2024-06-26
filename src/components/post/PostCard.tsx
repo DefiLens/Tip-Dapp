@@ -1,21 +1,19 @@
 import axiosInstance from "@/utils/axiosInstance";
 import { postDateFormat, shorten } from "@/utils/constants";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { PiCoinLight } from "react-icons/pi";
-
 import { BigNumber as bg } from "bignumber.js";
 import AvatarIcon from "../Avatar";
 import TipModal from "../TipModal";
-import InputForm from "../custom/InputForm";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { DataState } from "@/context/dataProvider";
 bg.config({ DECIMAL_PLACES: 10 });
 import { FaBookmark } from "react-icons/fa6";
 import { FaRegBookmark } from "react-icons/fa6";
+import toast from "react-hot-toast";
 
 const PostCard = ({ post }: any) => {
-    const { user } = DataState();
+    const { user, usdcBalance, isBiconomySession } = DataState();
     const [showTipModal, setShowTipModal] = useState<boolean>(false);
     const [likeCount, setLikeCount] = useState<number>(post?.likes?.length);
 
@@ -78,7 +76,17 @@ const PostCard = ({ post }: any) => {
         }
     }, [post]);
 
-    console.log(post?.userId?._id === user?._id, post?.userId?._id, user?._id);
+    const openTipModal = () => {
+        if (usdcBalance <= 0) {
+            toast.error("Deposit USDC");
+            return;
+        }
+        if (!isBiconomySession) {
+            toast.error("Create Session first");
+            return;
+        }
+        setShowTipModal(true);
+    };
 
     return (
         <div className="relative">
@@ -94,7 +102,7 @@ const PostCard = ({ post }: any) => {
                         <img
                             src={
                                 post.forOther
-                                    ? post.otherUserProfile.profileImage
+                                    ? post?.otherUserProfile?.profileImage
                                     : post?.createdBy?.farcaster?.pfp || "https://via.placeholder.com/40"
                             }
                             className="h-12 w-12 rounded-full"
@@ -141,7 +149,7 @@ const PostCard = ({ post }: any) => {
                     </div>
                 </div>
                 <p className="text-base text-gray-500">{post.content}</p>
-                {post?.imgUrl && <img src={post?.imgUrl} className="wfull md:w-2/4 rounded-lg" />}
+                {post?.imgUrl && <img src={post?.imgUrl} className="rounded-lg w-full lg:w-3/4" />}
                 {post.links && post.links.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                         {post.links.map((link: string, index: number) => (
@@ -191,7 +199,7 @@ const PostCard = ({ post }: any) => {
                             )}
                         </button>
                         <button
-                            onClick={() => setShowTipModal(!showTipModal)}
+                            onClick={openTipModal}
                             className="flex gap-2 items-center rounded-lg bg-fuchsia-100 hover:bg-fuchsia-200 px-2 py-1 cursor-pointer transition-all duration-300 text-secondary-text"
                         >
                             <PiCoinLight />

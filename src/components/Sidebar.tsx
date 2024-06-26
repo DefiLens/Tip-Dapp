@@ -7,9 +7,13 @@ import { usePathname } from "next/navigation";
 import { IoMdCreate } from "react-icons/io";
 import Image from "next/image";
 import { defiLogo } from "../../public/assets";
+import { FaCircleCheck, FaCircleXmark } from "react-icons/fa6";
+import CreateSessionButton from "./CreateSession";
+import { DataState } from "@/context/dataProvider";
 
 const Sidebar = () => {
     const pathname = usePathname();
+    const { isBiconomySession } = DataState();
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleDrawer = () => {
@@ -56,7 +60,9 @@ const Sidebar = () => {
                                         alt="Logo"
                                         className="w-12 shadow-sm shadow-white rounded-2xl"
                                     />
-                                    <span className="block sm:hidden lg:block text-2xl text-gray-700 font-bold">Defilens</span>
+                                    <span className="block sm:hidden lg:block text-2xl text-gray-700 font-bold">
+                                        Defilens
+                                    </span>
                                 </div>
                             </Link>
                         </h1>
@@ -73,7 +79,7 @@ const Sidebar = () => {
                             </Link>
                         ))}
                     </div>
-                    <div className="space-y-2 mb-10">
+                    <div className="space-y-2 ">
                         {socialItems.map((item, index) => (
                             <div
                                 key={index}
@@ -83,6 +89,20 @@ const Sidebar = () => {
                                 <span className="inline sm:hidden lg:inline text-gray-700">{item.name}</span>
                             </div>
                         ))}
+                        <div className="flex flex-col gap-2 justify-center px-4 py-4  border-t border-fuchsia-100">
+                            {isBiconomySession ? (
+                                <div className="flex items-center gap-2 text-gray-700">
+                                    <FaCircleCheck className="text-green-600 text-lg" />
+                                    <span className="font-semibold block sm:hidden lg:block">Session is Active</span>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2 text-gray-700">
+                                    <FaCircleXmark className="text-red-600 text-lg" />
+                                    <span className="font-semibold block sm:hidden lg:block">Session was Expired</span>
+                                </div>
+                            )}
+                            {!isBiconomySession && <CreateSessionButton />}
+                        </div>
                     </div>
                 </div>
             </div>

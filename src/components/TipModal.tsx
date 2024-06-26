@@ -17,6 +17,8 @@ import { encodeFunctionData, parseAbi } from "viem";
 import { polygon } from "viem/chains";
 import { useWalletClient, useWriteContract } from "wagmi";
 import { BigNumber as bg } from "bignumber.js";
+import CopyButton from "./custom/CopyButton";
+import { shorten } from "@/utils/constants";
 bg.config({ DECIMAL_PLACES: 10 });
 
 const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
@@ -141,7 +143,7 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
-            <div className="rounded-lg relative">
+            <div className="rounded-2xl relative bg-white">
                 <button
                     onClick={() => setShowTipModal(!showTipModal)}
                     className="absolute top-4 right-4 text-xl text-black"
@@ -149,9 +151,9 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                     <RxCross2 />
                 </button>
 
-                <div className="bg-white p-6 rounded-md shadow-md w-full max-w-md space-y-4">
+                <div className="p-6 space-y-4">
                     <h2 className="text-xl font-semibold">Enter Details</h2>
-
+                    {/* 
                     <input
                         type="text"
                         value={post.smartWalletAddress}
@@ -159,8 +161,15 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                         className="w-full px-4 py-2 border border-fuchsia-100 rounded-md focus:outline-none focus:ring focus:ring-fuchsia-300"
                         placeholder="Enter address"
                         disabled
-                    />
-
+                    /> */}
+                    
+                    <div className="bg-fuchsia-50 mb-4 rounded-xl px-3 py-2">
+                        {/* <label className="block text-gray-700"> wallet</label> */}
+                        <div className="p-2 rounded flex items-center justify-between gap-2">
+                            <span className="overflow-hidden text-ellipsis">{shorten(post.smartWalletAddress)}</span>{" "}
+                            <CopyButton copy={post.smartWalletAddress} />
+                        </div>
+                    </div>
                     <div className="flex items-center space-x-2">
                         <select
                             value={token}
@@ -180,11 +189,9 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                             placeholder="Amount"
                         />
                     </div>
-
                     {errors.address && <p className="text-red-500">{errors.address}</p>}
                     {errors.message && <p className="text-red-500">{errors.message}</p>}
                     {errors.amount && <p className="text-red-500">{errors.amount}</p>}
-
                     {txHash && <p className="mt-4 text-green-500">Transaction hash: {txHash}</p>}
                     <button
                         onClick={handleSubmit}

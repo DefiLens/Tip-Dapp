@@ -66,7 +66,7 @@ const PostList = () => {
                 const response = await axiosInstance.get("/post", {
                     params: {
                         page,
-                        limit: 10,
+                        limit: 40,
                         userId: filters.userId,
                         dappName: filters.dappName,
                     },

@@ -1,25 +1,21 @@
 "use client";
 import Sidebar from "../Sidebar";
 import Header from "../Header";
-import Deposit from "@/app/deposit/page";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useAccount, useWriteContract } from "wagmi";
 import { Address, erc20Abi } from "viem";
-import CustomButton from "@/components/custom/CustomButtons";
 import BigNumber from "bignumber.js";
-import { shorten } from "@/utils/constants";
 import { DataState } from "@/context/dataProvider";
-import { CiSearch } from "react-icons/ci";
 import { IoIosSearch } from "react-icons/io";
-import AvatarIcon from "../Avatar";
-import axiosInstance from "@/utils/axiosInstance";
 import SuggestedFollows from "../SuggestedFollows";
-
+import CreateSessionButton from "../CreateSession";
+import { FaCircleCheck } from "react-icons/fa6";
+import { FaCircleXmark } from "react-icons/fa6";
 BigNumber.config({ DECIMAL_PLACES: 10 });
 
 const NavigationLayout = ({ children }: any) => {
-    const { smartAccountAddress, usdcBalance } = DataState();
+    const { smartAccountAddress, usdcBalance, isBiconomySession } = DataState();
     const { address: userAddress } = useAccount();
     const { data: hash, isPending, writeContract } = useWriteContract();
     const [amount, setAmount] = useState<string>("");
@@ -46,7 +42,7 @@ const NavigationLayout = ({ children }: any) => {
 
     return (
         <main className="h-screen">
-            <div className="relative w-full mx-auto flex">
+            <div className="relative max-w-7xl w-full mx-auto flex">
                 <Sidebar />
                 <div className="relative flex-1 h-full">
                     <div className="sticky top-0 z-30">
