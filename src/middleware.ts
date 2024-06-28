@@ -21,7 +21,11 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // '/',
-    // '/login',
-    // '/deposit'
+    '/login',
+    '/deposit',
+    '/create-post',
+    '/bookmarks',
+    '/profile',
+    '/profile/edit',
   ]
 }

@@ -54,19 +54,3 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         </PrivyProvider>
     );
 }
-
-// appId="clw6b06dt01y7tijyl1gxs21d"
-// config={{
-//   appearance: {
-//     accentColor: "#6d3a37",
-//     theme: "#360c20",
-//     showWalletLoginFirst: false,
-//     logo: "https://pub-dc971f65d0aa41d18c1839f8ab426dcb.r2.dev/privy-dark.png",
-//   },
-//   loginMethods: ["wallet"],
-//   embeddedWallets: {
-//     createOnLogin: "users-without-wallets",
-//     requireUserPasswordOnCreate: false,
-//   },
-//   mfa: { noPromptOnMfaRequired: false },
-// }}

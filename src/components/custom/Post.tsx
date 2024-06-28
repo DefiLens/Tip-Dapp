@@ -121,8 +121,8 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
             };
             console.log("transferTx: ", transferTx);
 
-            // const sessionLocalStorage = new SessionLocalStorage(usersSmartAccountAddress);
-            // // const data3 = await sessionLocalStorage.clearPendingSessions()
+            const sessionLocalStorage = new SessionLocalStorage(usersSmartAccountAddress);
+            const data3 = await sessionLocalStorage.clearPendingSessions()
             // const data2 = await sessionLocalStorage.getAllSessionData();
             // console.log("data-: ", data2);
 

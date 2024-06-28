@@ -22,7 +22,7 @@ import { shorten } from "@/utils/constants";
 bg.config({ DECIMAL_PLACES: 10 });
 
 const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
-    const { smartAccountAddress, smartAccount } = DataState();
+    const { smartAccountAddress, smartAccount, biconomySession } = DataState();
     const [address, setAddress] = useState("");
     const [message, setMessage] = useState("");
     const [token, setToken] = useState("usdc");
@@ -70,6 +70,7 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                 setLoading(true);
                 const largeNumber = 1e6; // 1 million
 
+                console.log("smartAccount", smartAccount);
                 const usersSmartAccount = smartAccount;
                 const { sessionKeyAddress, sessionStorageClient }: any = await createSessionKeyEOA(
                     usersSmartAccount,
@@ -80,6 +81,8 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                     paymasterServiceData: { mode: PaymasterMode.SPONSORED },
                 };
                 const usersSmartAccountAddress = sessionStorageClient.smartAccountAddress;
+
+                console.log("usersSmartAccountAddress", usersSmartAccountAddress);
 
                 const emulatedUsersSmartAccount = await createSessionSmartAccountClient(
                     {
@@ -99,10 +102,14 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                     }),
                 };
 
+                console.log("biconomySession", biconomySession)
+
+                const index = biconomySession.length - 1;
+                console.log("index",index)
                 const params = await getSingleSessionTxParams(
                     usersSmartAccountAddress,
                     polygon,
-                    0 // index of the relevant policy leaf to the tx
+                    index // index of the relevant policy leaf to the tx
                 );
                 console.log(withSponsorship);
                 console.log(params);
@@ -112,9 +119,11 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                     ...withSponsorship,
                 });
 
+                console.log("---------Sending");
+
                 const success = await wait();
                 if (success.receipt.transactionHash) {
-                    sendTip(post._id, amount, token);
+                    sendTip(post?._id, post?.userId?._id, amount, token);
                 }
                 setTxhash(`https://polygonscan.com/tx/${success.receipt.transactionHash}`);
                 setLoading(false);
@@ -127,11 +136,12 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
 
     const [like, setLike] = useState<boolean>(false);
 
-    const sendTip = async (postId: string, amount: string, token: string) => {
+    const sendTip = async (postId: string, userId: string, amount: string, token: string) => {
         try {
-            const response = await axiosInstance.post(`/user/post/tip/${postId}`, {
+            const response = await axiosInstance.post(`/post/tip/${postId}`, {
                 amount,
                 token,
+                userId,
             });
             console.log("Tip sent successfully:", response.data);
             // Handle success, e.g., show confirmation message
@@ -162,7 +172,7 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                         placeholder="Enter address"
                         disabled
                     /> */}
-                    
+
                     <div className="bg-fuchsia-50 mb-4 rounded-xl px-3 py-2">
                         {/* <label className="block text-gray-700"> wallet</label> */}
                         <div className="p-2 rounded flex items-center justify-between gap-2">
@@ -195,6 +205,7 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                     {txHash && <p className="mt-4 text-green-500">Transaction hash: {txHash}</p>}
                     <button
                         onClick={handleSubmit}
+                        // onClick={() => sendTip(post?._id, post?.userId?._id, amount, token)}
                         className={`mt-4 w-full px-4 py-2 text-white bg-fuchsia-500 rounded-md transition-colors duration-300 hover:bg-fuchsia-600 ${
                             loading ? "bg-fuchsia-600" : "bg-fuchsia-500 hover:bg-fuchsia-600"
                         }`}

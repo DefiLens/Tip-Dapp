@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const Login = () => {
-    const { createSmartAccount, biconomySession, isBiconomySession } = DataState();
+    const { createSmartAccount, isBiconomySession } = DataState();
     const { ready, authenticated } = usePrivy();
     const [isWalletConnected, setIsWalletConnected] = useState(false);
     const [isSession, setIsSession] = useState(false);
@@ -84,7 +84,6 @@ const Login = () => {
                             Please connect your wallet
                             <br /> to get started.
                         </h2>
-                        {/* {ready && !authenticated && <CustomButton onClick={login}>Connect Wallet</CustomButton>} */}
                         <CustomButton onClick={login}>Connect Wallet</CustomButton>
                         <div className="mt-8 text-sm text-fuchsia-700">
                             <p>

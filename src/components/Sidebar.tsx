@@ -101,7 +101,7 @@ const Sidebar = () => {
                                     <span className="font-semibold block sm:hidden lg:block">Session was Expired</span>
                                 </div>
                             )}
-                            {!isBiconomySession && <CreateSessionButton />}
+                            {isBiconomySession && <CreateSessionButton />}
                         </div>
                     </div>
                 </div>

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 
 const UserList = ({ currentUser }: any) => {
-    const { user } = DataState();
+    const { user, setUser } = DataState();
 
     const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
@@ -22,9 +22,11 @@ const UserList = ({ currentUser }: any) => {
             } else {
                 setIsFollowing(true);
             }
-            await axiosInstance.post("/user/follow", {
+            const response = await axiosInstance.post("/user/follow", {
                 targetUserId,
             });
+
+            setUser(response.data.updatedUser);
         } catch (err) {
             console.error("Error toggling follow status:", err);
         }
@@ -45,18 +47,20 @@ const UserList = ({ currentUser }: any) => {
                 </p>
             </div>
 
-            <div className="h-10 flex items-center">
-                <button
-                    className={`px-2 py-1 rounded-xl transition-all duration-300 text-sm ${
-                        isFollowing
-                            ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                            : "bg-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-200"
-                    }`}
-                    onClick={() => handleToggleFollow(currentUser._id)}
-                >
-                    {isFollowing ? "Unfollow" : "Follow"}
-                </button>
-            </div>
+            {user && (
+                <div className="h-10 flex items-center">
+                    <button
+                        className={`px-2 py-1 rounded-xl transition-all duration-300 text-sm ${
+                            isFollowing
+                                ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                                : "bg-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-200"
+                        }`}
+                        onClick={() => handleToggleFollow(currentUser._id)}
+                    >
+                        {isFollowing ? "Unfollow" : "Follow"}
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

@@ -181,7 +181,7 @@ const CreatePost: React.FC = () => {
             const imageFile = e.target.files[0];
 
             const reader = new FileReader();
-            reader.addEventListener("load", (e) => {
+            reader.addEventListener("load", (e: any) => {
                 setResult(e.target.result);
             });
 

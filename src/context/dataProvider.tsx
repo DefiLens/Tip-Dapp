@@ -144,6 +144,7 @@ const DataProvider = ({ children }: any) => {
                 isGettingUserData,
                 biconomySession,
                 isBiconomySession,
+                setUser
             }}
         >
             {children}

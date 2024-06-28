@@ -11,9 +11,15 @@ bg.config({ DECIMAL_PLACES: 10 });
 import { FaBookmark } from "react-icons/fa6";
 import { FaRegBookmark } from "react-icons/fa6";
 import toast from "react-hot-toast";
+import { IPost } from "../PostList";
+import InputForm from "../custom/InputForm";
 
-const PostCard = ({ post }: any) => {
-    const { user, usdcBalance, isBiconomySession } = DataState();
+interface PostCardProps {
+    post: IPost;
+}
+
+const PostCard: React.FC<PostCardProps> = ({ post }) => {
+    const { user, setUser, usdcBalance, isBiconomySession } = DataState();
     const [showTipModal, setShowTipModal] = useState<boolean>(false);
     const [likeCount, setLikeCount] = useState<number>(post?.likes?.length);
 
@@ -23,6 +29,10 @@ const PostCard = ({ post }: any) => {
 
     const handleLike = async () => {
         try {
+            if (!user) {
+                toast.error("Login First");
+                return;
+            }
             if (liked) {
                 setLiked(false);
                 setLikeCount(likeCount - 1);
@@ -42,6 +52,10 @@ const PostCard = ({ post }: any) => {
 
     const handleBookmark = async () => {
         try {
+            if (!user) {
+                toast.error("Login First");
+                return;
+            }
             if (bookmarked) {
                 setBookmarked(false);
                 await axiosInstance.post("/post/removeBookmark", { postId: post._id });
@@ -56,14 +70,19 @@ const PostCard = ({ post }: any) => {
 
     const handleToggleFollow = async (targetUserId: any) => {
         try {
+            if (!user) {
+                toast.error("Login First");
+                return;
+            }
             if (isFollowing) {
                 setIsFollowing(false);
             } else {
                 setIsFollowing(true);
             }
-            await axiosInstance.post("/user/follow", {
+            const response = await axiosInstance.post("/user/follow", {
                 targetUserId,
             });
+            setUser(response.data.updatedUser);
         } catch (err) {
             console.error("Error toggling follow status:", err);
         }
@@ -72,11 +91,14 @@ const PostCard = ({ post }: any) => {
     useEffect(() => {
         if (post) {
             setIsFollowing(post?.userId?.followers?.includes(user?._id));
-            console.log(post?.userId?._id);
         }
     }, [post]);
 
     const openTipModal = () => {
+        if (!user) {
+            toast.error("Login First");
+            return;
+        }
         if (usdcBalance <= 0) {
             toast.error("Deposit USDC");
             return;
@@ -90,6 +112,7 @@ const PostCard = ({ post }: any) => {
 
     return (
         <div className="relative">
+            {/* <InputForm/> */}
             <button
                 onClick={handleBookmark}
                 className="cursor-pointer absolute top-4 right-4 text-xl text-secondary-text"

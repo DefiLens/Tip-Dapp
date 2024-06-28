@@ -1,12 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { useAccount, useWriteContract } from "wagmi";
+import { useWriteContract } from "wagmi";
 import { Address, erc20Abi } from "viem";
 import NavigationLayout from "@/components/layouts/NavigationLayout";
-import CustomButton from "@/components/custom/CustomButtons";
 import BigNumber from "bignumber.js";
-import { shorten } from "@/utils/constants";
 import { DataState } from "@/context/dataProvider";
 import CopyButton from "@/components/custom/CopyButton";
 
@@ -15,7 +13,6 @@ BigNumber.config({ DECIMAL_PLACES: 10 });
 const Deposit: React.FC = () => {
     const { smartAccountAddress } = DataState();
 
-    const { address: userAddress } = useAccount();
     const { data: hash, isPending, writeContract } = useWriteContract();
     const [amount, setAmount] = useState<string>("");
     const [transactionHash, setTransactionHash] = useState<Address | undefined>(undefined);
@@ -43,16 +40,11 @@ const Deposit: React.FC = () => {
         <NavigationLayout>
             <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-2xl border border-fuchsia-100">
                 <h1 className="text-2xl font-bold mb-4">Deposit USDC</h1>
-                {/* <div className="bg-fuchsia-50 mb-4 rounded-xl px-3 py-2">
-                    <label className="block text-gray-700">Your Address</label>
-                    <div className="p-2 rounded flex items-center gap-2">
-                        <span className="overflow-hidden text-ellipsis">{userAddress}</span> <CopyButton copy={userAddress} />
-                    </div>
-                </div> */}
                 <div className="bg-fuchsia-50 mb-4 rounded-xl px-3 py-2">
                     <label className="block text-gray-700">To your defi wallet</label>
                     <div className="p-2 rounded flex items-center gap-2">
-                        <span className="overflow-hidden text-ellipsis">{smartAccountAddress}</span> <CopyButton copy={smartAccountAddress} />
+                        <span className="overflow-hidden text-ellipsis">{smartAccountAddress}</span>{" "}
+                        <CopyButton copy={smartAccountAddress} />
                     </div>
                 </div>
 
@@ -76,19 +68,16 @@ const Deposit: React.FC = () => {
                 </div>
                 {transactionHash && (
                     <div className="mt-4 flex items-center text-green-600">
-                        {/* <CheckCircleIcon className="w-5 h-5 mr-2" /> */}
                         <span>Transaction hash: {transactionHash}</span>
                     </div>
                 )}
                 {hash && (
                     <div className="mt-4 flex items-center text-green-600">
-                        {/* <CheckCircleIcon className="w-5 h-5 mr-2" /> */}
                         <span>Transaction hash: {hash}</span>
                     </div>
                 )}
                 {error && (
                     <div className="mt-4 flex items-center text-red-600">
-                        {/* <XCircleIcon className="w-5 h-5 mr-2" /> */}
                         <span>{error}</span>
                     </div>
                 )}

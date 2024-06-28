@@ -27,21 +27,27 @@ const SuggestedFollows = () => {
     }, [user]);
 
     return (
-        <div className="p-2 w-full border rounded-lg border-fuchsia-200">
-            <h1 className="text-xl font-bold mb-2 text-primary-text">Suggested Follows</h1>
-            <div className="relative flex flex-col gap-5">
-                {isLoading ? (
-                    <>
-                        <UserListSkeleton />
-                        <UserListSkeleton />
-                        <UserListSkeleton />
-                        <UserListSkeleton />
-                    </>
-                ) : (
-                    users.map((user) => <UserList currentUser={user} />)
-                )}
-            </div>
-        </div>
+        <>
+            {users.length > 0 ? (
+                <div className="p-2 w-full border rounded-lg border-fuchsia-200">
+                    <h1 className="text-xl font-bold mb-2 text-primary-text">Suggested Follows</h1>
+                    <div className="relative flex flex-col gap-5">
+                        {isLoading ? (
+                            <>
+                                <UserListSkeleton />
+                                <UserListSkeleton />
+                                <UserListSkeleton />
+                                <UserListSkeleton />
+                            </>
+                        ) : (
+                            users.map((user, index) => <UserList key={index} currentUser={user} />)
+                        )}
+                    </div>
+                </div>
+            ) : (
+                <></>
+            )}
+        </>
     );
 };
 
