@@ -1,6 +1,6 @@
 import { DataState } from "@/context/dataProvider";
 import axiosInstance from "@/utils/axiosInstance";
-import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, POLYGON_BICONOMY_AA_KEY } from "@/utils/keys";
+import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, BASE_BICONOMY_AA_KEY } from "@/utils/keys";
 import {
     DEFAULT_MULTICHAIN_MODULE,
     PaymasterMode,
@@ -14,7 +14,7 @@ import { useWallets } from "@privy-io/react-auth";
 import React, { useEffect, useState } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { encodeFunctionData, parseAbi } from "viem";
-import { polygon } from "viem/chains";
+import { base } from "viem/chains";
 import { useWalletClient, useWriteContract } from "wagmi";
 import { BigNumber as bg } from "bignumber.js";
 import CopyButton from "./custom/CopyButton";
@@ -74,7 +74,7 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                 const usersSmartAccount = smartAccount;
                 const { sessionKeyAddress, sessionStorageClient }: any = await createSessionKeyEOA(
                     usersSmartAccount,
-                    polygon
+                    base
                 );
 
                 const withSponsorship = {
@@ -88,13 +88,13 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                     {
                         accountAddress: usersSmartAccountAddress, // Dapp can set the account address on behalf of the user
                         bundlerUrl: BICONOMY_MAINNET_BUNDLAR_KEY as string,
-                        paymasterUrl: `https://paymaster.biconomy.io/api/v1/137/${POLYGON_BICONOMY_AA_KEY}`,
-                        chainId: 137,
+                        paymasterUrl: `https://paymaster.biconomy.io/api/v1/8453/${BASE_BICONOMY_AA_KEY}`,
+                        chainId: 8453,
                     },
                     usersSmartAccountAddress // Storage client, full Session or simply the smartAccount address if using default storage for your environment
                 );
                 const transferTx = {
-                    to: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+                    to: "0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA",
                     data: encodeFunctionData({
                         abi: parseAbi(["function transfer(address,uint256)"]),
                         functionName: "transfer",
@@ -108,7 +108,7 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                 console.log("index",index)
                 const params = await getSingleSessionTxParams(
                     usersSmartAccountAddress,
-                    polygon,
+                    base,
                     index // index of the relevant policy leaf to the tx
                 );
                 console.log(withSponsorship);
@@ -125,7 +125,7 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                 if (success.receipt.transactionHash) {
                     sendTip(post?._id, post?.userId?._id, amount, token);
                 }
-                setTxhash(`https://polygonscan.com/tx/${success.receipt.transactionHash}`);
+                setTxhash(`https://basescan.org/tx/${success.receipt.transactionHash}`);
                 setLoading(false);
             }
         } catch (error) {
@@ -163,7 +163,7 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
 
                 <div className="p-6 space-y-4">
                     <h2 className="text-xl font-semibold">Enter Details</h2>
-                    {/* 
+                    {/*
                     <input
                         type="text"
                         value={post.smartWalletAddress}
@@ -186,7 +186,7 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                             onChange={(e) => setToken(e.target.value as "usdc" | "eth" | "dai")}
                             className="px-4 py-2 border border-fuchsia-100 rounded-md focus:outline-none focus:ring focus:ring-fuchsia-300"
                         >
-                            <option value="0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174" className="h-8">
+                            <option value="0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA" className="h-8">
                                 USDC
                             </option>
                         </select>

@@ -13,9 +13,9 @@ import {
     Rule,
     SessionLocalStorage,
 } from "@biconomy/account";
-import { polygon } from "viem/chains";
+import { base } from "viem/chains";
 import { useAccount, useWalletClient } from "wagmi";
-import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, POLYGON_BICONOMY_AA_KEY } from "@/utils/keys";
+import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, BASE_BICONOMY_AA_KEY } from "@/utils/keys";
 
 init("10414e57f4ac344a787f5d6ad0035ded4");
 
@@ -113,7 +113,7 @@ const InputForm = () => {
         });
 
         const bundelUrl: string = BICONOMY_MAINNET_BUNDLAR_KEY || "";
-        const paymasterApiKey: string = POLYGON_BICONOMY_AA_KEY || "";
+        const paymasterApiKey: string = BASE_BICONOMY_AA_KEY || "";
         const rpcUrl: string = MAINNET_INFURA || "";
 
         const usersSmartAccount = await createSmartAccountClient({
@@ -132,7 +132,7 @@ const InputForm = () => {
         const sessiondata = await sessionLocalStorage.getAllSessionData();
         console.log("sessiondata: ", sessiondata);
 
-        const { sessionKeyAddress, sessionStorageClient }: any = await createSessionKeyEOA(usersSmartAccount, polygon);
+        const { sessionKeyAddress, sessionStorageClient }: any = await createSessionKeyEOA(usersSmartAccount, base);
 
         const rules: Rule[] = [
             {
@@ -161,7 +161,7 @@ const InputForm = () => {
                 /** The address of the sessionKey upon which the policy is to be imparted */
                 sessionKeyAddress,
                 /** The address of the contract to be included in the policy */
-                contractAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+                contractAddress: "0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA",
                 /** The specific function selector from the contract to be included in the policy */
                 functionSelector: "transfer(address,uint256)",
                 /** The list of rules which make up the policy */

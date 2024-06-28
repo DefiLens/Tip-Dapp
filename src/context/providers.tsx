@@ -2,7 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { http } from "viem";
-import { arbitrum, base, mainnet, optimism, polygon, sepolia } from "viem/chains";
+import { arbitrum, base, mainnet, optimism, sepolia } from "viem/chains";
 
 import type { PrivyClientConfig } from "@privy-io/react-auth";
 import { PrivyProvider } from "@privy-io/react-auth";
@@ -11,11 +11,11 @@ import { WagmiProvider, createConfig } from "@privy-io/wagmi";
 const queryClient = new QueryClient();
 
 export const wagmiConfig = createConfig({
-    // chains: [mainnet, polygon, arbitrum, optimism, base],
-    chains: [polygon],
+    // chains: [mainnet, base, arbitrum, optimism, base],
+    chains: [base],
     transports: {
         // [mainnet.id]: http(),
-        [polygon.id]: http(),
+        [base.id]: http(),
         // [arbitrum.id]: http(),
         // [optimism.id]: http(),
         // [base.id]: http(),
@@ -34,7 +34,7 @@ const privyConfig: PrivyClientConfig = {
     appearance: {
         showWalletLoginFirst: true,
     },
-    defaultChain: polygon 
+    defaultChain: base
 };
 
 export default function Providers({ children }: { children: React.ReactNode }) {

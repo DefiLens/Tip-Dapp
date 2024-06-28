@@ -1,4 +1,4 @@
-import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, POLYGON_BICONOMY_AA_KEY } from "@/utils/keys";
+import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, BASE_BICONOMY_AA_KEY } from "@/utils/keys";
 import {
     DEFAULT_MULTICHAIN_MODULE,
     PaymasterMode,
@@ -10,7 +10,7 @@ import {
     createSmartAccountClient,
 } from "@biconomy/account";
 import React, { useState } from "react";
-import { polygon } from "viem/chains";
+import { base } from "viem/chains";
 import { useWalletClient } from "wagmi";
 import CustomButton from "./custom/CustomButtons";
 
@@ -28,7 +28,7 @@ const CreateSessionButton = () => {
             });
 
             const bundelUrl: string = BICONOMY_MAINNET_BUNDLAR_KEY || "";
-            const paymasterApiKey: string = POLYGON_BICONOMY_AA_KEY || "";
+            const paymasterApiKey: string = BASE_BICONOMY_AA_KEY || "";
             const rpcUrl: string = MAINNET_INFURA || "";
 
             const usersSmartAccount = await createSmartAccountClient({
@@ -49,7 +49,7 @@ const CreateSessionButton = () => {
 
             const { sessionKeyAddress, sessionStorageClient }: any = await createSessionKeyEOA(
                 usersSmartAccount,
-                polygon
+                base
             );
 
             const rules: Rule[] = [
@@ -79,7 +79,7 @@ const CreateSessionButton = () => {
                     /** The address of the sessionKey upon which the policy is to be imparted */
                     sessionKeyAddress,
                     /** The address of the contract to be included in the policy */
-                    contractAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+                    contractAddress: "0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA",
                     /** The specific function selector from the contract to be included in the policy */
                     functionSelector: "transfer(address,uint256)",
                     /** The list of rules which make up the policy */

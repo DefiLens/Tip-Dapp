@@ -12,9 +12,9 @@ import {
     SessionLocalStorage,
 } from "@biconomy/account";
 import { encodeFunctionData, parseAbi, parseUnits } from "viem";
-import { polygon } from "viem/chains";
+import { base } from "viem/chains";
 import { useWallets } from "@privy-io/react-auth";
-import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, POLYGON_BICONOMY_AA_KEY } from "@/utils/keys";
+import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, BASE_BICONOMY_AA_KEY } from "@/utils/keys";
 import { BigNumber as bg } from "bignumber.js";
 bg.config({ DECIMAL_PLACES: 10 });
 
@@ -65,7 +65,7 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
             // alert(bg(amount).multipliedBy(largeNumber))
 
             // await writeContract({
-            //     address: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+            //     address: "0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA",
             //     abi: erc20,
             //     functionName: "transfer",
             //     args: [data.Wallet.addresses[0], bg(amount).multipliedBy(largeNumber)],//BigInt(amount) * BigInt(largeNumber)
@@ -77,7 +77,7 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
                 moduleAddress: DEFAULT_MULTICHAIN_MODULE,
             });
             const bundelUrl: string = BICONOMY_MAINNET_BUNDLAR_KEY || "";
-            const paymasterApiKey: string = POLYGON_BICONOMY_AA_KEY || "";
+            const paymasterApiKey: string = BASE_BICONOMY_AA_KEY || "";
             const rpcUrl: string = MAINNET_INFURA || "";
 
             const usersSmartAccount = await createSmartAccountClient({
@@ -91,7 +91,7 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
             console.log("usersSmartAccount", usersSmartAccount);
             const { sessionKeyAddress, sessionStorageClient }: any = await createSessionKeyEOA(
                 usersSmartAccount,
-                polygon
+                base
             );
 
             const withSponsorship = {
@@ -106,13 +106,13 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
                 {
                     accountAddress: usersSmartAccountAddress, // Dapp can set the account address on behalf of the user
                     bundlerUrl: BICONOMY_MAINNET_BUNDLAR_KEY as string,
-                    paymasterUrl: `https://paymaster.biconomy.io/api/v1/137/${POLYGON_BICONOMY_AA_KEY}`,
-                    chainId: 137,
+                    paymasterUrl: `https://paymaster.biconomy.io/api/v1/8453/${BASE_BICONOMY_AA_KEY}`,
+                    chainId: 8453,
                 },
                 usersSmartAccountAddress // Storage client, full Session or simply the smartAccount address if using default storage for your environment
             );
             const transferTx = {
-                to: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+                to: "0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA",
                 data: encodeFunctionData({
                     abi: parseAbi(["function transfer(address,uint256)"]),
                     functionName: "transfer",
@@ -128,7 +128,7 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
 
             const params = await getSingleSessionTxParams(
                 usersSmartAccountAddress,
-                polygon,
+                base,
                 0 // index of the relevant policy leaf to the tx
             );
             console.log("Params: ", params);
@@ -140,7 +140,7 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
 
             const success = await wait();
             console.log("success: ", success.receipt.transactionHash);
-            setTxhash(`https://polygonscan.com/tx/${success.receipt.transactionHash}`)
+            setTxhash(`https://basescan.org/tx/${success.receipt.transactionHash}`)
             setLoading(false);
         }
     };
@@ -209,7 +209,7 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
                         onChange={(e) => setToken(e.target.value as "usdc" | "eth" | "dai")}
                         className="px-4 py-2 border border-gray-300 rounded-md"
                     >
-                        <option value="0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174">USDC</option>
+                        <option value="0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA">USDC</option>
                         <option value="eth" disabled>
                             ETH
                         </option>
@@ -308,7 +308,7 @@ const Post: React.FC<ModalProps> = ({ onClose, data }) => {
         //                 onChange={(e) => setToken(e.target.value as "usdc" | "eth" | "dai")}
         //                 className="px-4 py-2 border border-gray-300 rounded-md mr-2"
         //             >
-        //                 <option value="0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174">USDC</option>
+        //                 <option value="0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA">USDC</option>
         //                 <option value="eth" disabled>
         //                     ETH
         //                 </option>

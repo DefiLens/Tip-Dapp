@@ -36,7 +36,7 @@ const NavigationLayout = ({ children }: any) => {
         try {
             const amountInWei = new BigNumber(amount).multipliedBy(1e6).toFixed(); // USDC has 6 decimal places
             writeContract({
-                address: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+                address: "0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA",
                 abi: erc20Abi,
                 functionName: "transfer",
                 args: [smartAccountAddress, BigInt(amountInWei)],

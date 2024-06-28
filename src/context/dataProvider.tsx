@@ -6,7 +6,7 @@ import {
     DEFAULT_MULTICHAIN_MODULE,
     SessionLocalStorage,
 } from "@biconomy/account";
-import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, POLYGON_BICONOMY_AA_KEY } from "@/utils/keys";
+import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, BASE_BICONOMY_AA_KEY } from "@/utils/keys";
 import { Address } from "viem";
 import axios from "axios";
 import { decreasePowerByDecimals, usdcByChain } from "@/utils/constants";
@@ -42,7 +42,7 @@ const DataProvider = ({ children }: any) => {
             });
 
             const bundelUrl: string = BICONOMY_MAINNET_BUNDLAR_KEY || "";
-            const paymasterApiKey: string = POLYGON_BICONOMY_AA_KEY || "";
+            const paymasterApiKey: string = BASE_BICONOMY_AA_KEY || "";
             const rpcUrl: string = MAINNET_INFURA || "";
 
             const biconomySmartAccount = await createSmartAccountClient({
@@ -64,7 +64,7 @@ const DataProvider = ({ children }: any) => {
     };
 
     const getUscdBalance = async () => {
-        const chainId = "137";
+        const chainId = "8453";
         const tokenAddress = usdcByChain[chainId].usdc;
         const response = await axios.get(
             `https://server.defilens.tech/api/v1/token/getBalance?userAddress=${smartAccountAddress}&tokenAddress=${tokenAddress}&chainId=${chainId}`
