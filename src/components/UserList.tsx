@@ -53,7 +53,7 @@ const UserList = ({ currentUser }: any) => {
                         className={`px-2 py-1 rounded-xl transition-all duration-300 text-sm ${
                             isFollowing
                                 ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                                : "bg-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-200"
+                                : "bg-blue-100 text-blue-800 hover:bg-blue-200"
                         }`}
                         onClick={() => handleToggleFollow(currentUser._id)}
                     >

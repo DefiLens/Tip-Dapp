@@ -12,6 +12,7 @@ import axios from "axios";
 import { decreasePowerByDecimals, usdcByChain } from "@/utils/constants";
 import BigNumber from "bignumber.js";
 import axiosInstance from "@/utils/axiosInstance";
+import { usePrivy } from "@privy-io/react-auth";
 BigNumber.config({ DECIMAL_PLACES: 10 });
 
 export const DataContext = createContext<any | null>(null);
@@ -26,6 +27,7 @@ const DataProvider = ({ children }: any) => {
     const [user, setUser] = useState(null);
     const [isGettingUserData, setIsGettingUserData] = useState<boolean>(false);
     const [isBiconomySession, setIsBiconomySession] = useState<boolean>(false);
+    const [isLoadingBiconomySession, setIsLoadingBiconomySession] = useState<boolean>(true);
 
     const [biconomySession, setBiconomySession] = useState<any>(null);
 
@@ -111,6 +113,7 @@ const DataProvider = ({ children }: any) => {
         if (smartAccountAddress !== undefined) {
             getUscdBalance();
             checkSession();
+            setIsLoadingBiconomySession(false)
         }
     }, [smartAccountAddress]);
 
@@ -131,7 +134,10 @@ const DataProvider = ({ children }: any) => {
         fetchUserData();
     }, []);
 
-    console.log(biconomySession);
+    console.log("biconomySession:", biconomySession);
+    const { ready, user: privyUser, linkFarcaster, authenticated } = usePrivy();
+    const isPrivyConnected: any = authenticated && privyUser?.linkedAccounts.find((account) => account.type === "farcaster");
+
     return (
         <DataContext.Provider
             value={{
@@ -144,7 +150,10 @@ const DataProvider = ({ children }: any) => {
                 isGettingUserData,
                 biconomySession,
                 isBiconomySession,
-                setUser
+                setUser,
+                isPrivyConnected,
+                isLoadingBiconomySession, 
+                setIsLoadingBiconomySession
             }}
         >
             {children}

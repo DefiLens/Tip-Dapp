@@ -8,6 +8,7 @@ import React, { useEffect, useState } from "react";
 import { IoMdCreate } from "react-icons/io";
 import { CgSpinner } from "react-icons/cg";
 import { useRouter } from "next/navigation";
+import Loading from "@/components/Loading";
 
 const page = () => {
     const { user, isGettingUserData, setUser } = DataState();
@@ -16,6 +17,8 @@ const page = () => {
     const [uploadImageLoading, setUploadImageLoading] = useState<boolean>(false);
     const [name, setName] = useState<string>(user?.name || "");
     const [bio, setBio] = useState<string>(user?.bio || "");
+
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const router = useRouter();
     useEffect(() => {
         setImgUrl(user?.image);
@@ -60,13 +63,16 @@ const page = () => {
 
     const handleSaveProfile = async () => {
         try {
+            setIsLoading(true);
             const response = await axiosInstance.put("/user/update-info", { name, bio, image: imgUrl });
 
             if (response.status === 200) {
                 setUser(response.data.user);
                 router.push("/profile");
+                setIsLoading(false);
             }
         } catch (error) {
+            setIsLoading(false);
             console.error("Error updating profile:", error);
         }
     };
@@ -79,13 +85,8 @@ const page = () => {
 
     return (
         <NavigationLayout>
-            {uploadImageLoading && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
-                    <div className="rounded-2xl relative">
-                        <CgSpinner className="animate-spin h-12 w-12 text-white" />
-                    </div>
-                </div>
-            )}
+            {isLoading && <Loading />}
+            {uploadImageLoading && <Loading />}
             {isGettingUserData ? (
                 <></>
             ) : (
@@ -100,7 +101,7 @@ const page = () => {
                                 <AvatarIcon address={user?.smartAccountAddress} />
                             </div>
                         )}
-                        <button className="h-7 w-7 bg-fuchsia-50 hover:bg-fuchsia-100 rounded-full transition-all duration-300 text-secondary-text flex items-center justify-center cursor-pointer overflow-hidden absolute bottom-1 right-3 border-4 border-white">
+                        <button className="h-7 w-7 bg-blue-50 hover:bg-blue-100 rounded-full transition-all duration-300 text-secondary-text flex items-center justify-center cursor-pointer overflow-hidden absolute bottom-1 right-3 border-4 border-white">
                             <IoMdCreate />
                             <div className="absolute h-20 w-10 bottom-0 left-0 cursor-pointer">
                                 <input
@@ -112,23 +113,23 @@ const page = () => {
                             </div>
                         </button>
                     </div>
-
+                    {/* 
                     <div className="mb-4 w-full">
                         <label className="block text-gray-700">Name:</label>
                         <input
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="flex-grow px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-fuchsia-300 w-full"
+                            className="flex-grow px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300 w-full"
                         />
-                    </div>
+                    </div> */}
                     <div className="mb-4 w-full">
                         <label className="block text-gray-700">Bio:</label>
                         <textarea
                             value={bio}
                             onChange={(e) => setBio(e.target.value)}
                             required
-                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-fuchsia-300 resize-none"
+                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300 resize-none"
                             maxLength={500}
                             rows={4}
                         />

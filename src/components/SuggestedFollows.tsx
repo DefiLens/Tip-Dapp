@@ -29,7 +29,7 @@ const SuggestedFollows = () => {
     return (
         <>
             {users.length > 0 ? (
-                <div className="p-2 w-full border rounded-lg border-fuchsia-200">
+                <div className="p-2 w-full border rounded-lg border-blue-200">
                     <h1 className="text-xl font-bold mb-2 text-primary-text">Suggested Follows</h1>
                     <div className="relative flex flex-col gap-5">
                         {isLoading ? (

@@ -92,22 +92,22 @@ const NavigationLayout = ({ children }: any) => {
                     </div>
                     {children}
                 </div>
-                <div className="sticky top-0 h-screen hidden md:flex flex-col w-80 border-fuchsia-100 justify-between border-l border-r ">
+                <div className="sticky top-0 h-screen hidden md:flex flex-col w-80 border-blue-100 justify-between border-l border-r ">
                     <div className="p-2 w-full flex flex-col gap-3">
                         <div className="relative flex items-center">
                             <input
-                                className="w-full px-3 py-2 border rounded-lg border-fuchsia-200 focus:outline-none focus:ring focus:ring-fuchsia-300 resize-none"
+                                className="w-full px-3 py-2 border rounded-lg border-blue-200 focus:outline-none focus:ring focus:ring-blue-300 resize-none"
                                 placeholder="Search for users..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
-                            <button className="absolute right-4 text-2xl text-fuchsia-400">
+                            <button className="absolute right-4 text-2xl text-blue-400">
                                 <IoIosSearch />
                             </button>
                         </div>
 
                         {searchResults.length > 0 && (
-                            <div className="p-2 w-full border rounded-lg border-fuchsia-200 flex flex-col gap-3 relative">
+                            <div className="p-2 w-full border rounded-lg border-blue-200 flex flex-col gap-3 relative">
                                 <h1 className="text-xl font-bold text-primary-text">Users</h1>
 
                                 <button
@@ -142,7 +142,7 @@ const NavigationLayout = ({ children }: any) => {
                         {user && searchResults.length <= 0 && <SuggestedFollows />}
                     </div>
                     <div className="p-2">
-                        <div className="max-w-md mx-auto h-fit bg-white p-2 border rounded-lg border-fuchsia-200">
+                        <div className="max-w-md mx-auto h-fit p-2 border rounded-lg border-blue-200">
                             <h1 className="text-xl font-bold mb-2 text-primary-text">Deposit USDC</h1>
                             <div className="flex items-end gap-2">
                                 <div className="flex-1">
@@ -150,14 +150,14 @@ const NavigationLayout = ({ children }: any) => {
                                         type="number"
                                         value={amount}
                                         onChange={(e) => setAmount(e.target.value)}
-                                        className="w-full p-2 border border-fuchsia-200 rounded-xl outline-none"
+                                        className="w-full p-2 border border-blue-200 rounded-xl outline-none"
                                         placeholder="Amount of (USDC)"
                                     />
                                 </div>
                                 <button
                                     onClick={send}
                                     disabled={isPending}
-                                    className="bg-fuchsia-500 hover:bg-fuchsia-700 text-white px-4 py-2 rounded-xl transition-all duration-300"
+                                    className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition-all duration-300"
                                 >
                                     {isPending ? "waiting" : "Send"}
                                 </button>

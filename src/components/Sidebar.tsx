@@ -10,10 +10,11 @@ import { defiLogo } from "../../public/assets";
 import { FaCircleCheck, FaCircleXmark } from "react-icons/fa6";
 import CreateSessionButton from "./CreateSession";
 import { DataState } from "@/context/dataProvider";
+import { IoCart } from "react-icons/io5";
 
 const Sidebar = () => {
     const pathname = usePathname();
-    const { isBiconomySession } = DataState();
+    const { isBiconomySession, isLoadingBiconomySession, setIsLoadingBiconomySession } = DataState();
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleDrawer = () => {
@@ -26,7 +27,7 @@ const Sidebar = () => {
         // { icon: <FaBell />, name: "Notifications", link: "/notification" },
         // { icon: <FaCompass />, name: "Explore", link: "/explore" },
         { icon: <BiSolidDownload />, name: "Deposit", link: "/deposit" },
-        { icon: <FaBookmark />, name: "Bookmarks", link: "/bookmarks" },
+        { icon: <IoCart />, name: "Cart", link: "/cart" },
         { icon: <FaUser />, name: "Profile", link: "/profile" },
     ];
 
@@ -46,11 +47,11 @@ const Sidebar = () => {
 
             {/* Sidebar */}
             <div
-                className={`fixed sm:sticky top-0 h-screen z-50 bg-white transition-transform transform ${
+                className={`fixed sm:sticky top-0 h-screen z-50 bg-W0 sm:bg-transparent transition-transform transform ${
                     isOpen ? "translate-x-0" : "-translate-x-full sm:translate-x-0"
                 }`}
             >
-                <div className="w-60 sm:w-fit lg:w-60 h-full flex flex-col justify-between px-1 border-fuchsia-100 border-r pt-3">
+                <div className="w-60 sm:w-fit lg:w-60 h-full flex flex-col justify-between px-1 border-B900 border-r pt-3">
                     <div className="space-y-2">
                         <h1 className="flex items-center justify-center w-full font-bold text-sm md:text-xl h-[5rem]">
                             <Link href="/">
@@ -61,7 +62,7 @@ const Sidebar = () => {
                                         className="w-12 shadow-sm shadow-white rounded-2xl"
                                     />
                                     <span className="block sm:hidden lg:block text-2xl text-gray-700 font-bold">
-                                        Defilens
+                                        Social Tip
                                     </span>
                                 </div>
                             </Link>
@@ -70,12 +71,14 @@ const Sidebar = () => {
                             <Link
                                 href={item.link}
                                 key={index}
-                                className={`flex items-center space-x-4 px-4 py-3 hover:bg-fuchsia-50 cursor-pointer rounded-lg
-                                ${pathname === item.link && "bg-fuchsia-100"}
+                                className={`flex items-center space-x-4 px-4 py-3 hover:bg-B900 cursor-pointer rounded-lg
+                                ${pathname === item.link && "bg-B800"}
                                 `}
                             >
-                                <span className="text-fuchsia-500 text-lg">{item.icon}</span>
-                                <span className="inline sm:hidden lg:inline text-gray-700">{item.name}</span>
+                                <span className="text-B0 text-lg">{item.icon}</span>
+                                <span className="inline sm:hidden lg:inline text-B30 text-base font-bold">
+                                    {item.name}
+                                </span>
                             </Link>
                         ))}
                     </div>
@@ -83,25 +86,37 @@ const Sidebar = () => {
                         {socialItems.map((item, index) => (
                             <div
                                 key={index}
-                                className="flex items-center space-x-4 px-4 py-3 hover:bg-fuchsia-50 cursor-pointer rounded-lg"
+                                className="flex items-center space-x-4 px-4 py-3 hover:bg-B900 cursor-pointer rounded-lg"
                             >
-                                <span className="text-fuchsia-500 text-lg">{item.icon}</span>
-                                <span className="inline sm:hidden lg:inline text-gray-700">{item.name}</span>
+                                <span className="text-B0 text-lg">{item.icon}</span>
+                                <span className="inline sm:hidden lg:inline text-B30 text-base font-bold">
+                                    {item.name}
+                                </span>
                             </div>
                         ))}
-                        <div className="flex flex-col gap-2 justify-center px-4 py-4  border-t border-fuchsia-100">
-                            {isBiconomySession ? (
-                                <div className="flex items-center gap-2 text-gray-700">
-                                    <FaCircleCheck className="text-green-600 text-lg" />
-                                    <span className="font-semibold block sm:hidden lg:block">Session is Active</span>
-                                </div>
+                        <div className="flex flex-col gap-2 justify-center px-4 py-4 border-t border-B900">
+                            {isLoadingBiconomySession ? (
+                                <div className="animate-pulse h-8 rounded-lg w-full bg-gray-200"></div>
                             ) : (
-                                <div className="flex items-center gap-2 text-gray-700">
-                                    <FaCircleXmark className="text-red-600 text-lg" />
-                                    <span className="font-semibold block sm:hidden lg:block">Session was Expired</span>
-                                </div>
+                                <>
+                                    {isBiconomySession ? (
+                                        <div className="flex items-center gap-2 text-gray-700">
+                                            <FaCircleCheck className="text-green-600 text-lg" />
+                                            <span className="font-semibold block sm:hidden lg:block">
+                                                Session is Active
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-2 text-gray-700">
+                                            <FaCircleXmark className="text-red-600 text-lg" />
+                                            <span className="font-semibold block sm:hidden lg:block">
+                                                Session was Expired
+                                            </span>
+                                        </div>
+                                    )}
+                                    {!isBiconomySession && <CreateSessionButton />}
+                                </>
                             )}
-                            {isBiconomySession && <CreateSessionButton />}
                         </div>
                     </div>
                 </div>

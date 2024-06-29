@@ -13,7 +13,8 @@ import { FaRegBookmark } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import { IPost } from "../PostList";
 import InputForm from "../custom/InputForm";
-
+import { IoCartOutline } from "react-icons/io5";
+import { IoCart } from "react-icons/io5";
 interface PostCardProps {
     post: IPost;
 }
@@ -113,13 +114,13 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     return (
         <div className="relative">
             {/* <InputForm/> */}
-            <button
+           {user?._id !== post?.userId?._id && <button
                 onClick={handleBookmark}
-                className="cursor-pointer absolute top-4 right-4 text-xl text-secondary-text"
+                className="cursor-pointer absolute top-4 right-4 text-2xl text-secondary-text"
             >
-                {bookmarked ? <FaBookmark className="text-fuchsia-500" /> : <FaRegBookmark />}
-            </button>
-            <div className="z-10 bg-white p-4 min-w-full max-w-md flex flex-col gap-4 border-b border-fuchsia-100">
+                {bookmarked ? <IoCart className="text-blue-500" /> : <IoCartOutline />}
+            </button>}
+            <div className="z-10 bg-white p-4 min-w-full max-w-md flex flex-col gap-4 border-b border-blue-100">
                 <div className="flex gap-3 w-full">
                     {post.forOther ? (
                         <img
@@ -162,7 +163,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                                 className={`px-2 py-1 rounded-xl transition-all duration-300 text-sm ${
                                     isFollowing
                                         ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                                        : "bg-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-200"
+                                        : "bg-blue-100 text-blue-800 hover:bg-blue-200"
                                 }`}
                                 onClick={() => handleToggleFollow(post?.userId?._id)}
                             >
@@ -181,14 +182,14 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                                 href={link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-fuchsia-500 underline"
+                                className="text-blue-500 underline"
                             >
                                 {link}
                             </a>
                         ))}
                     </div>
                 )}
-                <div className="flex gap-6 items-center h-8 border-b border-fuchsia-100">
+                <div className="flex gap-6 items-center h-8 border-b border-blue-100">
                     <span className="text-secondary-text text-xs">
                         {likeCount} {likeCount > 1 ? "Likes" : "Like"}
                     </span>
@@ -207,11 +208,11 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                     <div className="flex gap-4">
                         <button
                             onClick={handleLike}
-                            className="flex gap-2 items-center rounded-lg bg-fuchsia-100 hover:bg-fuchsia-200 px-2 py-1 cursor-pointer transition-all duration-300 text-secondary-text"
+                            className="flex gap-2 items-center rounded-lg bg-blue-100 hover:bg-blue-200 px-2 py-1 cursor-pointer transition-all duration-300 text-secondary-text"
                         >
                             {liked ? (
                                 <>
-                                    <AiFillLike className="text-fuchsia-500" />
+                                    <AiFillLike className="text-blue-500" />
                                     <span className="text-xs">Liked</span>
                                 </>
                             ) : (
@@ -223,7 +224,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                         </button>
                         <button
                             onClick={openTipModal}
-                            className="flex gap-2 items-center rounded-lg bg-fuchsia-100 hover:bg-fuchsia-200 px-2 py-1 cursor-pointer transition-all duration-300 text-secondary-text"
+                            className="flex gap-2 items-center rounded-lg bg-blue-100 hover:bg-blue-200 px-2 py-1 cursor-pointer transition-all duration-300 text-secondary-text"
                         >
                             <PiCoinLight />
                             <span className="text-xs">Tip</span>

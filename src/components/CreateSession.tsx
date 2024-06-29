@@ -4,6 +4,7 @@ import {
     PaymasterMode,
     Policy,
     Rule,
+    SessionLocalStorage,
     createMultiChainValidationModule,
     createSession,
     createSessionKeyEOA,
@@ -13,12 +14,14 @@ import React, { useState } from "react";
 import { base } from "viem/chains";
 import { useWalletClient } from "wagmi";
 import CustomButton from "./custom/CustomButtons";
+import { Address } from "viem";
 
 const CreateSessionButton = () => {
     const { data: walletClient } = useWalletClient();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
+    let smartAccountAddress: Address;
     const makeSession = async () => {
         try {
             setIsLoading(true);
@@ -40,17 +43,14 @@ const CreateSessionButton = () => {
                 activeValidationModule: multiChainModule,
             });
             console.log("usersSmartAccount: ", usersSmartAccount);
-            const smartAccountAddress = await usersSmartAccount.getAccountAddress();
+            smartAccountAddress = await usersSmartAccount.getAccountAddress();
 
             // const sessionLocalStorage = new SessionLocalStorage(smartAccountAddress);
             // const data = await sessionLocalStorage.clearPendingSessions()
             // const sessiondata = await sessionLocalStorage.getAllSessionData();
             // console.log("sessiondata: ", sessiondata);
 
-            const { sessionKeyAddress, sessionStorageClient }: any = await createSessionKeyEOA(
-                usersSmartAccount,
-                base
-            );
+            const { sessionKeyAddress, sessionStorageClient }: any = await createSessionKeyEOA(usersSmartAccount, base);
 
             const rules: Rule[] = [
                 {
@@ -110,8 +110,13 @@ const CreateSessionButton = () => {
             } = await wait();
             setIsLoading(false);
             // console.log("success: ", success);
-            // console.log("receipt: ", transactionHash);
+            console.log("receipt: ", transactionHash);
         } catch (error) {
+            const sessionLocalStorage = new SessionLocalStorage(smartAccountAddress);
+
+            const data = await sessionLocalStorage.clearPendingSessions();
+            // console.log("sessiondata: ", sessiondata);
+
             setIsLoading(false);
             console.log(error);
         }
@@ -119,7 +124,9 @@ const CreateSessionButton = () => {
 
     return (
         <div>
-            <CustomButton className="w-40" disabled={isLoading} isLoading={isLoading} onClick={makeSession}>Create Sessions</CustomButton>
+            <CustomButton className="w-40" disabled={isLoading} isLoading={isLoading} onClick={makeSession}>
+                Create Sessions
+            </CustomButton>
         </div>
     );
 };

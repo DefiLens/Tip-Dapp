@@ -157,8 +157,9 @@ const page = () => {
     return (
         <NavigationLayout>
             <div className="relative">
-                <div className="flex flex-col gap-7 p-4 border-b border-fuchsia-100 sticky z-[1] top-16 bg-white h-48">
-                    <Link href="/profile/edit" className="absolute top-3 right-3 text-fuchsia-800 text-xl">
+                {/* <div className="flex flex-col gap-7 p-4 border-b border-blue-100 sticky z-[1] top-16 bg-white h-48"> */}
+                <div className="flex flex-col gap-7 p-4 border-b border-blue-100 bg-white h-48">
+                    <Link href="/profile/edit" className="absolute top-3 right-3 text-blue-800 text-xl">
                         <IoMdCreate />
                     </Link>
                     {isGettingUserData ? (
@@ -176,7 +177,7 @@ const page = () => {
                                 <p className="text-primary-text text-2xl font-bold">
                                     {user?.name ? user?.name : shorten(user?.smartAccountAddress)}
                                 </p>
-                                <p>{user?.bio.slice(0, 130)}</p>
+                                <p>{user?.bio?.slice(0, 130)}</p>
                             </div>
                         </div>
                     )}
@@ -185,22 +186,22 @@ const page = () => {
                         <div className="flex items-center justify-end gap-4">
                             <button
                                 onClick={() => setShowFollowers(true)}
-                                className="px-2 py-1 rounded-xl transition-all duration-300 text-sm bg-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-200"
+                                className="px-2 py-1 rounded-xl transition-all duration-300 text-sm bg-blue-100 text-blue-800 hover:bg-blue-200"
                             >
-                                <span className="text-fuchsia-900">{user?.followers?.length}</span> Followers
+                                <span className="text-blue-900">{user?.followers?.length}</span> Followers
                             </button>
                             <button
                                 onClick={() => setShowFollowing(true)}
-                                className="px-2 py-1 rounded-xl transition-all duration-300 text-sm bg-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-200"
+                                className="px-2 py-1 rounded-xl transition-all duration-300 text-sm bg-blue-100 text-blue-800 hover:bg-blue-200"
                             >
-                                <span className="text-fuchsia-900">{user?.following?.length}</span> Following
+                                <span className="text-blue-900">{user?.following?.length}</span> Following
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-3 p-4 border-b border-fuchsia-100">
-                    <h1 className="text-gray-700 text-2xl font-semibold px-4 border-b border-fuchsia-100">My Posts</h1>
+                <div className="flex flex-col gap-3 p-4 border-b border-blue-100">
+                    <h1 className="text-gray-700 text-2xl font-semibold px-4 border-blue-100">My Posts</h1>
                     <div className="grid gap-4">
                         {posts.map((post, index) => (
                             <PostCard key={index} post={post} />

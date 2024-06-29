@@ -1,13 +1,10 @@
 import { DataState } from "@/context/dataProvider";
 import axiosInstance from "@/utils/axiosInstance";
-import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, BASE_BICONOMY_AA_KEY } from "@/utils/keys";
+import { BICONOMY_MAINNET_BUNDLAR_KEY, BASE_BICONOMY_AA_KEY } from "@/utils/keys";
 import {
-    DEFAULT_MULTICHAIN_MODULE,
     PaymasterMode,
-    createMultiChainValidationModule,
     createSessionKeyEOA,
     createSessionSmartAccountClient,
-    createSmartAccountClient,
     getSingleSessionTxParams,
 } from "@biconomy/account";
 import { useWallets } from "@privy-io/react-auth";
@@ -20,10 +17,14 @@ import { BigNumber as bg } from "bignumber.js";
 import CopyButton from "./custom/CopyButton";
 import { shorten } from "@/utils/constants";
 bg.config({ DECIMAL_PLACES: 10 });
+import { FiExternalLink } from "react-icons/fi";
+import Lottie from "lottie-react";
+import animationData from "../../public/assets/party.json";
+import Link from "next/link";
+import Loading from "./Loading";
 
 const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
     const { smartAccountAddress, smartAccount, biconomySession } = DataState();
-    const [address, setAddress] = useState("");
     const [message, setMessage] = useState("");
     const [token, setToken] = useState("usdc");
     const [amount, setAmount] = useState("");
@@ -37,17 +38,8 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
     const { data: walletClient } = useWalletClient();
     const { wallets } = useWallets();
     const [txHash, setTxhash] = useState("");
-
+    const [showAnimation, setShowAnimation] = useState(false);
     const receiptSmartWalletAddress = post.smartWalletAddress;
-
-    useEffect(() => {
-        if (txHash) {
-            alert("tx success: " + txHash);
-        }
-        if (post) {
-            setAddress(receiptSmartWalletAddress);
-        }
-    }, [post, txHash]);
 
     const handleAmountChange = (e: any) => {
         const inputAmount = e.target.value;
@@ -60,7 +52,6 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
     const handleSubmit = async () => {
         try {
             const newErrors: { address?: string; message?: string; amount?: string } = {};
-            if (!address) newErrors.address = "Address is required.";
             if (!amount || isNaN(Number(amount)) || Number(amount) <= 0)
                 newErrors.amount = "Amount must be a number greater than zero.";
             setErrors(newErrors);
@@ -70,7 +61,6 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                 setLoading(true);
                 const largeNumber = 1e6; // 1 million
 
-                console.log("smartAccount", smartAccount);
                 const usersSmartAccount = smartAccount;
                 const { sessionKeyAddress, sessionStorageClient }: any = await createSessionKeyEOA(
                     usersSmartAccount,
@@ -81,8 +71,6 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                     paymasterServiceData: { mode: PaymasterMode.SPONSORED },
                 };
                 const usersSmartAccountAddress = sessionStorageClient.smartAccountAddress;
-
-                console.log("usersSmartAccountAddress", usersSmartAccountAddress);
 
                 const emulatedUsersSmartAccount = await createSessionSmartAccountClient(
                     {
@@ -102,17 +90,12 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                     }),
                 };
 
-                console.log("biconomySession", biconomySession)
-
                 const index = biconomySession.length - 1;
-                console.log("index",index)
                 const params = await getSingleSessionTxParams(
                     usersSmartAccountAddress,
                     base,
                     index // index of the relevant policy leaf to the tx
                 );
-                console.log(withSponsorship);
-                console.log(params);
 
                 const { wait } = await emulatedUsersSmartAccount.sendTransaction(transferTx, {
                     ...params,
@@ -122,10 +105,15 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                 console.log("---------Sending");
 
                 const success = await wait();
+
                 if (success.receipt.transactionHash) {
+                    setTxhash(`https://basescan.org/tx/${success.receipt.transactionHash}`);
                     sendTip(post?._id, post?.userId?._id, amount, token);
+                    setShowAnimation(true);
+                    setTimeout(() => {
+                        setShowAnimation(false);
+                    }, 3000);
                 }
-                setTxhash(`https://basescan.org/tx/${success.receipt.transactionHash}`);
                 setLoading(false);
             }
         } catch (error) {
@@ -153,7 +141,8 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
-            <div className="rounded-2xl relative bg-white">
+            {loading && <Loading />}
+            <div className="rounded-2xl relative bg-white max-w-[90%] md:max-w-[40%] w-full">
                 <button
                     onClick={() => setShowTipModal(!showTipModal)}
                     className="absolute top-4 right-4 text-xl text-black"
@@ -163,18 +152,7 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
 
                 <div className="p-6 space-y-4">
                     <h2 className="text-xl font-semibold">Enter Details</h2>
-                    {/*
-                    <input
-                        type="text"
-                        value={post.smartWalletAddress}
-                        onChange={() => {}}
-                        className="w-full px-4 py-2 border border-fuchsia-100 rounded-md focus:outline-none focus:ring focus:ring-fuchsia-300"
-                        placeholder="Enter address"
-                        disabled
-                    /> */}
-
-                    <div className="bg-fuchsia-50 mb-4 rounded-xl px-3 py-2">
-                        {/* <label className="block text-gray-700"> wallet</label> */}
+                    <div className="bg-B900 mb-4 rounded-xl px-3 py-2">
                         <div className="p-2 rounded flex items-center justify-between gap-2">
                             <span className="overflow-hidden text-ellipsis">{shorten(post.smartWalletAddress)}</span>{" "}
                             <CopyButton copy={post.smartWalletAddress} />
@@ -184,7 +162,7 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                         <select
                             value={token}
                             onChange={(e) => setToken(e.target.value as "usdc" | "eth" | "dai")}
-                            className="px-4 py-2 border border-fuchsia-100 rounded-md focus:outline-none focus:ring focus:ring-fuchsia-300"
+                            className="px-4 py-2 border border-B900 rounded-md focus:outline-none focus:ring focus:ring-B900"
                         >
                             <option value="0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA" className="h-8">
                                 USDC
@@ -195,32 +173,53 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                             type="number"
                             value={amount}
                             onChange={handleAmountChange}
-                            className="px-4 py-2 border border-fuchsia-100 rounded-md focus:outline-none focus:ring focus:ring-fuchsia-300"
+                            className="px-4 py-2 border border-B900 rounded-md focus:outline-none focus:ring focus:ring-B900 w-full"
                             placeholder="Amount"
                         />
                     </div>
                     {errors.address && <p className="text-red-500">{errors.address}</p>}
-                    {errors.message && <p className="text-red-500">{errors.message}</p>}
                     {errors.amount && <p className="text-red-500">{errors.amount}</p>}
-                    {txHash && <p className="mt-4 text-green-500">Transaction hash: {txHash}</p>}
+                    {txHash && (
+                        <div className="flex items-center gap-2 text-sm text-B10">
+                            <span className="font-semibold">Success:</span>
+                            <p className="overflow-hidden text-ellipsis flex-1">
+                                <a href={txHash} target="_blank" rel="noopener noreferrer">
+                                    {txHash}
+                                </a>
+                            </p>
+                            <Link
+                                href={txHash}
+                                target="_blank"
+                                className=" hover:bg-B900 p-1.5 rounded-md cursor-pointer text-xs text-B10"
+                            >
+                                <FiExternalLink />
+                            </Link>
+                            <CopyButton copy={txHash} />
+                        </div>
+                    )}
                     <button
                         onClick={handleSubmit}
-                        // onClick={() => sendTip(post?._id, post?.userId?._id, amount, token)}
-                        className={`mt-4 w-full px-4 py-2 text-white bg-fuchsia-500 rounded-md transition-colors duration-300 hover:bg-fuchsia-600 ${
-                            loading ? "bg-fuchsia-600" : "bg-fuchsia-500 hover:bg-fuchsia-600"
+                        className={`mt-4 w-full px-4 py-2 text-white bg-B0 rounded-md transition-colors duration-300 hover:bg-B30 ${
+                            loading ? "bg-B30" : "bg-B0 hover:bg-30"
                         }`}
                         disabled={loading}
                     >
                         {loading ? "Sending..." : "Tip"}
                     </button>
-                    <button
-                        onClick={() => setShowTipModal(!showTipModal)}
-                        className="mt-4 w-full px-4 py-2 bg-fuchsia-500 text-white rounded-md transition-colors duration-300 hover:bg-fuchsia-600"
-                    >
-                        Close
-                    </button>
                 </div>
             </div>
+            {showAnimation && (
+                <div className="fixed inset-0 flex items-center justify-center  p-4 z-50">
+                    <div className="rounded-2xl relative w-full h-full">
+                        <Lottie
+                            animationData={animationData}
+                            loop={true}
+                            autoplay={true}
+                            style={{ width: "100%", height: "100%" }}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

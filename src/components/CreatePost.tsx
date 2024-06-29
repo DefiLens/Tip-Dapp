@@ -99,7 +99,7 @@ const GetEnsProfile = ({ setDappName, setProfileImage, setProfileName, setUserPr
                     type="text"
                     value={inputValue}
                     onChange={handleInputChange}
-                    className="px-4 py-2 border border-fuchsia-100 outline-none rounded-md w-full focus:outline-none focus:ring focus:ring-fuchsia-300"
+                    className="px-4 py-2 border border-blue-100 outline-none rounded-md w-full focus:outline-none focus:ring focus:ring-blue-300"
                     placeholder="Seach ENS Profile for Tip..."
                 />
                 <CustomButton onClick={handleSubmit} disabled={loading}>
@@ -217,7 +217,7 @@ const CreatePost: React.FC = () => {
     return (
         <form
             onSubmit={handleSubmit}
-            className="w-full mx-auto p-4 bg-white rounded-2xl border border-fuchsia-100 max-w-md mt-10"
+            className="w-full mx-auto p-4 bg-white rounded-2xl border border-blue-100 max-w-md mt-10"
         >
             {forOther && (
                 <div className="mb-4">
@@ -240,7 +240,7 @@ const CreatePost: React.FC = () => {
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     required
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-fuchsia-300 resize-none"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300 resize-none"
                     maxLength={500}
                     rows={5}
                 />
@@ -253,13 +253,13 @@ const CreatePost: React.FC = () => {
             </div>
             <div className="mb-4 flex gap-3">
                 <button
-                    className="h-10 w-10 flex items-center justify-center bg-fuchsia-50 hover:bg-fuchsia-100 rounded-lg transition-all duration-300 text-secondary-text"
+                    className="h-10 w-10 flex items-center justify-center bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-300 text-secondary-text"
                     onClick={() => setShowLinkSelection(true)}
                 >
                     <FaLink />
                 </button>
                 <div className="">
-                    <button className="h-10 w-10 bg-fuchsia-50 hover:bg-fuchsia-100 rounded-lg transition-all duration-300 text-secondary-text relative flex items-center justify-center cursor-pointer overflow-hidden">
+                    <button className="h-10 w-10 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-300 text-secondary-text relative flex items-center justify-center cursor-pointer overflow-hidden">
                         <FaRegImage />
                         <div className="absolute h-20 w-10 bottom-0 left-0 cursor-pointer">
                             <input
@@ -285,13 +285,13 @@ const CreatePost: React.FC = () => {
                 </div>
                 <div className="mb-4 flex gap-3">
                     <button
-                        className="h-10 w-10 flex items-center justify-center bg-fuchsia-50 hover:bg-fuchsia-100 rounded-lg transition-all duration-300 text-secondary-text"
+                        className="h-10 w-10 flex items-center justify-center bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-300 text-secondary-text"
                         onClick={() => setShowLinkSelection(true)}
                     >
                         <FaLink />
                     </button>
                     <div>
-                        <button className="h-10 w-10 bg-fuchsia-50 hover:bg-fuchsia-100 rounded-lg transition-all duration-300 text-secondary-text relative flex items-center justify-center cursor-pointer overflow-hidden">
+                        <button className="h-10 w-10 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-300 text-secondary-text relative flex items-center justify-center cursor-pointer overflow-hidden">
                             <FaRegImage />
                             <div className="absolute h-20 w-10 bottom-0 left-0 cursor-pointer">
                                 <input
@@ -322,12 +322,12 @@ const CreatePost: React.FC = () => {
                             type="text"
                             value={link}
                             onChange={(e) => setLink(e.target.value)}
-                            className="flex-grow px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-fuchsia-300"
+                            className="flex-grow px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
                         />
                         <button
                             type="button"
                             onClick={handleAddLink}
-                            className="ml-2 px-4 py-2 bg-fuchsia-500 text-white rounded-lg hover:bg-fuchsia-600 focus:outline-none focus:ring focus:ring-fuchsia-300"
+                            className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
                         >
                             Add
                         </button>
@@ -336,13 +336,13 @@ const CreatePost: React.FC = () => {
                         {links.map((link, index) => (
                             <div
                                 key={index}
-                                className="flex items-center bg-fuchsia-200 text-fuchsia-800 px-3 py-1 rounded-full"
+                                className="flex items-center bg-blue-200 text-blue-800 px-3 py-1 rounded-full"
                             >
                                 <span>{shorten(link)}</span>
                                 <button
                                     type="button"
                                     onClick={() => handleRemoveLink(index)}
-                                    className="ml-2 text-fuchsia-500 hover:text-fuchsia-700 focus:outline-none"
+                                    className="ml-2 text-blue-500 hover:text-blue-700 focus:outline-none"
                                 >
                                     ✕
                                 </button>
@@ -362,7 +362,7 @@ const CreatePost: React.FC = () => {
             </div>
             <button
                 type="submit"
-                className="w-full px-4 py-2 bg-fuchsia-500 text-white rounded-lg hover:bg-fuchsia-600 focus:outline-none focus:ring focus:ring-fuchsia-300"
+                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
                 disabled={postSending}
             >
                 Create Post

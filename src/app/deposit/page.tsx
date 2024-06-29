@@ -38,9 +38,9 @@ const Deposit: React.FC = () => {
 
     return (
         <NavigationLayout>
-            <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-2xl border border-fuchsia-100">
+            <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-2xl border border-blue-100">
                 <h1 className="text-2xl font-bold mb-4">Deposit USDC</h1>
-                <div className="bg-fuchsia-50 mb-4 rounded-xl px-3 py-2">
+                <div className="bg-blue-50 mb-4 rounded-xl px-3 py-2">
                     <label className="block text-gray-700">To your defi wallet</label>
                     <div className="p-2 rounded flex items-center gap-2">
                         <span className="overflow-hidden text-ellipsis">{smartAccountAddress}</span>{" "}
@@ -55,13 +55,13 @@ const Deposit: React.FC = () => {
                             type="number"
                             value={amount}
                             onChange={(e) => setAmount(e.target.value)}
-                            className="w-full p-2 border border-fuchsia-200 rounded-xl outline-none"
+                            className="w-full p-2 border border-blue-200 rounded-xl outline-none"
                         />
                     </div>
                     <button
                         onClick={send}
                         disabled={isPending}
-                        className="bg-fuchsia-500 hover:bg-fuchsia-700 text-white px-4 py-2 rounded-xl transition-all duration-300"
+                        className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition-all duration-300"
                     >
                         {isPending ? "waiting" : "Send"}
                     </button>
