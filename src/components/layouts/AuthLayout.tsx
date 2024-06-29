@@ -9,13 +9,7 @@ const AuthLayout = ({ children }: any) => {
                     <h1 className="text-5xl text-B0 font-bold text-start w-full">
                         {/* Empower web3 builders with your tips and support their groundbreaking contributions seamlessly
                         on our platform. */}
-                        <span className="DM_Mono">
-                            Social Tip
-                            <br />
-                            for
-                            <br />
-                            web3 builders
-                        </span>
+                        <span className="DM_Mono">Social Tip for web3 builders</span>
                     </h1>
 
                     <div className="flex flex-col w-full justify-center items-center gap-4">

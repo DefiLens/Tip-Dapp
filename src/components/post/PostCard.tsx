@@ -114,15 +114,17 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     return (
         <div className="relative">
             {/* <InputForm/> */}
-           {user?._id !== post?.userId?._id && <button
-                onClick={handleBookmark}
-                className="cursor-pointer absolute top-4 right-4 text-2xl text-secondary-text"
-            >
-                {bookmarked ? <IoCart className="text-blue-500" /> : <IoCartOutline />}
-            </button>}
+            {user?._id !== post?.userId?._id && (
+                <button
+                    onClick={handleBookmark}
+                    className="cursor-pointer absolute top-4 right-4 text-2xl text-secondary-text"
+                >
+                    {bookmarked ? <IoCart className="text-blue-500" /> : <IoCartOutline />}
+                </button>
+            )}
             <div className="z-10 bg-white p-4 min-w-full max-w-md flex flex-col gap-4 border-b border-blue-100">
                 <div className="flex gap-3 w-full">
-                    {post.forOther ? (
+                    {/* {post.forOther ? (
                         <img
                             src={
                                 post.forOther
@@ -133,17 +135,23 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                             alt="Profile"
                         />
                     ) : (
+                        <img src={post?.userId?.image} className="h-12 w-12 rounded-full" alt="Profile" /> 
+                    )}
+                        */}
+                    {post.userId?.image ? (
+                        <img
+                            src={post.userId?.image || "https://via.placeholder.com/40"}
+                            className="h-12 w-12 rounded-full"
+                            alt="Profile"
+                        />
+                    ) : (
                         <div className="h-12 w-12">
                             <AvatarIcon address={post?.smartWalletAddress} />
                         </div>
                     )}
                     <div className="flex flex-col h-12 justify-center text-sm">
                         <p className="text-lg text-primary-text font-semibold flex items-center gap-2">
-                            <span>
-                                {post.forOther
-                                    ? post.otherUserProfile.profileName
-                                    : shorten(post.smartWalletAddress) || "Anonymous"}
-                            </span>
+                            <span>{post.forOther ? post.otherUserProfile.profileName : post.userId?.name}</span>
                             {post.forOther && <span className="text-xs">created by</span>}
                             {post.forOther && (
                                 <span className="text-base">

@@ -53,10 +53,10 @@ export const get1InchUrl = (NODE_ENV: string | undefined) => {
 const getBaseURL = (NODE_ENV: string | undefined) => {
     switch (NODE_ENV) {
       case 'production':
-      return 'https://server.defilens.tech/api/v1';
+      return 'https://tip-backend-gl1b.onrender.com/api';
 
       case 'staging':
-        return 'https://backend-staging-cohr.onrender.com/api/v1';
+        return 'https://tip-backend-gl1b.onrender.com/api';
 
       case 'dev':
         return 'http://localhost:9090/api';

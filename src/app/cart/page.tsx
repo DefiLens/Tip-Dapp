@@ -191,13 +191,9 @@ const TipPosts = () => {
             {bookmarkedPosts.map((post: any) => (
                 <div key={post._id} className="flex flex-col border border-B900 p-4 rounded mb-4">
                     <div className="flex gap-3 w-full mb-4">
-                        {post.forOther ? (
+                        {post.userId?.image ? (
                             <img
-                                src={
-                                    post.forOther
-                                        ? post?.otherUserProfile?.profileImage
-                                        : post?.createdBy?.farcaster?.pfp || "https://via.placeholder.com/40"
-                                }
+                                src={post.userId?.image || "https://via.placeholder.com/40"}
                                 className="h-12 w-12 rounded-full"
                                 alt="Profile"
                             />
@@ -209,11 +205,7 @@ const TipPosts = () => {
 
                         <div className="flex flex-col h-12 justify-center text-sm">
                             <p className="text-lg text-primary-text font-semibold flex items-center gap-2">
-                                <span>
-                                    {post.forOther
-                                        ? post.otherUserProfile.profileName
-                                        : shorten(post.smartWalletAddress) || "Anonymous"}
-                                </span>
+                                <span>{post.forOther ? post.otherUserProfile.profileName : post.userId?.name}</span>
                                 {post.forOther && <span className="text-xs">created by</span>}
                                 {post.forOther && (
                                     <span className="text-base">

@@ -15,11 +15,20 @@ import { base } from "viem/chains";
 import { useWalletClient } from "wagmi";
 import CustomButton from "./custom/CustomButtons";
 import { Address } from "viem";
+import { DataState } from "@/context/dataProvider";
+import Loading from "./Loading";
+import { RxCross2 } from "react-icons/rx";
+import Link from "next/link";
+import { FiExternalLink } from "react-icons/fi";
+import CopyButton from "./custom/CopyButton";
 
 const CreateSessionButton = () => {
+    const { checkSession } = DataState();
     const { data: walletClient } = useWalletClient();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [showSuccess, setShowSuccess] = useState<boolean>(false);
+    const [txHash, setTxhash] = useState("");
 
     let smartAccountAddress: Address;
     const makeSession = async () => {
@@ -108,6 +117,12 @@ const CreateSessionButton = () => {
                 receipt: { transactionHash },
                 success,
             } = await wait();
+
+            if (transactionHash) {
+                checkSession();
+                setShowSuccess(true);
+                setTxhash(`https://basescan.org/tx/${success.receipt.transactionHash}`);
+            }
             setIsLoading(false);
             // console.log("success: ", success);
             console.log("receipt: ", transactionHash);
@@ -123,11 +138,47 @@ const CreateSessionButton = () => {
     };
 
     return (
-        <div>
+        <>
+            {isLoading && <Loading />}
+            {!showSuccess && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-0 p-4 h-screen max-w-screen w-screen z-[200]">
+                    <div className="rounded-2xl relative bg-white max-w-[90%] md:max-w-[40%] w-full flex flex-col items-center p-3 shadow-2xl">
+                        <button
+                            onClick={() => setShowSuccess(false)}
+                            className="absolute top-4 right-4 text-xl text-black"
+                        >
+                            <RxCross2 />
+                        </button>
+
+                        <img
+                            src="https://cdn3d.iconscout.com/3d/premium/thumb/tick-11928227-9757430.png?f=webp"
+                            className="h-40 w-40"
+                        />
+                        <h1>Session Created Successfully</h1>
+
+                        <div className="flex items-center gap-2 text-sm text-B10">
+                            <span className="font-semibold">Success:</span>
+                            <p className="overflow-hidden text-ellipsis flex-1">
+                                <a href={txHash} target="_blank" rel="noopener noreferrer">
+                                    {txHash}
+                                </a>
+                            </p>
+                            <Link
+                                href={txHash}
+                                target="_blank"
+                                className=" hover:bg-B900 p-1.5 rounded-md cursor-pointer text-xs text-B10"
+                            >
+                                <FiExternalLink />
+                            </Link>
+                            <CopyButton copy={txHash} />
+                        </div>
+                    </div>
+                </div>
+            )}
             <CustomButton className="w-40" disabled={isLoading} isLoading={isLoading} onClick={makeSession}>
                 Create Sessions
             </CustomButton>
-        </div>
+        </>
     );
 };
 

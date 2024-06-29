@@ -19,6 +19,7 @@ export const DataContext = createContext<any | null>(null);
 
 const DataProvider = ({ children }: any) => {
     const { data: walletClient } = useWalletClient();
+    const { user: privyUser, authenticated } = usePrivy();
 
     const [privySession, setPrivySession] = useState<string | null>(null);
     const [smartAccount, setSmartAccount] = useState<any>();
@@ -132,10 +133,8 @@ const DataProvider = ({ children }: any) => {
         };
 
         fetchUserData();
-    }, []);
+    }, [authenticated]);
 
-    console.log("biconomySession:", biconomySession);
-    const { ready, user: privyUser, linkFarcaster, authenticated } = usePrivy();
     const isPrivyConnected: any = authenticated && privyUser?.linkedAccounts.find((account) => account.type === "farcaster");
 
     return (
@@ -153,7 +152,8 @@ const DataProvider = ({ children }: any) => {
                 setUser,
                 isPrivyConnected,
                 isLoadingBiconomySession, 
-                setIsLoadingBiconomySession
+                setIsLoadingBiconomySession,
+                checkSession
             }}
         >
             {children}
