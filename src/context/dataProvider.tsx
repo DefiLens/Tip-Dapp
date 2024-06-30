@@ -6,12 +6,11 @@ import {
     DEFAULT_MULTICHAIN_MODULE,
     SessionLocalStorage,
 } from "@biconomy/account";
-import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, BASE_BICONOMY_AA_KEY } from "@/utils/keys";
+import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, BASE_BICONOMY_AA_KEY, BASE_URL } from "@/utils/keys";
 import { Address } from "viem";
 import axios from "axios";
 import { decreasePowerByDecimals, usdcByChain } from "@/utils/constants";
 import BigNumber from "bignumber.js";
-import axiosInstance from "@/utils/axiosInstance";
 import { usePrivy } from "@privy-io/react-auth";
 BigNumber.config({ DECIMAL_PLACES: 10 });
 
@@ -19,7 +18,7 @@ export const DataContext = createContext<any | null>(null);
 
 const DataProvider = ({ children }: any) => {
     const { data: walletClient } = useWalletClient();
-    const { user: privyUser, authenticated } = usePrivy();
+    const { user: privyUser, authenticated, getAccessToken } = usePrivy();
 
     const [privySession, setPrivySession] = useState<string | null>(null);
     const [smartAccount, setSmartAccount] = useState<any>();
@@ -114,7 +113,7 @@ const DataProvider = ({ children }: any) => {
         if (smartAccountAddress !== undefined) {
             getUscdBalance();
             checkSession();
-            setIsLoadingBiconomySession(false)
+            setIsLoadingBiconomySession(false);
         }
     }, [smartAccountAddress]);
 
@@ -123,7 +122,15 @@ const DataProvider = ({ children }: any) => {
         const fetchUserData = async () => {
             try {
                 setIsGettingUserData(true);
-                const response = await axiosInstance.get("/user");
+                const accessToken = await getAccessToken();
+                const response = await axios.get(`${BASE_URL}/user`, 
+                {
+                    headers: {
+                      Authorization: `Bearer ${accessToken}`,
+                    },
+                  }
+                );
+
                 setUser(response.data);
                 setIsGettingUserData(false);
             } catch (err) {
@@ -135,7 +142,8 @@ const DataProvider = ({ children }: any) => {
         fetchUserData();
     }, [authenticated]);
 
-    const isPrivyConnected: any = authenticated && privyUser?.linkedAccounts.find((account) => account.type === "farcaster");
+    const isPrivyConnected: any =
+        authenticated && privyUser?.linkedAccounts.find((account) => account.type === "farcaster");
 
     return (
         <DataContext.Provider
@@ -151,9 +159,9 @@ const DataProvider = ({ children }: any) => {
                 isBiconomySession,
                 setUser,
                 isPrivyConnected,
-                isLoadingBiconomySession, 
+                isLoadingBiconomySession,
                 setIsLoadingBiconomySession,
-                checkSession
+                checkSession,
             }}
         >
             {children}

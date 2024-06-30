@@ -9,8 +9,12 @@ import { IoMdCreate } from "react-icons/io";
 import { CgSpinner } from "react-icons/cg";
 import { useRouter } from "next/navigation";
 import Loading from "@/components/Loading";
+import { usePrivy } from "@privy-io/react-auth";
+import axios from "axios";
+import { BASE_URL } from "@/utils/keys";
 
 const page = () => {
+    const { getAccessToken } = usePrivy();
     const { user, isGettingUserData, setUser } = DataState();
     const { result, uploader }: any = useDisplayImage();
     const [imgUrl, setImgUrl] = useState<string>(user?.image || "");
@@ -49,7 +53,13 @@ const page = () => {
             const formData = new FormData();
             formData.append("picture", result);
 
-            const response = await axiosInstance.put(`/post/upload-img`, formData);
+            // const response = await axiosInstance.put(`/post/upload-img`, formData);
+            const accessToken = await getAccessToken();
+            const response = await axios.put(`${BASE_URL}/post/upload-img`, formData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
 
             if (response.status === 200) {
                 setImgUrl(response.data.url);
@@ -64,7 +74,17 @@ const page = () => {
     const handleSaveProfile = async () => {
         try {
             setIsLoading(true);
-            const response = await axiosInstance.put("/user/update-info", { name, bio, image: imgUrl });
+            // const response = await axiosInstance.put("/user/update-info", { name, bio, image: imgUrl });
+            const accessToken = await getAccessToken();
+            const response = await axios.put(
+                `${BASE_URL}/user/update-info`,
+                { name, bio, image: imgUrl },
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
 
             if (response.status === 200) {
                 setUser(response.data.user);

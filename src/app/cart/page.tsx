@@ -11,7 +11,7 @@ import {
     createSessionSmartAccountClient,
     getSingleSessionTxParams,
 } from "@biconomy/account";
-import { BASE_BICONOMY_AA_KEY, BICONOMY_MAINNET_BUNDLAR_KEY } from "@/utils/keys";
+import { BASE_BICONOMY_AA_KEY, BASE_URL, BICONOMY_MAINNET_BUNDLAR_KEY } from "@/utils/keys";
 import { base } from "viem/chains";
 import NavigationLayout from "@/components/layouts/NavigationLayout";
 import AvatarIcon from "@/components/Avatar";
@@ -19,6 +19,8 @@ import { postDateFormat, shorten } from "@/utils/constants";
 import CopyButton from "@/components/custom/CopyButton";
 import Loading from "@/components/Loading";
 import toast from "react-hot-toast";
+import { usePrivy } from "@privy-io/react-auth";
+import axios from "axios";
 bg.config({ DECIMAL_PLACES: 10 });
 
 const toSmallestUnit = (amount: any, decimals = 6) => {
@@ -26,6 +28,7 @@ const toSmallestUnit = (amount: any, decimals = 6) => {
 };
 
 const TipPosts = () => {
+    const { getAccessToken } = usePrivy();
     const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -34,7 +37,14 @@ const TipPosts = () => {
     useEffect(() => {
         const fetchBookmarkedPosts = async () => {
             try {
-                const response = await axiosInstance.get("/post/bookmarked");
+                // const response = await axiosInstance.get("/post/bookmarked");
+
+                const accessToken = await getAccessToken();
+                const response = await axios.get(`${BASE_URL}/post/bookmarked`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
 
                 setBookmarkedPosts(response.data.bookmarkedPosts);
                 setLoading(false);

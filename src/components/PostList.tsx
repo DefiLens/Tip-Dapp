@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import PostCard from "./post/PostCard";
-import axiosInstance from "@/utils/axiosInstance";
+import { usePrivy } from "@privy-io/react-auth";
+import axios from "axios";
+import { BASE_URL } from "@/utils/keys";
 
 interface ILinkedAccount {
     address: string;
@@ -79,90 +81,34 @@ interface Post {
     updatedAt: string;
 }
 
-// const PostList = () => {
-//     const [posts, setPosts] = useState<IPost[]>([]);
-//     const [page, setPage] = useState(1);
-//     const [totalPages, setTotalPages] = useState(0);
-//     const [filters, setFilters] = useState({ userId: "", dappName: "" });
-
-//     useEffect(() => {
-//         const fetchPosts = async () => {
-//             try {
-//                 const response = await axiosInstance.get("/post", {
-//                     params: {
-//                         page,
-//                         limit: 1,
-//                         userId: filters.userId,
-//                         dappName: filters.dappName,
-//                     },
-//                 });
-//                 setPosts(response.data.posts);
-//                 setTotalPages(response.data.totalPages);
-//             } catch (error) {
-//                 console.error("Error fetching posts:", error);
-//             }
-//         };
-
-//         fetchPosts();
-//     }, [page, filters]);
-
-//     const morePosts = async () => {
-//         try {
-//             const response = await axiosInstance.get("/post", {
-//                 params: {
-//                     page,
-//                     limit: 1,
-//                     userId: filters.userId,
-//                     dappName: filters.dappName,
-//                 },
-//             });
-//             setPosts(response.data.posts);
-//             setTotalPages(response.data.totalPages);
-//         } catch (error) {
-//             console.error("Error fetching posts:", error);
-//         }
-//     };
-
- 
-//     return (
-//         <div className="container mx-auto">
-//             <div className="grid gap-4">
-//                 {posts.map((post, index) => (
-//                     <PostCard key={index} post={post} />
-//                 ))}
-//             </div>
-//             <div className="mt-4 flex justify-center items-center">
-//                 <button
-//                     onClick={morePosts}
-//                     disabled={page === 1}
-//                     className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-//                 >
-//                     More
-//                 </button>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default PostList;
-
 const PostList: React.FC = () => {
     const [posts, setPosts] = useState<IPost[]>([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [filters, setFilters] = useState({ userId: "", dappName: "" });
+    const { getAccessToken } = usePrivy();
 
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await axiosInstance.get("/post", {
-                    params: {
-                        page,
-                        limit: 20,
-                        userId: filters.userId,
-                        dappName: filters.dappName,
+                // const response = await axiosInstance.get("/post", {
+                //     params: {
+                //         page,
+                //         limit: 20,
+                //         userId: filters.userId,
+                //         dappName: filters.dappName,
+                //     },
+                // });
+
+                const accessToken = await getAccessToken();
+                const response = await axios.get(`${BASE_URL}/post`, 
+                {
+                    headers: {
+                      Authorization: `Bearer ${accessToken}`,
                     },
-                });
+                  }
+                );
+
                 setPosts(response.data.posts);
                 setTotalPages(response.data.totalPages);
             } catch (error) {

@@ -7,6 +7,9 @@ import UserListSkeleton from "@/components/skeletons/UserListSkeleton";
 import { DataState } from "@/context/dataProvider";
 import axiosInstance from "@/utils/axiosInstance";
 import { postDateFormat, shorten } from "@/utils/constants";
+import { BASE_URL } from "@/utils/keys";
+import { usePrivy } from "@privy-io/react-auth";
+import axios from "axios";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { IoMdCreate } from "react-icons/io";
@@ -14,6 +17,7 @@ import { RxCross2 } from "react-icons/rx";
 
 const UserFollowers = ({ url }: any) => {
     const { user } = DataState();
+    const { getAccessToken } = usePrivy();
     const [followers, setFollowers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -26,7 +30,14 @@ const UserFollowers = ({ url }: any) => {
     const fetchFollowers = async () => {
         try {
             setIsLoading(true);
-            const response = await axiosInstance.get(`/user/${url}`);
+            // const response = await axiosInstance.get(`/user/${url}`);
+            const accessToken = await getAccessToken();
+            const response = await axios.get(`${BASE_URL}/user/${url}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
             if (url === "/user-followers") {
                 setFollowers(response.data.followers);
             } else {
@@ -62,6 +73,7 @@ const UserFollowers = ({ url }: any) => {
 
 const TipStats = () => {
     const { user } = DataState();
+    const { getAccessToken } = usePrivy();
     const [tipsGiven, setTipsGiven] = useState([]);
     const [totalTipsReceived, setTotalTipsReceived] = useState(0);
     const [totalTipsGiven, setTotalTipsGiven] = useState(0);
@@ -69,7 +81,14 @@ const TipStats = () => {
     useEffect(() => {
         const fetchTipStats = async () => {
             try {
-                const response = await axiosInstance.get("/user/tip-stats");
+                // const response = await axiosInstance.get("/user/tip-stats");
+                const accessToken = await getAccessToken();
+                const response = await axios.get(`${BASE_URL}/user/tip-stats`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
+
                 setTipsGiven(response.data.tipsGiven);
                 setTotalTipsReceived(response.data.totalTipsReceived);
                 setTotalTipsGiven(response.data.totalTipsGiven);
@@ -121,7 +140,7 @@ const TipStats = () => {
 
 const page = () => {
     const { user, isGettingUserData } = DataState();
-
+    const { getAccessToken } = usePrivy();
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -131,10 +150,21 @@ const page = () => {
     useEffect(() => {
         const fetchUserPosts = async () => {
             try {
-                const response = await axiosInstance.get("/post/userPosts", {
+                // const response = await axiosInstance.get("/post/userPosts", {
+                //     params: {
+                //         page: page,
+                //         limit: 10, // Adjust limit as needed
+                //     },
+                // });
+
+                const accessToken = await getAccessToken();
+                const response = await axios.get(`${BASE_URL}/post/userPosts`, {
                     params: {
                         page: page,
                         limit: 10, // Adjust limit as needed
+                    },
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
                     },
                 });
 

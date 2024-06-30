@@ -36,34 +36,34 @@ export const NODE_JWT_TOKEN = process.env.NEXT_PUBLIC_NODE_JWT_TOKEN
 
 
 export const get1InchUrl = (NODE_ENV: string | undefined) => {
-    switch (NODE_ENV) {
-      case 'production':
-        return 'https://server.defilens.tech/api/v1/public/1Inch';
+  switch (NODE_ENV) {
+    case 'production':
+      return 'https://server.defilens.tech/api/v1/public/1Inch';
 
-      case 'staging':
-        return 'https://server.defilens.tech/api/v1/public/1Inch';
+    case 'staging':
+      return 'https://server.defilens.tech/api/v1/public/1Inch';
 
-      case 'dev':
-        return 'http://localhost:8080/api/v1/public/1Inch';
+    case 'dev':
+      return 'http://localhost:8080/api/v1/public/1Inch';
 
-      default: return 'http://localhost:8080/api/v1/public/1Inch';
-    }
-  };
+    default: return 'http://localhost:8080/api/v1/public/1Inch';
+  }
+};
 
 const getBaseURL = (NODE_ENV: string | undefined) => {
-    switch (NODE_ENV) {
-      case 'production':
+  switch (NODE_ENV) {
+    case 'production':
       return 'https://tipbackend.defilens.tech/api';
 
-      case 'staging':
-        return 'https://tipbackend.defilens.tech/api';
+    case 'staging':
+      return 'https://tipbackend.defilens.tech/api';
 
-      case 'dev':
-        return 'http://localhost:9090/api';
+    case 'dev':
+      return 'http://localhost:9090/api';
 
-      default: return 'http://localhost:9090/api';
-    }
-  };
+    default: return 'http://localhost:9090/api';
+  }
+};
 
 export const NODE_ONEINCH_URL = get1InchUrl(process.env.NEXT_PUBLIC_NODE_ENV);
 export const BASE_URL = getBaseURL(process.env.NEXT_PUBLIC_NODE_ENV);

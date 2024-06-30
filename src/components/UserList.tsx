@@ -3,9 +3,13 @@ import AvatarIcon from "./Avatar";
 import { shorten } from "@/utils/constants";
 import { useEffect, useState } from "react";
 import axiosInstance from "@/utils/axiosInstance";
+import { BASE_URL } from "@/utils/keys";
+import axios from "axios";
+import { usePrivy } from "@privy-io/react-auth";
 
 const UserList = ({ currentUser }: any) => {
     const { user, setUser } = DataState();
+    const { getAccessToken } = usePrivy();
 
     const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
@@ -22,10 +26,18 @@ const UserList = ({ currentUser }: any) => {
             } else {
                 setIsFollowing(true);
             }
-            const response = await axiosInstance.post("/user/follow", {
-                targetUserId,
-            });
-
+            const accessToken = await getAccessToken();
+            const response = await axios.post(
+                `${BASE_URL}/user/follow`,
+                {
+                    targetUserId,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
             setUser(response.data.updatedUser);
         } catch (err) {
             console.error("Error toggling follow status:", err);

@@ -1,337 +1,13 @@
-// "use client";
-
-// import CreateSessionButton from "@/components/CreateSession";
-// import CustomButton from "@/components/custom/CustomButtons";
-// import { DataState } from "@/context/dataProvider";
-// import axiosInstance from "@/utils/axiosInstance";
-// import { useLinkAccount, useLogin, usePrivy } from "@privy-io/react-auth";
-// import { useRouter } from "next/navigation";
-// import { useEffect, useState } from "react";
-
-// const Login: React.FC = () => {
-//     const { createSmartAccount, isBiconomySession } = DataState();
-//     const { ready, user: privyUser, authenticated } = usePrivy();
-//     const [isWalletConnected, setIsWalletConnected] = useState(false);
-//     const [isLinkedFarcaster, setIsLinkedFarcaster] = useState(false);
-//     const [isSession, setIsSession] = useState(false);
-
-//     const router = useRouter();
-
-//     const { login } = useLogin({
-//         onComplete: async (user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount) => {
-//             // console.log(user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount);
-
-//             const address = await createSmartAccount();
-//             const userData = {
-//                 id: user.id,
-//                 createdAt: user.createdAt,
-//                 linkedAccounts: user.linkedAccounts,
-//                 wallet: user.wallet,
-//                 smartAccountAddress: address,
-//             };
-
-//             console.log(userData);
-//         },
-//         onError: (error) => {
-//             console.log(error);
-//         },
-//     });
-
-//     const { linkFarcaster } = useLinkAccount({
-//         onSuccess: (user, linkMethod, linkedAccount) => {
-//             console.log(user, linkMethod, linkedAccount);
-//         },
-//         onError: (error) => {
-//             console.log(error);
-//         },
-//     });
-
-//     const sendUserDataToBackend = async (data: any) => {
-//         try {
-//             const response = await axiosInstance.post("/user", data);
-//             if (response.data.alreadyReg) {
-//                 router.push("/");
-//             }
-//             setIsWalletConnected(true);
-//         } catch (error) {
-//             console.error("Error sending user data:", error);
-//         }
-//     };
-
-//     const handleRedirectToDeposit = () => {
-//         router.push("/deposit");
-//     };
-
-//     useEffect(() => {
-//         if (authenticated) {
-//             setIsWalletConnected(true);
-//         }
-//     }, [authenticated]);
-
-//     useEffect(() => {
-//         if (authenticated) {
-//             setIsSession(isBiconomySession);
-//         }
-//     }, [authenticated]);
-
-//     // useEffect(() => {
-//     //     if (authenticated && privyUser) {
-//     //         const farcasterAccount = privyUser.linkedAccounts.find((account) => account.type === "farcaster");
-//     //         if (farcasterAccount) {
-//     //             setIsLinkedFarcaster(true);
-//     //         }
-//     //     }
-//     // }, [authenticated, privyUser]);
-
-//     return (
-//         <div className="flex h-screen bg-gray-100">
-//             {/* Left side */}
-//             <div className="hidden md:w-1/2 bg-gray-200 p-8 md:flex flex-col justify-center items-center">
-//                 <div className="p-5 rounded-3xl bg-white bg-opacity-30 bg-blur-lg text-gray-700 flex flex-col items-center justify-center h-[90%] w-[90%] shadow-xl">
-//                     <h2 className="text-6xl text-center font-bold mb-10 text-gray-800">Welcome to Base Chain DApp</h2>
-//                     <p className="text-center text-lg mb-4 w-3/4 text-gray-700">
-//                         Join our decentralized social platform where you can share posts, give tips, and earn USDC tips
-//                         on your own content.
-//                     </p>
-//                     <p className="text-center text-lg w-3/4 text-gray-700">
-//                         Experience the power of blockchain with secure and transparent transactions.
-//                     </p>
-//                 </div>
-//             </div>
-
-//             {/* Right side */}
-//             <div className="w-full md:w-1/2 bg-gray-100 p-8 flex flex-col justify-center items-center">
-//                 {!isWalletConnected ? (
-//                     <div className="text-center flex flex-col items-center">
-//                         <h2 className="text-3xl font-semibold mb-4 text-gray-800">
-//                             Please connect your wallet
-//                             <br /> to get started.
-//                         </h2>
-//                         <CustomButton onClick={login}>Connect Wallet</CustomButton>
-//                         <div className="mt-8 text-sm text-gray-700">
-//                             <p>
-//                                 By connecting your wallet,
-//                                 <br /> you agree to our Terms and Conditions.
-//                             </p>
-//                             <p>Protected by Privy.</p>
-//                         </div>
-//                     </div>
-//                 ) : !isLinkedFarcaster ? (
-//                     ready &&
-//                     authenticated && (
-//                         <div className="text-center flex flex-col items-center">
-//                             <h2 className="text-3xl font-semibold mb-4 text-gray-800">
-//                                 Please link with Farcaster
-//                                 <br /> to proceed.
-//                             </h2>
-//                             <CustomButton onClick={linkFarcaster}>Link with Farcaster</CustomButton>
-//                         </div>
-//                     )
-//                 ) : !isSession ? (
-//                     <div className="text-center flex flex-col items-center">
-//                         <h2 className="text-3xl font-semibold mb-4 text-gray-800">
-//                             Create a session for a seamless
-//                             <br /> payment experience
-//                         </h2>
-//                         <CreateSessionButton />
-//                         <div className="mt-8 text-sm text-gray-700">
-//                             <p>
-//                                 After creating a session, your wallet will not need to be opened for sending
-//                                 transactions.
-//                                 <br /> We cover gas fees for you, making tipping in USDC effortless.
-//                             </p>
-//                             <p>Protected by Biconomy.</p>
-//                         </div>
-//                     </div>
-//                 ) : (
-//                     <div className="text-center flex flex-col items-center justify-center">
-//                         <p className="mb-8 font-semibold text-2xl w-3/4 text-gray-800">
-//                             Deposit USDC to your account to start using the platform.
-//                         </p>
-//                         <CustomButton onClick={handleRedirectToDeposit}>Deposit USDC</CustomButton>
-//                     </div>
-//                 )}
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default Login;
-
-// "use client";
-
-// import CreateSessionButton from "@/components/CreateSession";
-// import CustomButton from "@/components/custom/CustomButtons";
-// import { DataState } from "@/context/dataProvider";
-// import axiosInstance from "@/utils/axiosInstance";
-// import { useLogin, useLinkAccount, usePrivy } from "@privy-io/react-auth";
-// import { useRouter } from "next/navigation";
-// import { useEffect, useState } from "react";
-
-// const Login: React.FC = () => {
-//     const { createSmartAccount, isBiconomySession } = DataState();
-//     const { ready, user: privyUser, authenticated } = usePrivy();
-//     const [isWalletConnected, setIsWalletConnected] = useState(false);
-//     const [isLinkedFarcaster, setIsLinkedFarcaster] = useState(false);
-//     const [isSession, setIsSession] = useState(false);
-
-//     const router = useRouter();
-
-//     const { login } = useLogin({
-//         onComplete: async (user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount) => {
-//             const address = await createSmartAccount();
-//             const userData = {
-//                 id: user.id,
-//                 createdAt: user.createdAt,
-//                 linkedAccounts: user.linkedAccounts,
-//                 wallet: user.wallet,
-//                 smartAccountAddress: address,
-//             };
-
-//             sendUserDataToBackend(userData);
-//         },
-//         onError: (error) => {
-//             console.log(error);
-//         },
-//     });
-
-//     const { linkFarcaster } = useLinkAccount({
-//         onSuccess: async (user, linkMethod, linkedAccount) => {
-//             const address = await createSmartAccount();
-//             const userData = {
-//                 id: user.id,
-//                 createdAt: user.createdAt,
-//                 linkedAccounts: user.linkedAccounts,
-//                 wallet: user.wallet,
-//                 smartAccountAddress: address,
-//             };
-
-//             sendUserDataToBackend(userData);
-//         },
-//         onError: (error) => {
-//             console.log(error);
-//         },
-//     });
-
-//     const sendUserDataToBackend = async (data: any) => {
-//         try {
-//             const response = await axiosInstance.post("/user", data);
-
-//             if (response.data.alreadyReg) {
-//                 router.push("/");
-//             } else {
-//                 setIsWalletConnected(true);
-//             }
-//         } catch (error) {
-//             console.error("Error sending user data:", error);
-//         }
-//     };
-
-//     const handleRedirectToDeposit = () => {
-//         router.push("/deposit");
-//     };
-
-//     useEffect(() => {
-//         if (authenticated) {
-//             setIsSession(isBiconomySession);
-//         }
-//     }, [authenticated]);
-
-//     useEffect(() => {
-//         if (authenticated && privyUser) {
-//             const farcasterAccount = privyUser.linkedAccounts.find((account) => account.type === "farcaster");
-//             if (farcasterAccount) {
-//                 setIsLinkedFarcaster(true);
-//             }
-//         }
-//     }, [authenticated, privyUser]);
-
-//     return (
-//         <div className="flex h-screen bg-gray-100">
-//             {/* Left side */}
-//             <div className="w-1/2 bg-gray-200 p-8 flex flex-col justify-center items-center">
-//                 <div className="p-5 rounded-3xl bg-white bg-opacity-30 bg-blur-lg text-gray-700 flex flex-col items-center justify-center h-[90%] w-[90%] shadow-xl">
-//                     <h2 className="text-6xl text-center font-bold mb-10 text-gray-800">Welcome to Base Chain DApp</h2>
-//                     <p className="text-center text-lg mb-4 w-3/4 text-gray-700">
-//                         Join our decentralized social platform where you can share posts, give tips, and earn USDC tips
-//                         on your own content.
-//                     </p>
-//                     <p className="text-center text-lg w-3/4 text-gray-700">
-//                         Experience the power of blockchain with secure and transparent transactions.
-//                     </p>
-//                 </div>
-//             </div>
-
-//             {/* Right side */}
-//             <div className="w-1/2 bg-gray-100 p-8 flex flex-col justify-center items-center">
-//                 {!isWalletConnected ? (
-//                     <div className="text-center flex flex-col items-center">
-//                         <h2 className="text-3xl font-semibold mb-4 text-gray-800">
-//                             Please connect your wallet
-//                             <br /> to get started.
-//                         </h2>
-//                         <CustomButton onClick={login}>Connect Wallet</CustomButton>
-//                         <div className="mt-8 text-sm text-gray-700">
-//                             <p>
-//                                 By connecting your wallet,
-//                                 <br /> you agree to our Terms and Conditions.
-//                             </p>
-//                             <p>Protected by Privy.</p>
-//                         </div>
-//                     </div>
-//                 ) : !isLinkedFarcaster ? (
-//                     ready &&
-//                     authenticated && (
-//                         <div className="text-center flex flex-col items-center">
-//                             <h2 className="text-3xl font-semibold mb-4 text-gray-800">
-//                                 Please link with Farcaster
-//                                 <br /> to proceed.
-//                             </h2>
-//                             <CustomButton onClick={linkFarcaster}>Link with Farcaster</CustomButton>
-//                         </div>
-//                     )
-//                 ) : !isSession ? (
-//                     <div className="text-center flex flex-col items-center">
-//                         <h2 className="text-3xl font-semibold mb-4 text-gray-800">
-//                             Create a session for a seamless
-//                             <br /> payment experience
-//                         </h2>
-//                         <CreateSessionButton />
-//                         <div className="mt-8 text-sm text-gray-700">
-//                             <p>
-//                                 After creating a session, your wallet will not need to be opened for sending
-//                                 transactions.
-//                                 <br /> We cover gas fees for you, making tipping in USDC effortless.
-//                             </p>
-//                             <p>Protected by Biconomy.</p>
-//                         </div>
-//                     </div>
-//                 ) : (
-//                     <div className="text-center flex flex-col items-center justify-center">
-//                         <p className="mb-8 font-semibold text-2xl w-3/4 text-gray-800">
-//                             Deposit USDC to your account to start using the platform.
-//                         </p>
-//                         <CustomButton onClick={handleRedirectToDeposit}>Deposit USDC</CustomButton>
-//                     </div>
-//                 )}
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default Login;
-
 "use client";
 
 import AuthLayout from "@/components/layouts/AuthLayout";
 import { DataState } from "@/context/dataProvider";
-import axiosInstance from "@/utils/axiosInstance";
 import { useLogin, useLinkAccount, usePrivy, useLogout } from "@privy-io/react-auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, BASE_BICONOMY_AA_KEY } from "@/utils/keys";
+import { BICONOMY_MAINNET_BUNDLAR_KEY, MAINNET_INFURA, BASE_BICONOMY_AA_KEY, BASE_URL } from "@/utils/keys";
 import {
     DEFAULT_MULTICHAIN_MODULE,
     PaymasterMode,
@@ -351,6 +27,7 @@ import { RxCross2 } from "react-icons/rx";
 import { FiExternalLink } from "react-icons/fi";
 import CopyButton from "@/components/custom/CopyButton";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 const CreateSessionButton = ({ setIsSession }: any) => {
     const { checkSession } = DataState();
@@ -521,7 +198,7 @@ const CreateSessionButton = ({ setIsSession }: any) => {
 
 const Login: React.FC = () => {
     const { createSmartAccount, isBiconomySession, checkSession, setUser } = DataState();
-    const { ready, user: privyUser, authenticated } = usePrivy();
+    const { ready, user: privyUser, authenticated, getAccessToken } = usePrivy();
     const [isWalletConnected, setIsWalletConnected] = useState(false);
     const [isLinkedFarcaster, setIsLinkedFarcaster] = useState(false);
     const [isSession, setIsSession] = useState(false);
@@ -560,7 +237,13 @@ const Login: React.FC = () => {
 
     const sendUserDataToBackend = async (data: any) => {
         try {
-            const response = await axiosInstance.post("/user", data);
+            // const response = await axiosInstance.post("/user", data);
+            const accessToken = await getAccessToken();
+            const response = await axios.post(`${BASE_URL}/user`, data, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
 
             if (response.data.alreadyReg) {
                 setUser(response.data.user);
@@ -575,7 +258,14 @@ const Login: React.FC = () => {
 
     const linkFarcasterApi = async (data: any) => {
         try {
-            const res = await axiosInstance.post("/user/link-farcaster", { farcasterAccount: data });
+            const accessToken = await getAccessToken();
+            const res = await axios.post(`${BASE_URL}/user/link-farcaster`, data, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            // const res = await axiosInstance.post("/user/link-farcaster", { farcasterAccount: data });
             setUser(res.data.user);
             setIsLinkedFarcaster(true);
         } catch (error) {

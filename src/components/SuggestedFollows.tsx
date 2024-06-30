@@ -1,11 +1,14 @@
-import axiosInstance from "@/utils/axiosInstance";
 import { useEffect, useState } from "react";
 import { DataState } from "@/context/dataProvider";
 import UserListSkeleton from "./skeletons/UserListSkeleton";
 import UserList from "./UserList";
+import { usePrivy } from "@privy-io/react-auth";
+import axios from "axios";
+import { BASE_URL } from "@/utils/keys";
 
 const SuggestedFollows = () => {
     const { user } = DataState();
+    const { getAccessToken } = usePrivy();
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -14,7 +17,14 @@ const SuggestedFollows = () => {
             const fetchRandomUsers = async () => {
                 try {
                     setIsLoading(true);
-                    const response = await axiosInstance.get(`/user/get-follows?user=${user._id}`);
+                    // const response = await axiosInstance.get(`/user/get-follows?user=${user._id}`);
+
+                    const accessToken = await getAccessToken();
+                    const response = await axios.get(`${BASE_URL}/user/get-follows?user=${user._id}`, {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    });
                     setUsers(response.data);
                     setIsLoading(false);
                 } catch (err) {

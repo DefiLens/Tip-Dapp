@@ -47,13 +47,14 @@ const Sidebar = () => {
         // { icon: <FaBell />, name: "Notifications", link: "/notification" },
         // { icon: <FaCompass />, name: "Explore", link: "/explore" },
         { icon: <BiSolidDownload />, name: "Deposit", link: "/deposit" },
-        { icon: <IoCart />, name: "Cart", link: "/cart" },
+        // { icon: <IoCart />, name: "Cart", link: "/cart" },
+        { icon: <FaBookmark />, name: "Bookmarks", link: "/bookmarks" },
         { icon: <FaUser />, name: "Profile", link: "/profile" },
     ];
 
     const socialItems = [
-        { icon: <FaTelegram />, name: "Telegram" },
-        { icon: <FaTwitter />, name: "Twitter" },
+        { icon: <FaTelegram />, name: "Telegram", link: "https://t.me/defilenscommunity" },
+        { icon: <FaTwitter />, name: "Twitter", link: "https://x.com/DefiLensTech" },
     ];
 
     const { checkSession } = DataState();
@@ -218,7 +219,9 @@ const Sidebar = () => {
                     </div>
                     <div className="space-y-2 ">
                         {socialItems.map((item, index) => (
-                            <div
+                            <Link
+                                href={item.link}
+                                target="_blank"
                                 key={index}
                                 className="flex items-center space-x-4 px-4 py-3 hover:bg-B900 cursor-pointer rounded-lg"
                             >
@@ -226,7 +229,7 @@ const Sidebar = () => {
                                 <span className="inline sm:hidden lg:inline text-B30 text-base font-bold">
                                     {item.name}
                                 </span>
-                            </div>
+                            </Link>
                         ))}
                         <div className="flex flex-col gap-2 justify-center px-4 py-4 border-t border-B900">
                             {isLoadingBiconomySession ? (

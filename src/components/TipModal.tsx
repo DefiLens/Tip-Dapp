@@ -1,13 +1,13 @@
 import { DataState } from "@/context/dataProvider";
 import axiosInstance from "@/utils/axiosInstance";
-import { BICONOMY_MAINNET_BUNDLAR_KEY, BASE_BICONOMY_AA_KEY } from "@/utils/keys";
+import { BICONOMY_MAINNET_BUNDLAR_KEY, BASE_BICONOMY_AA_KEY, BASE_URL } from "@/utils/keys";
 import {
     PaymasterMode,
     createSessionKeyEOA,
     createSessionSmartAccountClient,
     getSingleSessionTxParams,
 } from "@biconomy/account";
-import { useWallets } from "@privy-io/react-auth";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 import React, { useEffect, useState } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { encodeFunctionData, parseAbi } from "viem";
@@ -22,8 +22,11 @@ import Lottie from "lottie-react";
 import animationData from "../../public/assets/party.json";
 import Link from "next/link";
 import Loading from "./Loading";
+import axios from "axios";
 
 const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
+    const { getAccessToken } = usePrivy();
+
     const { smartAccountAddress, smartAccount, biconomySession } = DataState();
     const [message, setMessage] = useState("");
     const [token, setToken] = useState("usdc");
@@ -126,11 +129,23 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
 
     const sendTip = async (postId: string, userId: string, amount: string, token: string) => {
         try {
-            const response = await axiosInstance.post(`/post/tip/${postId}`, {
-                amount,
-                token,
-                userId,
-            });
+            // const response = await axiosInstance.post(`/post/tip/${postId}`, {
+            // amount,
+            // token,
+            // userId,
+            // });
+
+            const accessToken = await getAccessToken();
+            const response = await axios.post(
+                `${BASE_URL}/post/tip/${postId}`,
+                { amount, token, userId },
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+
             console.log("Tip sent successfully:", response.data);
             // Handle success, e.g., show confirmation message
         } catch (error) {

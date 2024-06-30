@@ -15,10 +15,14 @@ import { shorten } from "@/utils/constants";
 import axiosInstance from "@/utils/axiosInstance";
 import UserList from "../UserList";
 import { RxCross2 } from "react-icons/rx";
+import { usePrivy } from "@privy-io/react-auth";
+import axios from "axios";
+import { BASE_URL } from "@/utils/keys";
 BigNumber.config({ DECIMAL_PLACES: 10 });
 
 const NavigationLayout = ({ children }: any) => {
     const { user } = DataState();
+    const { getAccessToken } = usePrivy();
     const { smartAccountAddress, usdcBalance, isBiconomySession } = DataState();
     const { address: userAddress } = useAccount();
     const { data: hash, isPending, writeContract } = useWriteContract();
@@ -55,9 +59,15 @@ const NavigationLayout = ({ children }: any) => {
 
     const handleSearch = async () => {
         try {
+            const accessToken = await getAccessToken();
+
             const response = await axiosInstance.get(`/user/search`, {
                 params: { query: searchQuery },
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
             });
+
             setSearchResults(response.data);
         } catch (error) {
             console.error("Error searching users:", error);

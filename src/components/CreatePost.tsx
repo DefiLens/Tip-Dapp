@@ -12,6 +12,9 @@ import { FaRegImage } from "react-icons/fa6";
 init("10414e57f4ac344a787f5d6ad0035ded4");
 import { CgSpinner } from "react-icons/cg";
 import CopyButton from "./custom/CopyButton";
+import { BASE_URL } from "@/utils/keys";
+import axios from "axios";
+import { usePrivy } from "@privy-io/react-auth";
 
 const UNIVERSAL_RESOLVER = `
 query MyQuery($address: Identity!) {
@@ -112,6 +115,7 @@ const GetEnsProfile = ({ setDappName, setProfileImage, setProfileName, setUserPr
 };
 
 const CreatePost: React.FC = () => {
+    const { getAccessToken } = usePrivy();
     const router = useRouter();
     const { smartAccountAddress } = DataState();
     const [showLinkSelection, setShowLinkSelection] = useState<boolean>(false);
@@ -159,7 +163,13 @@ const CreatePost: React.FC = () => {
                 tips: [], // Initial tips array
             };
 
-            const response = await axiosInstance.post("/post", postData);
+            // const response = await axiosInstance.post("/post", postData);
+            const accessToken = await getAccessToken();
+            const response = await axios.post(`${BASE_URL}/post`, postData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
 
             const data = await response.data;
 
@@ -198,7 +208,13 @@ const CreatePost: React.FC = () => {
             const formData = new FormData();
             formData.append("picture", result);
 
-            const response = await axiosInstance.put(`/post/upload-img`, formData);
+            // const response = await axiosInstance.put(`/post/upload-img`, formData);
+            const accessToken = await getAccessToken();
+            const response = await axios.put(`${BASE_URL}/post/upload-img`, formData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
 
             if (response.status === 200) {
                 setImgUrl(response.data.url);
@@ -242,11 +258,11 @@ const CreatePost: React.FC = () => {
                     onChange={(e) => setContent(e.target.value)}
                     required
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300 resize-none"
-                    maxLength={500}
+                    maxLength={2000}
                     rows={5}
                 />
                 <div className="text-right text-gray-600">
-                    {content.length}/{500}
+                    {content.length}/{2000}
                 </div>
             </div>
             {/* <div className="mb-4 flex gap-3">
@@ -369,7 +385,6 @@ const CreatePost: React.FC = () => {
             >
                 Create Post
             </button>
-
         </div>
     );
 };
