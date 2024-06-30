@@ -53,10 +53,10 @@ export const get1InchUrl = (NODE_ENV: string | undefined) => {
 const getBaseURL = (NODE_ENV: string | undefined) => {
     switch (NODE_ENV) {
       case 'production':
-      return 'https://tip-backend-l4mk.onrender.com';
+      return 'https://tip-backend-l4mk.onrender.com/api';
 
       case 'staging':
-        return 'https://tip-backend-l4mk.onrender.com';
+        return 'https://tip-backend-l4mk.onrender.com/api';
 
       case 'dev':
         return 'http://localhost:9090/api';
