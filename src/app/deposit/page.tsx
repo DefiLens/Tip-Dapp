@@ -7,6 +7,9 @@ import NavigationLayout from "@/components/layouts/NavigationLayout";
 import BigNumber from "bignumber.js";
 import { DataState } from "@/context/dataProvider";
 import CopyButton from "@/components/custom/CopyButton";
+import { shorten } from "@/utils/constants";
+import Link from "next/link";
+import { FiExternalLink } from "react-icons/fi";
 
 BigNumber.config({ DECIMAL_PLACES: 10 });
 
@@ -66,14 +69,34 @@ const Deposit: React.FC = () => {
                         {isPending ? "waiting" : "Send"}
                     </button>
                 </div>
-                {transactionHash && (
+                {/* {transactionHash && (
                     <div className="mt-4 flex items-center text-green-600">
                         <span>Transaction hash: {transactionHash}</span>
                     </div>
-                )}
-                {hash && (
+                )} */}
+                {/* {hash && (
                     <div className="mt-4 flex items-center text-green-600">
                         <span>Transaction hash: {hash}</span>
+                    </div>
+                )} */}
+                {hash && (
+                    <div className="mt-4">
+                        <p className="flex gap-2 items-center text-blue-500">
+                            Success:{" "}
+                            <u>
+                                <a className="text-blue-500" href={hash} target="_blank" rel="noopener noreferrer">
+                                    {shorten(hash)}
+                                </a>
+                            </u>
+                            <Link
+                                href={`https://basescan.org/tx/${hash}`}
+                                target="_blank"
+                                className=" hover:bg-B900 p-1.5 rounded-md cursor-pointer text-xs text-B10"
+                            >
+                                <FiExternalLink />
+                            </Link>
+                            {/* <CopyButton copy={`https://basescan.org/tx/${hash}`} /> */}
+                        </p>
                     </div>
                 )}
                 {error && (

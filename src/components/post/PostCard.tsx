@@ -24,7 +24,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     const [showTipModal, setShowTipModal] = useState<boolean>(false);
     const [likeCount, setLikeCount] = useState<number>(post?.likes?.length);
 
-    const [liked, setLiked] = useState(post.likes.includes(user?._id));
+    const [liked, setLiked] = useState<boolean>(post.likes.includes(user?._id));
     const [bookmarked, setBookmarked] = useState(post.bookmarks.includes(user?._id));
     const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
@@ -46,7 +46,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         } catch (error) {
             console.error("Error liking/disliking post:", error);
             // Optionally revert state changes if API call fails
-            setLiked((prevLiked: number) => !prevLiked);
+            setLiked((prevLiked: boolean) => !prevLiked);
             setLikeCount((prevCount: number) => (liked ? prevCount + 1 : prevCount - 1));
         }
     };
@@ -135,7 +135,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                             alt="Profile"
                         />
                     ) : (
-                        <img src={post?.userId?.image} className="h-12 w-12 rounded-full" alt="Profile" /> 
+                        <img src={post?.userId?.image} className="h-12 w-12 rounded-full" alt="Profile" />
                     )}
                         */}
                     {post.userId?.image ? (

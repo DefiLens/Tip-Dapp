@@ -116,9 +116,9 @@ const CreateSessionButton = () => {
             const {
                 receipt: { transactionHash },
                 success,
-            } = await wait();
+            }: any = await wait();
 
-            if (transactionHash) {
+            if (transactionHash && success) {
                 checkSession();
                 setShowSuccess(true);
                 setTxhash(`https://basescan.org/tx/${success.receipt.transactionHash}`);

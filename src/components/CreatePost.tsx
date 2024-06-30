@@ -11,6 +11,7 @@ import { FaLink } from "react-icons/fa";
 import { FaRegImage } from "react-icons/fa6";
 init("10414e57f4ac344a787f5d6ad0035ded4");
 import { CgSpinner } from "react-icons/cg";
+import CopyButton from "./custom/CopyButton";
 
 const UNIVERSAL_RESOLVER = `
 query MyQuery($address: Identity!) {
@@ -127,7 +128,7 @@ const CreatePost: React.FC = () => {
     const [userWalletAddress, setUserWalletAddress] = useState(null);
     const [postSending, setPostSending] = useState<boolean>(false);
 
-    const { result, uploader } = useDisplayImage();
+    const { result, uploader }: any = useDisplayImage();
     const [imgUrl, setImgUrl] = useState<string>("");
     const [uploadImageLoading, setUploadImageLoading] = useState<boolean>(false);
     const imageRef = useRef(null);
@@ -215,8 +216,8 @@ const CreatePost: React.FC = () => {
         }
     }, [result]);
     return (
-        <form
-            onSubmit={handleSubmit}
+        <div
+            // onSubmit={handleSubmit}
             className="w-full mx-auto p-4 bg-white rounded-2xl border border-blue-100 max-w-md mt-10"
         >
             {forOther && (
@@ -364,10 +365,12 @@ const CreatePost: React.FC = () => {
                 type="submit"
                 className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
                 disabled={postSending}
+                onClick={handleSubmit}
             >
                 Create Post
             </button>
-        </form>
+
+        </div>
     );
 };
 
