@@ -102,13 +102,11 @@ const PostList: React.FC = () => {
                 // });
 
                 const accessToken = await getAccessToken();
-                const response = await axios.get(`${BASE_URL}/post`,
-                {
+                const response = await axios.get(`${BASE_URL}/post`, {
                     headers: {
-                      Authorization: `Bearer ${accessToken}`,
+                        Authorization: `Bearer ${accessToken}`,
                     },
-                  }
-                );
+                });
 
                 setPosts(response.data.posts);
                 setTotalPages(response.data.totalPages);
@@ -123,14 +121,28 @@ const PostList: React.FC = () => {
     const morePosts = async () => {
         try {
             const nextPage = page + 1;
-            const response = await axiosInstance.get("/post", {
+            // const response = await axiosInstance.get("/post", {
+            //     params: {
+            //         page: nextPage,
+            //         limit: 20,
+            //         userId: filters.userId,
+            //         dappName: filters.dappName,
+            //     },
+            // });
+
+            const accessToken = await getAccessToken();
+            const response = await axios.get(`${BASE_URL}/post`, {
                 params: {
                     page: nextPage,
                     limit: 20,
                     userId: filters.userId,
                     dappName: filters.dappName,
                 },
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
             });
+
             setPosts((prevPosts) => [...prevPosts, ...response.data.posts]);
             setPage(nextPage);
             setTotalPages(response.data.totalPages);
@@ -148,10 +160,7 @@ const PostList: React.FC = () => {
             </div>
             {page < totalPages && (
                 <div className="mt-4 flex justify-center items-center">
-                    <button
-                        onClick={morePosts}
-                        className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-                    >
+                    <button onClick={morePosts} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
                         Load More
                     </button>
                 </div>
