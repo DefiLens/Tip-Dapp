@@ -3,6 +3,7 @@ import PostCard from "./post/PostCard";
 import { usePrivy } from "@privy-io/react-auth";
 import axios from "axios";
 import { BASE_URL } from "@/utils/keys";
+import axiosInstance from "@/utils/axiosInstance";
 
 interface ILinkedAccount {
     address: string;
@@ -101,7 +102,7 @@ const PostList: React.FC = () => {
                 // });
 
                 const accessToken = await getAccessToken();
-                const response = await axios.get(`${BASE_URL}/post`, 
+                const response = await axios.get(`${BASE_URL}/post`,
                 {
                     headers: {
                       Authorization: `Bearer ${accessToken}`,
