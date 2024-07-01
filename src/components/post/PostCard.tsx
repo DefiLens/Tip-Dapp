@@ -241,7 +241,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                 </div>
                 {post?.imgUrl && <img src={post?.imgUrl} className="rounded-lg w-full lg:w-3/4" />}
                 {post.links && post.links.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-col gap-1">
                         {post.links.map((link: string, index: number) => (
                             <a
                                 key={index}
