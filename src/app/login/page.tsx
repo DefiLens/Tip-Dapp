@@ -207,7 +207,7 @@ const Login: React.FC = () => {
 
     const { login } = useLogin({
         onComplete: async (user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount) => {
-            console.log("Login: ", user);
+            // console.log("Login: ", user);
 
             const address = await createSmartAccount();
             const userData = {
@@ -227,7 +227,7 @@ const Login: React.FC = () => {
 
     const { linkFarcaster } = useLinkAccount({
         onSuccess: async (user, linkMethod, linkedAccount) => {
-            console.log("Farcaster: ", user);
+            // console.log("Farcaster: ", user);
             linkFarcasterApi(user);
         },
         onError: (error) => {
@@ -288,8 +288,6 @@ const Login: React.FC = () => {
             setIsSession(isBiconomySession);
         }
     }, [authenticated, isBiconomySession]);
-
-    console.log("isSession", isSession);
     return (
         <AuthLayout>
             <div className="text-center flex flex-col items-center justify-center relative h-full DM_Mono">

@@ -19,13 +19,13 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/',
-    '/login',
-    '/deposit',
-    '/create-post',
-    '/bookmarks',
-    '/profile',
-    '/profile/edit',
+    // '/',
+    // '/login',
+    // '/deposit',
+    // '/create-post',
+    // '/bookmarks',
+    // '/profile',
+    // '/profile/edit',
   ]
 }
 
