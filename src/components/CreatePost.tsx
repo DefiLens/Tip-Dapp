@@ -191,7 +191,7 @@ const CreatePost: React.FC = () => {
         function uploader(e: any) {
             const imageFile = e.target.files[0];
 
-            const reader = new FileReader();
+            const reader: any = new FileReader();
             reader.addEventListener("load", (e: any) => {
                 setResult(e.target.result);
             });
@@ -205,7 +205,7 @@ const CreatePost: React.FC = () => {
     const handleProfilePic = async () => {
         try {
             setUploadImageLoading(true);
-            const formData = new FormData();
+            const formData: any = new FormData();
             formData.append("picture", result);
 
             // const response = await axiosInstance.put(`/post/upload-img`, formData);
