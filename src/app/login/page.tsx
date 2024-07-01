@@ -259,11 +259,15 @@ const Login: React.FC = () => {
     const linkFarcasterApi = async (data: any) => {
         try {
             const accessToken = await getAccessToken();
-            const res = await axios.post(`${BASE_URL}/user/link-farcaster`, data, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            });
+            const res = await axios.post(
+                `${BASE_URL}/user/link-farcaster`,
+                { farcasterAccount: data },
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
 
             // const res = await axiosInstance.post("/user/link-farcaster", { farcasterAccount: data });
             setUser(res.data.user);

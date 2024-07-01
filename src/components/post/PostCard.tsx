@@ -199,7 +199,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                     )}
                     <div className="flex flex-col h-12 justify-center text-sm">
                         <p className="text-lg text-primary-text font-semibold flex items-center gap-2">
-                            <span>{post.forOther ? post.otherUserProfile.profileName : post.userId?.name}</span>
+                            <span>{post.forOther ? post.otherUserProfile.profileName : post.userId?.name ? post.userId?.name: shorten(post?.smartWalletAddress)}</span>
                             {post.forOther && <span className="text-xs">created by</span>}
                             {post.forOther && (
                                 <span className="text-base">

@@ -133,7 +133,6 @@ const page = () => {
                             </div>
                         </button>
                     </div>
-                    {/* 
                     <div className="mb-4 w-full">
                         <label className="block text-gray-700">Name:</label>
                         <input
@@ -142,7 +141,7 @@ const page = () => {
                             onChange={(e) => setName(e.target.value)}
                             className="flex-grow px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300 w-full"
                         />
-                    </div> */}
+                    </div>
                     <div className="mb-4 w-full">
                         <label className="block text-gray-700">Bio:</label>
                         <textarea
