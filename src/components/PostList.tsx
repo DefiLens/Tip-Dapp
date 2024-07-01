@@ -93,16 +93,22 @@ const PostList: React.FC = () => {
         const fetchPosts = async () => {
             try {
                 // const response = await axiosInstance.get("/post", {
-                //     params: {
-                //         page,
-                //         limit: 20,
-                //         userId: filters.userId,
-                //         dappName: filters.dappName,
-                //     },
+                    // params: {
+                    //     page,
+                    //     limit: 20,
+                    //     userId: filters.userId,
+                    //     dappName: filters.dappName,
+                    // },
                 // });
 
                 const accessToken = await getAccessToken();
                 const response = await axios.get(`${BASE_URL}/post`, {
+                    params: {
+                        page,
+                        limit: 1,
+                        userId: filters.userId,
+                        dappName: filters.dappName,
+                    },
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
                     },
@@ -134,7 +140,7 @@ const PostList: React.FC = () => {
             const response = await axios.get(`${BASE_URL}/post`, {
                 params: {
                     page: nextPage,
-                    limit: 20,
+                    limit: 1,
                     userId: filters.userId,
                     dappName: filters.dappName,
                 },
