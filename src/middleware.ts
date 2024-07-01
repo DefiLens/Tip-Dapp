@@ -21,11 +21,11 @@ export const config = {
   matcher: [
     // '/',
     // '/login',
-    // '/deposit',
-    // '/create-post',
-    // '/bookmarks',
-    // '/profile',
-    // '/profile/edit',
+    '/deposit',
+    '/create-post',
+    '/bookmarks',
+    '/profile',
+    '/profile/edit',
   ]
 }
 
