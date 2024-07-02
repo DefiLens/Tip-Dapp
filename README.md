@@ -47,3 +47,10 @@ Our solution simplifies the process of supporting web3 builders, ensures transpa
 
 1. npm install
 2. npm run dev
+
+## Contact
+
+1. Telegram: rksunny
+2. X: https://x.com/RadadiyaSunny
+
+### Thank you
