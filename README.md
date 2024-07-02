@@ -2,6 +2,10 @@
 
 ## SocialTip built during Onchain summer buildathon by base network and devfolio.
 
+## Video Demo
+
+https://www.loom.com/share/a15f2fcfcf46425e9905317454b1e47d?sid=fd778ee5-3fb0-4752-b987-6a0224b54a05
+
 ## Abstract
 
 Social tip to empower builders for their contributions and work. Web3 builders often struggle to gain recognition and financial support for their valuable contributions to open-source projects and innovative solutions. Traditional platforms lack effective mechanisms for rewarding these efforts, making it challenging for builders to sustain their work and for the community to show appreciation.
