@@ -259,11 +259,15 @@ const Login: React.FC = () => {
     const linkFarcasterApi = async (data: any) => {
         try {
             const accessToken = await getAccessToken();
-            const res = await axios.post(`${BASE_URL}/user/link-farcaster`, data, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            });
+            const res = await axios.post(
+                `${BASE_URL}/user/link-farcaster`,
+                { farcasterAccount: data },
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
 
             // const res = await axiosInstance.post("/user/link-farcaster", { farcasterAccount: data });
             setUser(res.data.user);
@@ -300,12 +304,6 @@ const Login: React.FC = () => {
                         >
                             Login
                         </button>
-                        {/* <p className="text-sm mt-5 text-B20">
-                            Already have an account ?{" "}
-                            <Link href="/login" className="text-sm text-B30 font-semibold">
-                                Login
-                            </Link>
-                        </p> */}
                     </div>
                 ) : !isLinkedFarcaster ? (
                     ready &&
@@ -320,6 +318,14 @@ const Login: React.FC = () => {
                                 className="bg-B0 hover:bg-B10 text-white text-xl font-medium py-3 px-7 rounded-lg hover:scale-105 transition-all shadow-md hover:shadow-2xl"
                             >
                                 Link Farcaster
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setIsLinkedFarcaster(true);
+                                }}
+                                className="mt-5 underline text-sm"
+                            >
+                                Skip
                             </button>
                         </div>
                     )
@@ -336,8 +342,15 @@ const Login: React.FC = () => {
                                 transactions.
                                 <br /> We cover gas fees for you, making tipping in USDC effortless.
                             </p>
-                            {/* <p>Protected by Biconomy.</p> */}
                         </div>
+                        <button
+                            onClick={() => {
+                                setIsSession(true);
+                            }}
+                            className="mt-5 underline text-sm"
+                        >
+                            Skip
+                        </button>
                     </div>
                 ) : (
                     <div className="text-center flex flex-col items-center justify-center">
@@ -350,6 +363,14 @@ const Login: React.FC = () => {
                         >
                             Deposit USDC
                         </Link>
+                        <button
+                            onClick={() => {
+                                router.push("/");
+                            }}
+                            className="mt-5 underline text-sm"
+                        >
+                            Skip
+                        </button>
                     </div>
                 )}
                 <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 mt-8 text-sm text-gray-700 flex items-center gap-3 w-full justify-center">

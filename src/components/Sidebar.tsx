@@ -31,6 +31,7 @@ import Loading from "./Loading";
 import { RxCross2 } from "react-icons/rx";
 import CopyButton from "./custom/CopyButton";
 import { FiExternalLink } from "react-icons/fi";
+import { shorten } from "@/utils/constants";
 
 const Sidebar = () => {
     const pathname = usePathname();
@@ -273,7 +274,7 @@ const Sidebar = () => {
             {isLoading && <Loading />}
             {showSuccess && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 h-screen max-w-screen w-screen z-[200]">
-                    <div className="rounded-2xl relative bg-white max-w-[90%] md:max-w-[40%] w-full flex flex-col items-center p-3 shadow-2xl">
+                    <div className="rounded-2xl relative bg-white max-w-[90%] md:max-w-[40%] flex flex-col items-center p-3 shadow-2xl">
                         <button
                             onClick={() => setShowSuccess(false)}
                             className="absolute top-4 right-4 text-xl text-black"
@@ -291,7 +292,7 @@ const Sidebar = () => {
                             <span className="font-semibold">Success:</span>
                             <p className="overflow-hidden text-ellipsis flex-1">
                                 <a href={txHash} target="_blank" rel="noopener noreferrer">
-                                    {txHash}
+                                    {shorten(txHash)}
                                 </a>
                             </p>
                             <Link
