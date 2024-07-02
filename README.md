@@ -1,4 +1,4 @@
-# SocialTip (Tip to web3 contributors via Decentralized socials and Smart Wallet)
+# SocialTip (Tip to Web3 Contributors via Decentralized Socials and Smart Wallet)
 
 ## SocialTip built during Onchain summer buildathon by base network and devfolio.
 
