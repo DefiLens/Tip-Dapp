@@ -29,7 +29,7 @@ const ImageGallery = ({ images }: any) => {
     const [selectedImage, setSelectedImage] = useState(images[0]);
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    const handleImageClick = (index) => {
+    const handleImageClick = (index: any) => {
         setSelectedImage(images[index]);
         setCurrentIndex(index);
     };
