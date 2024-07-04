@@ -276,7 +276,7 @@ const page = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    {isGettingUserData && !user?.isFarcasterLinked && (
+                                    {!user?.isFarcasterLinked && (
                                         <CustomButton onClick={linkFarcaster}>Link Farcaster</CustomButton>
                                     )}
                                 </div>
