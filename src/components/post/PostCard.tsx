@@ -310,7 +310,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                         referrerpolicy="strict-origin-when-cross-origin"
                         allowfullscreen
                     ></iframe> */}
-                    {post?.imgUrl.length > 0 && <ImageGallery images={post && post?.imgUrl} />}
+                    {post?.imgUrl?.length > 0 && <ImageGallery images={post && post?.imgUrl} />}
 
                     {post.links && post.links.length > 0 && (
                         <div className="flex flex-col gap-1">
