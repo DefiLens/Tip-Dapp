@@ -20,6 +20,7 @@ import { BASE_URL } from "@/utils/keys";
 import { usePrivy } from "@privy-io/react-auth";
 import { IoIosArrowBack, IoIosArrowDropleftCircle, IoIosArrowDroprightCircle, IoIosArrowForward } from "react-icons/io";
 import { HiBadgeCheck } from "react-icons/hi";
+import { FaLink } from "react-icons/fa";
 
 interface PostCardProps {
     post: IPost;
@@ -299,23 +300,29 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                             </button>
                         )}
                     </div>
-                    {/* <div className="grid grid-cols-2 gap-3">
-                        {post?.imgUrl &&
-                            post?.imgUrl?.map((item: string, index: number) => (
-                                <img key={index} src={item} className="rounded-lg w-full" />
-                            ))}
-                    </div> */}
-                    <ImageGallery images={post && post?.imgUrl} />
+                    {/* <iframe
+                        width="full"
+                        className="rounded-lg"
+                        height="315"
+                        title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen
+                    ></iframe> */}
+                    {post?.imgUrl.length > 0 && <ImageGallery images={post && post?.imgUrl} />}
+
                     {post.links && post.links.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
+                        <div className="flex flex-col gap-1">
                             {post.links.map((link: string, index: number) => (
                                 <a
                                     key={index}
                                     href={link}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-blue-500 underline"
+                                    className="text-blue-500 flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-0.5 w-fit"
                                 >
+                                    <FaLink className="text-sm" />
                                     {link}
                                 </a>
                             ))}

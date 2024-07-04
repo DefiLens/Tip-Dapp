@@ -16,6 +16,7 @@ import { BASE_URL } from "@/utils/keys";
 import axios from "axios";
 import { usePrivy } from "@privy-io/react-auth";
 import { RxCross2 } from "react-icons/rx";
+import toast from "react-hot-toast";
 
 const UNIVERSAL_RESOLVER = `
 query MyQuery($address: Identity!) {
@@ -461,7 +462,11 @@ const CreatePost: React.FC = () => {
 
         function uploader(e: any) {
             const imageFile = e.target.files[0];
-
+            if (imageFile.size > 400 * 1024) {
+                toast.error("Image size should be less than 400 KB");
+                return;
+            }
+            
             const reader: any = new FileReader();
             reader.addEventListener("load", (e: any) => {
                 setResult(e.target.result);

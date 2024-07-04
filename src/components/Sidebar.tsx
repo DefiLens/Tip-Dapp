@@ -32,7 +32,6 @@ import { RxCross2 } from "react-icons/rx";
 import CopyButton from "./custom/CopyButton";
 import { FiExternalLink } from "react-icons/fi";
 import { shorten } from "@/utils/constants";
-import { shorten } from "@/utils/constants";
 
 const Sidebar = () => {
     const pathname = usePathname();

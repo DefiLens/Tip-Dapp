@@ -25,7 +25,7 @@ const DataProvider = ({ children }: any) => {
     const [smartAccountAddress, setSmartAccountAddress] = useState<Address | undefined>(undefined);
     const [usdcBalance, setUsdcBalance] = useState<number | string>();
     const [user, setUser] = useState(null);
-    const [isGettingUserData, setIsGettingUserData] = useState<boolean>(false);
+    const [isGettingUserData, setIsGettingUserData] = useState<boolean>(true);
     const [isBiconomySession, setIsBiconomySession] = useState<boolean>(false);
     const [isLoadingBiconomySession, setIsLoadingBiconomySession] = useState<boolean>(true);
 
@@ -121,7 +121,6 @@ const DataProvider = ({ children }: any) => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                setIsGettingUserData(true);
                 const accessToken = await getAccessToken();
                 const response = await axios.get(`${BASE_URL}/user`, 
                 {

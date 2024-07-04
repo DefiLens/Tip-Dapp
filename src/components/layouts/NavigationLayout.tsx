@@ -61,7 +61,7 @@ const NavigationLayout = ({ children }: any) => {
         try {
             const accessToken = await getAccessToken();
 
-            const response = await axiosInstance.get(`/user/search`, {
+            const response = await axios.get(`${BASE_URL}/user/search`, {
                 params: { query: searchQuery },
                 headers: {
                     Authorization: `Bearer ${accessToken}`,

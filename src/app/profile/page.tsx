@@ -54,9 +54,9 @@ const UserFollowers = ({ url }: any) => {
     };
 
     return (
-        <div className="flex flex-col gap-3 w-full">
-            <div className="flex flex-col gap-3">
-                <h3 className="text-xl font-bold">Followers</h3>
+        <div className="flex flex-col gap-5 w-full">
+            <h3 className="text-xl font-bold">Followers</h3>
+            <div className="flex flex-col gap-5 w-full overflow-y-auto h-full">
                 {isLoading ? (
                     <div className="flex flex-col gap-3">
                         <UserListSkeleton />
@@ -209,54 +209,81 @@ const page = () => {
     return (
         <NavigationLayout>
             <div className="relative">
-                {/* <div className="flex flex-col gap-7 p-4 border-b border-blue-100 sticky z-[1] top-16 bg-white h-48"> */}
-                <div className="flex flex-col gap-7 p-4 border-b border-blue-100 bg-white ">
-                    <Link href="/profile/edit" className="absolute top-3 right-3 text-blue-800 text-xl">
-                        <IoMdCreate />
-                    </Link>
-                    {isGettingUserData ? (
-                        <></>
-                    ) : (
+                {isGettingUserData ? (
+                    <div className="flex flex-col gap-7 p-4 border-b border-blue-100 bg-white ">
                         <div className="flex gap-5 w-full">
-                            {user?.image ? (
-                                <img src={user?.image} className="h-24 w-24 rounded-full" alt="Profile" />
-                            ) : (
-                                <div className="h-24 w-24">
-                                    <AvatarIcon address={user?.smartAccountAddress} />
-                                </div>
-                            )}
-                            <div className="flex flex-col h-20 justify-center text-sm text-gray-500">
-                                <p className="text-primary-text text-2xl font-bold flex items-center gap-1">
-                                    {user?.name ? user?.name : shorten(user?.smartAccountAddress)}
-                                    {user?.isFarcasterLinked && <HiBadgeCheck className="text-blue-600 text-xl" />}
-                                </p>
-                                <p>{user?.bio?.slice(0, 130)}</p>
+                            <div>
+                                <div className="h-24 w-24 rounded-full animate-pulse bg-gray-200"></div>
+                            </div>
+                            <div className="flex flex-col gap-2 h-20 justify-center w-full">
+                                <p className="h-5 rounded-lg animate-pulse w-52 bg-gray-200"></p>
+                                <p className="h-5 rounded-lg animate-pulse w-full bg-gray-200"></p>
                             </div>
                         </div>
-                    )}
-                    <div className="flex justify-between items-center gap-2">
-                        <TipStats />
-                        <div className="flex items-center justify-end gap-4">
-                            <button
-                                onClick={() => setShowFollowers(true)}
-                                className="px-2 py-1 rounded-xl transition-all duration-300 text-sm bg-blue-100 text-blue-800 hover:bg-blue-200"
-                            >
-                                <span className="text-blue-900">{user?.followers?.length}</span> Followers
-                            </button>
-                            <button
-                                onClick={() => setShowFollowing(true)}
-                                className="px-2 py-1 rounded-xl transition-all duration-300 text-sm bg-blue-100 text-blue-800 hover:bg-blue-200"
-                            >
-                                <span className="text-blue-900">{user?.following?.length}</span> Following
-                            </button>
+                        <div className="flex justify-between items-center gap-2">
+                            <div className="flex flex-col gap-2">
+                                <div className="bg-gray-200 rounded-lg h-3 w-20"></div>
+                                <div className="bg-gray-200 rounded-lg h-3 w-28"></div>
+                            </div>
+                            <div className="flex items-center justify-end gap-4">
+                                <div className="h-7 w-24 rounded-lg bg-gray-200"></div>
+                                <div className="h-7 w-24 rounded-lg bg-gray-200"></div>
+                            </div>
                         </div>
                     </div>
-                    <div>
-                        {!user?.isFarcasterLinked && (
-                            <CustomButton onClick={linkFarcaster}>Link Farcaster</CustomButton>
+                ) : (
+                    <div className="flex flex-col gap-7 p-4 border-b border-blue-100 bg-white ">
+                        <Link href="/profile/edit" className="absolute top-3 right-3 text-blue-800 text-xl">
+                            <IoMdCreate />
+                        </Link>
+                        {isGettingUserData ? (
+                            <></>
+                        ) : (
+                            <>
+                                <div className="flex gap-5 w-full">
+                                    {user?.image ? (
+                                        <img src={user?.image} className="h-24 w-24 rounded-full" alt="Profile" />
+                                    ) : (
+                                        <div className="h-24 w-24">
+                                            <AvatarIcon address={user?.smartAccountAddress} />
+                                        </div>
+                                    )}
+                                    <div className="flex flex-col h-20 justify-center text-sm text-gray-500">
+                                        <p className="text-primary-text text-2xl font-bold flex items-center gap-1">
+                                            {user?.name ? user?.name : shorten(user?.smartAccountAddress)}
+                                            {user?.isFarcasterLinked && (
+                                                <HiBadgeCheck className="text-blue-600 text-xl" />
+                                            )}
+                                        </p>
+                                        <p>{user?.bio?.slice(0, 130)}</p>
+                                    </div>
+                                </div>
+                                <div className="flex justify-between items-center gap-2">
+                                    <TipStats />
+                                    <div className="flex items-center justify-end gap-4">
+                                        <button
+                                            onClick={() => setShowFollowers(true)}
+                                            className="px-2 py-1 rounded-xl transition-all duration-300 text-sm bg-blue-100 text-blue-800 hover:bg-blue-200"
+                                        >
+                                            <span className="text-blue-900">{user?.followers?.length}</span> Followers
+                                        </button>
+                                        <button
+                                            onClick={() => setShowFollowing(true)}
+                                            className="px-2 py-1 rounded-xl transition-all duration-300 text-sm bg-blue-100 text-blue-800 hover:bg-blue-200"
+                                        >
+                                            <span className="text-blue-900">{user?.following?.length}</span> Following
+                                        </button>
+                                    </div>
+                                </div>
+                                <div>
+                                    {isGettingUserData && !user?.isFarcasterLinked && (
+                                        <CustomButton onClick={linkFarcaster}>Link Farcaster</CustomButton>
+                                    )}
+                                </div>
+                            </>
                         )}
                     </div>
-                </div>
+                )}
 
                 <div className="flex flex-col gap-3 p-4 border-b border-blue-100">
                     <h1 className="text-gray-700 text-2xl font-semibold px-4 border-blue-100">My Posts</h1>
@@ -273,7 +300,7 @@ const page = () => {
                 </div>
                 {showFollowers && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
-                        <div className="rounded-lg relative max-h-[50%] min-h-[30%] max-w-[25%] min-w-[25%]  bg-white p-4">
+                        <div className="rounded-lg relative h-96 max-w-[25%] min-w-[25%] bg-white p-4 overflow-hidden">
                             <button
                                 onClick={() => setShowFollowers(false)}
                                 className="absolute top-4 right-4 text-xl text-black"
@@ -286,7 +313,7 @@ const page = () => {
                 )}
                 {showFollowing && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
-                        <div className="rounded-lg relative max-h-[50%] min-h-[30%] max-w-[25%] min-w-[25%] bg-white p-4">
+                        <div className="rounded-lg relative h-96 max-w-[25%] min-w-[25%] bg-white p-4">
                             <button
                                 onClick={() => setShowFollowing(false)}
                                 className="absolute top-4 right-4 text-xl text-black"

@@ -45,18 +45,20 @@ const UserList = ({ currentUser }: any) => {
     };
 
     return (
-        <div className="flex items-center gap-2 w-full">
-            {currentUser.image ? (
-                <img src={currentUser.image} className="h-10 w-10 rounded-full" alt="Profile" />
-            ) : (
-                <div className="h-10 w-10">
-                    <AvatarIcon address={currentUser.smartAccountAddress} />
+        <div className="flex items-center justify-between gap-2 w-full">
+            <div className="flex items-center gap-2">
+                {currentUser.image ? (
+                    <img src={currentUser.image} className="h-10 w-10 rounded-full" alt="Profile" />
+                ) : (
+                    <div className="h-10 w-10">
+                        <AvatarIcon address={currentUser.smartAccountAddress} />
+                    </div>
+                )}
+                <div className="flex flex-col h-10 justify-center text-sm text-gray-500 overflow-hidden whitespace-nowrap text-ellipsis">
+                    <p className="text-primary-text text-base font-bold overflow-hidden whitespace-nowrap overflow-ellipsis">
+                        {currentUser.name ? currentUser.name : shorten(currentUser.smartAccountAddress)}
+                    </p>
                 </div>
-            )}
-            <div className="flex flex-col h-10 justify-center text-sm text-gray-500 overflow-hidden whitespace-nowrap text-ellipsis">
-                <p className="text-primary-text text-base font-bold overflow-hidden whitespace-nowrap overflow-ellipsis">
-                    {currentUser.name ? currentUser.name : shorten(currentUser.smartAccountAddress)}
-                </p>
             </div>
 
             {user && (
