@@ -32,6 +32,7 @@ import { RxCross2 } from "react-icons/rx";
 import CopyButton from "./custom/CopyButton";
 import { FiExternalLink } from "react-icons/fi";
 import { shorten } from "@/utils/constants";
+import { shorten } from "@/utils/constants";
 
 const Sidebar = () => {
     const pathname = usePathname();
@@ -292,6 +293,7 @@ const Sidebar = () => {
                             <span className="font-semibold">Success:</span>
                             <p className="overflow-hidden text-ellipsis flex-1">
                                 <a href={txHash} target="_blank" rel="noopener noreferrer">
+                                    {shorten(txHash)}
                                     {shorten(txHash)}
                                 </a>
                             </p>

@@ -140,16 +140,16 @@ const NavigationLayout = ({ children }: any) => {
                                         )}
                                         <div>
                                             <p className="text-base font-bold">
-                                                {result.name ? result.name : shorten(result.smartAccountAddress)}
+                                                {result?.name ? result?.name : shorten(result.smartAccountAddress)}
                                             </p>
-                                            <p className="text-sm text-gray-500">{result.bio.slice(0, 30)}</p>
+                                            <p className="text-sm text-gray-500">{result?.bio?.slice(0, 30)}</p>
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         )}
 
-                        {user && searchResults.length <= 0 && <SuggestedFollows />}
+                        {user && searchResults?.length <= 0 && searchQuery === "" && <SuggestedFollows />}
                     </div>
                     <div className="p-2">
                         <div className="max-w-md mx-auto h-fit p-2 border rounded-lg border-blue-200">

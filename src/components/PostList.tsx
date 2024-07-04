@@ -99,6 +99,12 @@ const PostList: React.FC = () => {
                 setIsLoading(true);
                 const accessToken = await getAccessToken();
                 const response = await axios.get(`${BASE_URL}/post`, {
+                    params: {
+                        page,
+                        limit: 20,
+                        userId: filters.userId,
+                        dappName: filters.dappName,
+                    },
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
                     },
@@ -154,7 +160,7 @@ const PostList: React.FC = () => {
             </div>
             {page < totalPages && (
                 <div className="mt-4 flex justify-center items-center">
-                    <button onClick={morePosts} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+                    <button onClick={morePosts} className="px-4 py-1 bg-gray-200 rounded-lg hover:bg-gray-300">
                         Load More
                     </button>
                 </div>

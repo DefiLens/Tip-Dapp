@@ -192,6 +192,11 @@ const CreatePost2: React.FC = () => {
         function uploader(e: any) {
             const imageFile = e.target.files[0];
 
+            if (imageFile.size > 400 * 1024) {
+                toast.error("Image size should be less than 400 KB");
+                return;
+            }
+
             const reader: any = new FileReader();
             reader.addEventListener("load", (e: any) => {
                 setResult(e.target.result);
