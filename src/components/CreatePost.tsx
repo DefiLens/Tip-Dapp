@@ -15,6 +15,7 @@ import CopyButton from "./custom/CopyButton";
 import { BASE_URL } from "@/utils/keys";
 import axios from "axios";
 import { usePrivy } from "@privy-io/react-auth";
+import { RxCross2 } from "react-icons/rx";
 
 const UNIVERSAL_RESOLVER = `
 query MyQuery($address: Identity!) {
@@ -114,7 +115,7 @@ const GetEnsProfile = ({ setDappName, setProfileImage, setProfileName, setUserPr
     );
 };
 
-const CreatePost: React.FC = () => {
+const CreatePost2: React.FC = () => {
     const { getAccessToken } = usePrivy();
     const router = useRouter();
     const { smartAccountAddress } = DataState();
@@ -265,30 +266,6 @@ const CreatePost: React.FC = () => {
                     {content.length}/{2000}
                 </div>
             </div>
-            {/* <div className="mb-4 flex gap-3">
-                <div>{imgUrl !== "" && <img ref={imageRef} src={imgUrl} className="w-full mx-auto rounded-lg" />}</div>
-            </div>
-            <div className="mb-4 flex gap-3">
-                <button
-                    className="h-10 w-10 flex items-center justify-center bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-300 text-secondary-text"
-                    onClick={() => setShowLinkSelection(true)}
-                >
-                    <FaLink />
-                </button>
-                <div className="">
-                    <button className="h-10 w-10 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-300 text-secondary-text relative flex items-center justify-center cursor-pointer overflow-hidden">
-                        <FaRegImage />
-                        <div className="absolute h-20 w-10 bottom-0 left-0 cursor-pointer">
-                            <input
-                                type="file"
-                                name="image"
-                                onChange={(e) => uploader(e)}
-                                className="h-full w-10 opacity-25 cursor-pointer"
-                            />
-                        </div>
-                    </button>
-                </div>
-            </div> */}
             <div>
                 <div className="mb-4 flex gap-3">
                     {uploadImageLoading ? (
@@ -321,14 +298,6 @@ const CreatePost: React.FC = () => {
                         </button>
                     </div>
                 </div>
-                {/* {uploadImageLoading && (
-                    <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                        <div
-                            className="bg-blue-600 h-2.5 rounded-full transition-width duration-300"
-                            style={{ width: `${uploadProgress}%` }}
-                        ></div>
-                    </div>
-                )} */}
             </div>
 
             {showLinkSelection && (
@@ -385,6 +354,296 @@ const CreatePost: React.FC = () => {
             >
                 Create Post
             </button>
+        </div>
+    );
+};
+
+const imgList = [
+    "https://plus.unsplash.com/premium_photo-1683917067889-c88599491d5c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90b3MtZmVlZHwxfHx8ZW58MHx8fHx8",
+];
+
+const CreatePost: React.FC = () => {
+    const { getAccessToken } = usePrivy();
+    const router = useRouter();
+    const { smartAccountAddress } = DataState();
+    const [showLinkSelection, setShowLinkSelection] = useState<boolean>(false);
+
+    const [content, setContent] = useState("");
+    const [link, setLink] = useState("");
+    const [links, setLinks] = useState<string[]>([]);
+    const [forOther, setForOther] = useState(false);
+    const [dappName, setDappName] = useState("");
+    const [profileImage, setProfileImage] = useState("");
+    const [profileName, setProfileName] = useState("");
+    const [smartWalletAddress, setSmartWalletAddress] = useState("");
+    const [userProfile, setUserProfile] = useState(null);
+    const [userWalletAddress, setUserWalletAddress] = useState(null);
+    const [postSending, setPostSending] = useState<boolean>(false);
+
+    const [imgUrls, setImgUrls] = useState<string[]>([]);
+    const [uploadImageLoading, setUploadImageLoading] = useState<boolean>(false);
+    const imageRef = useRef(null);
+
+    const handleAddLink = () => {
+        if (link && links.length < 5) {
+            setLinks([...links, link]);
+            setLink("");
+        }
+    };
+
+    const handleRemoveLink = (index: number) => {
+        setLinks(links.filter((_, i) => i !== index));
+    };
+
+    const handleSubmit = async (e: any) => {
+        e.preventDefault();
+        try {
+            setPostSending(true);
+            const postData = {
+                content,
+                links: links || [],
+                forOther,
+                otherUserProfile: forOther ? { dappName, profileImage, profileName } : null,
+                smartWalletAddress: forOther ? userWalletAddress : smartAccountAddress,
+                imgUrl: imgUrls || [],
+                tips: [], // Initial tips array
+            };
+
+            const accessToken = await getAccessToken();
+            const response = await axios.post(`${BASE_URL}/post`, postData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            const data = await response.data;
+
+            if (data.success) {
+                router.push("/");
+                setPostSending(false);
+                console.log("Post created successfully:", data.data);
+            }
+        } catch (error) {
+            setPostSending(false);
+            console.error("Error:", error);
+        }
+    };
+
+    // const uploader = async (e: any) => {
+    //     const file = e.target.files[0];
+    //     if (file) {
+    //         setUploadImageLoading(true);
+    //         try {
+    //             const accessToken = await getAccessToken();
+    //             const formData = new FormData();
+    //             formData.append("picture", file);
+    //             const response = await axios.put(`${BASE_URL}/post/upload-img`, formData, {
+    //                 headers: {
+    //                     Authorization: `Bearer ${accessToken}`,
+    //                 },
+    //             });
+    //             setUploadImageLoading(false);
+    //         } catch (error) {
+    //             console.error(error);
+    //             setUploadImageLoading(false);
+    //         }
+    //     }
+    // };
+    const { result, uploader }: any = useDisplayImage();
+
+    function useDisplayImage() {
+        const [result, setResult] = useState(false);
+
+        function uploader(e: any) {
+            const imageFile = e.target.files[0];
+
+            const reader: any = new FileReader();
+            reader.addEventListener("load", (e: any) => {
+                setResult(e.target.result);
+            });
+
+            reader?.readAsDataURL(imageFile);
+        }
+
+        return { result, uploader };
+    }
+
+    const handleProfilePic = async () => {
+        try {
+            setUploadImageLoading(true);
+            const formData: any = new FormData();
+            formData.append("picture", result);
+
+            // const response = await axiosInstance.put(`/post/upload-img`, formData);
+            const accessToken = await getAccessToken();
+            const response = await axios.put(`${BASE_URL}/post/upload-img`, formData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            if (response.status === 200) {
+                // setImgUrl(response.data.url);
+                setImgUrls((prevUrls) => [...prevUrls, response.data.url]);
+            }
+            setUploadImageLoading(false);
+        } catch (error) {
+            console.error(error);
+            setUploadImageLoading(false);
+        }
+    };
+
+    const handleRemoveImage = (index: number) => {
+        setImgUrls(imgUrls.filter((_, i) => i !== index));
+    };
+
+    useEffect(() => {
+        if (result) {
+            handleProfilePic();
+        }
+    }, [result]);
+
+    return (
+        <div className="w-full mx-auto p-4 bg-white rounded-2xl border border-blue-100 max-w-md mt-10 relative">
+            {forOther && (
+                <div className="mb-4">
+                    <div className="flex flex-col gap-2 mb-4">
+                        <GetEnsProfile
+                            setDappName={setDappName}
+                            setProfileImage={setProfileImage}
+                            setProfileName={setProfileName}
+                            setUserProfile={setUserProfile}
+                            setUserWalletAddress={setUserWalletAddress}
+                        />
+                        {userProfile && <SocialProfileCard profile={userProfile} />}
+                    </div>
+                </div>
+            )}
+
+            <div className="mb-4">
+                <label className="block text-gray-700">Content:</label>
+                <textarea
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    required
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300 resize-none"
+                    maxLength={2000}
+                    rows={5}
+                />
+                <div className="text-right text-gray-600">
+                    {content.length}/{2000}
+                </div>
+            </div>
+
+            <div>
+                <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-3 rounded-lg">
+                    {imgUrls.map((url, index) => (
+                        <div key={index} className="relative w-full h-48">
+                            <img src={url} className="w-full h-full object-cover rounded-lg" alt="Uploaded" />
+                            <button
+                                onClick={() => handleRemoveImage(index)}
+                                className="absolute top-1 right-1 text-sm text-black bg-gray-50 p-0.5 rounded-full"
+                            >
+                                <RxCross2 />
+                            </button>
+                        </div>
+                    ))}
+                    {imgUrls.length > 0 && (
+                        <div className="relative w-full h-48 border border-dashed border-gray-400 rounded-lg flex items-center justify-center">
+                            <label className="cursor-pointer flex flex-col items-center justify-center h-full w-full">
+                                <FaRegImage className="text-gray-400 text-3xl mb-2" />
+                                <span className="text-gray-400">Add more</span>
+                                <input type="file" name="image" onChange={uploader} className="hidden" />
+                            </label>
+                        </div>
+                    )}
+                </div>
+                <div className="mb-4 flex gap-3">
+                    <button
+                        className="h-10 w-10 flex items-center justify-center bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-300 text-secondary-text"
+                        onClick={() => setShowLinkSelection(true)}
+                    >
+                        <FaLink />
+                    </button>
+                    <div>
+                        <button className="h-10 w-10 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-300 text-secondary-text relative flex items-center justify-center cursor-pointer overflow-hidden">
+                            <FaRegImage />
+                            <div className="absolute h-20 w-10 bottom-0 left-0 cursor-pointer">
+                                <input
+                                    type="file"
+                                    name="image"
+                                    onChange={(e) => uploader(e)}
+                                    className="h-full w-10 opacity-0 cursor-pointer"
+                                />
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {showLinkSelection && (
+                <div className="mb-4">
+                    <label className="block text-gray-700">Links:</label>
+                    <div className="flex items-center mb-2">
+                        <input
+                            type="text"
+                            value={link}
+                            onChange={(e) => setLink(e.target.value)}
+                            className="flex-grow px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                        />
+                        <button
+                            type="button"
+                            onClick={handleAddLink}
+                            className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+                        >
+                            Add
+                        </button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                        {links.map((link, index) => (
+                            <div
+                                key={index}
+                                className="flex items-center bg-blue-200 text-blue-800 px-3 py-1 rounded-full"
+                            >
+                                <span>{shorten(link)}</span>
+                                <button
+                                    type="button"
+                                    onClick={() => handleRemoveLink(index)}
+                                    className="ml-2 text-blue-500 hover:text-blue-700 focus:outline-none"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            <div className="mb-4 flex items-center gap-2">
+                <input
+                    type="checkbox"
+                    checked={forOther}
+                    onChange={(e) => setForOther(e.target.checked)}
+                    className="cursor-pointer"
+                />
+                <label className="text-gray-700 text-sm">Create post for someone</label>
+            </div>
+
+            <button
+                type="submit"
+                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+                disabled={postSending}
+                onClick={handleSubmit}
+            >
+                Create Post
+            </button>
+
+            {uploadImageLoading && (
+                <div className="absolute top-0 left-0 h-full w-full flex flex-col gap-3 items-center justify-center bg-black bg-opacity-15 rounded-2xl">
+                    <CgSpinner className="text-white animate-spin h-7 w-7" />
+                    <span className="text-sm text-white">Uploading...</span>
+                </div>
+            )}
         </div>
     );
 };

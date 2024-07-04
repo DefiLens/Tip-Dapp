@@ -94,7 +94,7 @@ const NavigationLayout = ({ children }: any) => {
 
     return (
         <main className="h-screen">
-            <div className="relative max-w-7xl w-full mx-auto flex">
+            <div className="relative max-w-6xl w-full mx-auto flex">
                 <Sidebar />
                 <div className="relative flex-1 h-full">
                     <div className="sticky top-0 z-30">

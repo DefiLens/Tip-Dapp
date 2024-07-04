@@ -6,6 +6,7 @@ import PostCard from "@/components/post/PostCard";
 import axiosInstance from "@/utils/axiosInstance";
 import { usePrivy } from "@privy-io/react-auth";
 import { BASE_URL } from "@/utils/keys";
+import PostSkeleton from "@/components/skeletons/PostSkeleton";
 
 const page = () => {
     const { getAccessToken } = usePrivy();
@@ -16,7 +17,6 @@ const page = () => {
     useEffect(() => {
         const fetchBookmarkedPosts = async () => {
             try {
-
                 const accessToken = await getAccessToken();
                 const response = await axios.get(`${BASE_URL}/post/bookmarked`, {
                     headers: {
@@ -37,7 +37,16 @@ const page = () => {
 
     return (
         <NavigationLayout>
-            {posts.length === 0 ? <p className="p-8 text-center w-full">No bookmarked posts found.</p> : posts.map((post) => <PostCard post={post} />)}
+            {loading ? (
+                <>
+                    <PostSkeleton />
+                    <PostSkeleton />
+                </>
+            ) : posts.length === 0 ? (
+                <p className="p-8 text-center w-full">No bookmarked posts found.</p>
+            ) : (
+                posts.map((post) => <PostCard post={post} />)
+            )}
         </NavigationLayout>
     );
 };

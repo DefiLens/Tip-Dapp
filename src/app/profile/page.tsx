@@ -1,6 +1,7 @@
 "use client";
 import AvatarIcon from "@/components/Avatar";
 import UserList from "@/components/UserList";
+import CustomButton from "@/components/custom/CustomButtons";
 import NavigationLayout from "@/components/layouts/NavigationLayout";
 import PostCard from "@/components/post/PostCard";
 import UserListSkeleton from "@/components/skeletons/UserListSkeleton";
@@ -8,12 +9,14 @@ import { DataState } from "@/context/dataProvider";
 import axiosInstance from "@/utils/axiosInstance";
 import { postDateFormat, shorten } from "@/utils/constants";
 import { BASE_URL } from "@/utils/keys";
-import { usePrivy } from "@privy-io/react-auth";
+import { useLinkAccount, usePrivy } from "@privy-io/react-auth";
 import axios from "axios";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { IoMdCreate } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
+import { HiBadgeCheck } from "react-icons/hi";
+import PostSkeleton from "@/components/skeletons/PostSkeleton";
 
 const UserFollowers = ({ url }: any) => {
     const { user } = DataState();
@@ -139,7 +142,7 @@ const TipStats = () => {
 };
 
 const page = () => {
-    const { user, isGettingUserData } = DataState();
+    const { user, setUser, isGettingUserData } = DataState();
     const { getAccessToken } = usePrivy();
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -150,13 +153,6 @@ const page = () => {
     useEffect(() => {
         const fetchUserPosts = async () => {
             try {
-                // const response = await axiosInstance.get("/post/userPosts", {
-                //     params: {
-                //         page: page,
-                //         limit: 10, // Adjust limit as needed
-                //     },
-                // });
-
                 const accessToken = await getAccessToken();
                 const response = await axios.get(`${BASE_URL}/post/userPosts`, {
                     params: {
@@ -184,11 +180,37 @@ const page = () => {
     const [showFollowers, setShowFollowers] = useState<boolean>(false);
     const [showFollowing, setShowFollowing] = useState<boolean>(false);
 
+    const { linkFarcaster } = useLinkAccount({
+        onSuccess: async (user, linkMethod, linkedAccount) => {
+            // console.log("Farcaster: ", user);
+            linkFarcasterApi(user);
+        },
+        onError: (error) => {
+            console.error(error);
+        },
+    });
+
+    const linkFarcasterApi = async (data: any) => {
+        try {
+            const accessToken = await getAccessToken();
+            const res = await axios.post(`${BASE_URL}/user/link-farcaster`, data, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            // const res = await axiosInstance.post("/user/link-farcaster", { farcasterAccount: data });
+            setUser(res.data.user);
+        } catch (error) {
+            console.error("Error sending user data:", error);
+        }
+    };
+
     return (
         <NavigationLayout>
             <div className="relative">
                 {/* <div className="flex flex-col gap-7 p-4 border-b border-blue-100 sticky z-[1] top-16 bg-white h-48"> */}
-                <div className="flex flex-col gap-7 p-4 border-b border-blue-100 bg-white h-48">
+                <div className="flex flex-col gap-7 p-4 border-b border-blue-100 bg-white ">
                     <Link href="/profile/edit" className="absolute top-3 right-3 text-blue-800 text-xl">
                         <IoMdCreate />
                     </Link>
@@ -204,8 +226,9 @@ const page = () => {
                                 </div>
                             )}
                             <div className="flex flex-col h-20 justify-center text-sm text-gray-500">
-                                <p className="text-primary-text text-2xl font-bold">
+                                <p className="text-primary-text text-2xl font-bold flex items-center gap-1">
                                     {user?.name ? user?.name : shorten(user?.smartAccountAddress)}
+                                    {user?.isFarcasterLinked && <HiBadgeCheck className="text-blue-600 text-xl" />}
                                 </p>
                                 <p>{user?.bio?.slice(0, 130)}</p>
                             </div>
@@ -228,14 +251,24 @@ const page = () => {
                             </button>
                         </div>
                     </div>
+                    <div>
+                        {!user?.isFarcasterLinked && (
+                            <CustomButton onClick={linkFarcaster}>Link Farcaster</CustomButton>
+                        )}
+                    </div>
                 </div>
 
                 <div className="flex flex-col gap-3 p-4 border-b border-blue-100">
                     <h1 className="text-gray-700 text-2xl font-semibold px-4 border-blue-100">My Posts</h1>
                     <div className="grid gap-4">
-                        {posts.map((post, index) => (
-                            <PostCard key={index} post={post} />
-                        ))}
+                        {loading ? (
+                            <>
+                                <PostSkeleton />
+                                <PostSkeleton />
+                            </>
+                        ) : (
+                            posts.map((post, index) => <PostCard key={index} post={post} />)
+                        )}
                     </div>
                 </div>
                 {showFollowers && (

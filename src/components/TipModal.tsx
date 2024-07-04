@@ -24,7 +24,7 @@ import Link from "next/link";
 import Loading from "./Loading";
 import axios from "axios";
 
-const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
+const TipModal = ({ post, showTipModal, setShowTipModal, setTotalTipAmount }: any) => {
     const { getAccessToken } = usePrivy();
 
     const { smartAccountAddress, smartAccount, biconomySession } = DataState();
@@ -110,6 +110,7 @@ const TipModal = ({ post, showTipModal, setShowTipModal }: any) => {
                 const success = await wait();
 
                 if (success.receipt.transactionHash) {
+                    setTotalTipAmount((prev: number) => prev + Number(amount));
                     setTxhash(`https://basescan.org/tx/${success.receipt.transactionHash}`);
                     sendTip(post?._id, post?.userId?._id, amount, token);
                     setShowAnimation(true);

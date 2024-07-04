@@ -43,7 +43,7 @@ const Header = () => {
     };
 
     return (
-        <header className="mx-auto flex justify-end gap-3 items-center py-4 px-4 text-black bg-white bg-opacity-55 backdrop-blur-sm border-b border-blue-100 h-16">
+        <header className="mx-auto flex justify-end gap-3 items-center py-4 px-4 text-black bg-white border-b border-blue-100 h-16">
             <div className="text-2xl font-bold"></div>
             {/* <CustomButton onClick={clearSession}>Clear Session</CustomButton> */}
             <CustomButton onClick={() => router.push("/create-post")}>Create Post</CustomButton>

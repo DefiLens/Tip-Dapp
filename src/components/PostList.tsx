@@ -4,6 +4,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import axios from "axios";
 import { BASE_URL } from "@/utils/keys";
 import axiosInstance from "@/utils/axiosInstance";
+import PostSkeleton from "./skeletons/PostSkeleton";
 
 interface ILinkedAccount {
     address: string;
@@ -39,6 +40,7 @@ interface IUser {
     followers: string[];
     following: string[];
     wallet: IWallet;
+    isFarcasterLinked: boolean;
 }
 
 export interface IPost {
@@ -46,7 +48,7 @@ export interface IPost {
     userId: IUser;
     otherUserProfile?: any; // Adjust the type based on the actual structure if known
     content: string;
-    imgUrl: string;
+    imgUrl: [];
     links: string[];
     forOther: boolean;
     smartWalletAddress: string;
@@ -89,18 +91,12 @@ const PostList: React.FC = () => {
     const [filters, setFilters] = useState({ userId: "", dappName: "" });
     const { getAccessToken } = usePrivy();
 
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                // const response = await axiosInstance.get("/post", {
-                //     params: {
-                //         page,
-                //         limit: 20,
-                //         userId: filters.userId,
-                //         dappName: filters.dappName,
-                //     },
-                // });
-
+                setIsLoading(true);
                 const accessToken = await getAccessToken();
                 const response = await axios.get(`${BASE_URL}/post`, {
                     headers: {
@@ -110,8 +106,10 @@ const PostList: React.FC = () => {
 
                 setPosts(response.data.posts);
                 setTotalPages(response.data.totalPages);
+                setIsLoading(false);
             } catch (error) {
                 console.error("Error fetching posts:", error);
+                setIsLoading(false);
             }
         };
 
@@ -121,15 +119,6 @@ const PostList: React.FC = () => {
     const morePosts = async () => {
         try {
             const nextPage = page + 1;
-            // const response = await axiosInstance.get("/post", {
-            //     params: {
-            //         page: nextPage,
-            //         limit: 20,
-            //         userId: filters.userId,
-            //         dappName: filters.dappName,
-            //     },
-            // });
-
             const accessToken = await getAccessToken();
             const response = await axios.get(`${BASE_URL}/post`, {
                 params: {
@@ -154,9 +143,14 @@ const PostList: React.FC = () => {
     return (
         <div className="container mx-auto">
             <div className="grid gap-4">
-                {posts.map((post, index) => (
-                    <PostCard key={index} post={post} />
-                ))}
+                {isLoading ? (
+                    <>
+                        <PostSkeleton />
+                        <PostSkeleton />
+                    </>
+                ) : (
+                    posts.map((post, index) => <PostCard key={index} post={post} />)
+                )}
             </div>
             {page < totalPages && (
                 <div className="mt-4 flex justify-center items-center">

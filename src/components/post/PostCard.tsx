@@ -18,9 +18,63 @@ import { IoCart } from "react-icons/io5";
 import axios from "axios";
 import { BASE_URL } from "@/utils/keys";
 import { usePrivy } from "@privy-io/react-auth";
+import { IoIosArrowBack, IoIosArrowDropleftCircle, IoIosArrowDroprightCircle, IoIosArrowForward } from "react-icons/io";
+import { HiBadgeCheck } from "react-icons/hi";
+
 interface PostCardProps {
     post: IPost;
 }
+const ImageGallery = ({ images }: any) => {
+    const [selectedImage, setSelectedImage] = useState(images[0]);
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const handleImageClick = (index) => {
+        setSelectedImage(images[index]);
+        setCurrentIndex(index);
+    };
+
+    const handlePrevious = () => {
+        if (currentIndex > 0) {
+            setCurrentIndex((prevIndex) => prevIndex - 1);
+            setSelectedImage(images[currentIndex - 1]);
+        }
+    };
+
+    const handleNext = () => {
+        if (currentIndex < images.length - 1) {
+            setCurrentIndex((prevIndex) => prevIndex + 1);
+            setSelectedImage(images[currentIndex + 1]);
+        }
+    };
+
+    const handleClose = () => {
+        setSelectedImage(null);
+    };
+
+    return (
+        <div className="w-full flex justify-center items-center">
+            <div className="relative w-full max-w-5xl">
+                <img src={selectedImage} alt="Selected" className="max-h-screen rounded-xl" />
+                {currentIndex > 0 && (
+                    <button
+                        className="absolute top-1/2 left-4 transform -translate-y-1/2 text-white text-lg font-bold bg-white p-0.5 rounded-full"
+                        onClick={handlePrevious}
+                    >
+                        <IoIosArrowBack className="text-black" />
+                    </button>
+                )}
+                {currentIndex < images.length - 1 && (
+                    <button
+                        className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white text-lg font-bold bg-white p-0.5 rounded-full"
+                        onClick={handleNext}
+                    >
+                        <IoIosArrowForward className="text-black" />
+                    </button>
+                )}
+            </div>
+        </div>
+    );
+};
 
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
     const { getAccessToken } = usePrivy();
@@ -28,8 +82,9 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     const [showTipModal, setShowTipModal] = useState<boolean>(false);
     const [likeCount, setLikeCount] = useState<number>(post?.likes?.length);
 
-    const [liked, setLiked] = useState<boolean>(post.likes.includes(user?._id));
-    const [bookmarked, setBookmarked] = useState(post.bookmarks.includes(user?._id));
+    const [liked, setLiked] = useState<boolean>(post?.likes?.includes(user?._id));
+    const [bookmarked, setBookmarked] = useState(post?.bookmarks?.includes(user?._id));
+    const [totalTipAmount, setTotalTipAmount] = useState<number>(post?.totalTips);
     const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
     const handleLike = async () => {
@@ -185,7 +240,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                 </button>
             )}
             <div className="z-10 bg-white p-4 min-w-full max-w-md flex flex-col gap-4 border-b border-blue-100">
-                <div className="flex gap-3 w-full">
+                <div className="flex gap-4 w-full">
                     {post.userId?.image ? (
                         <img
                             src={post.userId?.image || "https://via.placeholder.com/40"}
@@ -199,7 +254,11 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                     )}
                     <div className="flex flex-col h-12 justify-center text-sm">
                         <p className="text-lg text-primary-text font-semibold flex items-center gap-2">
-                            <span>{post.forOther ? post.otherUserProfile.profileName : post.userId?.name}</span>
+                            <span className="flex items-center gap-1">
+                                {post.forOther ? post.otherUserProfile.profileName : post.userId?.name}
+                                {post?.userId?.isFarcasterLinked && <HiBadgeCheck className="text-blue-600 text-xl" />}
+                            </span>
+
                             {post.forOther && <span className="text-xs">created by</span>}
                             {post.forOther && (
                                 <span className="text-base">
@@ -228,72 +287,88 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                         )}
                     </div>
                 </div>
+                <div className="pl-16 flex flex-col gap-4">
                     {/* <pre className="text-base text-gray-500 whitespace-pre-wrap font-sans">{post.content}</pre> */}
-                <div className="text-base text-gray-700 whitespace-pre-wrap font-sans">
-                    {isExpanded
-                        ? post?.content
-                        : post?.content.slice(0, 400) + (post?.content.length > 400 ? "..." : "")}
-                    {post?.content.length > 400 && (
-                        <button onClick={toggleExpanded} className="text-blue-500 text-xs ml-2">
-                            {isExpanded ? "Show less" : "Read more"}
-                        </button>
+                    <div className="text-base text-gray-700 whitespace-pre-wrap font-sans">
+                        {isExpanded
+                            ? post?.content
+                            : post?.content.slice(0, 400) + (post?.content.length > 400 ? "..." : "")}
+                        {post?.content.length > 400 && (
+                            <button onClick={toggleExpanded} className="text-blue-500 text-xs ml-2">
+                                {isExpanded ? "Show less" : "Read more"}
+                            </button>
+                        )}
+                    </div>
+                    {/* <div className="grid grid-cols-2 gap-3">
+                        {post?.imgUrl &&
+                            post?.imgUrl?.map((item: string, index: number) => (
+                                <img key={index} src={item} className="rounded-lg w-full" />
+                            ))}
+                    </div> */}
+                    <ImageGallery images={post && post?.imgUrl} />
+                    {post.links && post.links.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                            {post.links.map((link: string, index: number) => (
+                                <a
+                                    key={index}
+                                    href={link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-500 underline"
+                                >
+                                    {link}
+                                </a>
+                            ))}
+                        </div>
                     )}
-                </div>
-                {post?.imgUrl && <img src={post?.imgUrl} className="rounded-lg w-full lg:w-3/4" />}
-                {post.links && post.links.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                        {post.links.map((link: string, index: number) => (
-                            <a
-                                key={index}
-                                href={link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-500 underline"
+                    <div className="flex gap-6 items-center h-8 border-b border-blue-100">
+                        <span className="text-primary-text text-xs">
+                            {likeCount} {likeCount > 1 ? "Likes" : "Like"}
+                        </span>
+                        <span className="text-primary-text text-xs">
+                            {post?.tips?.length} {post?.tips?.length > 1 ? "Tips" : "Tip"}
+                        </span>
+                        <button className="text-primary-text text-xs hover:text-primary-text hover:underline cursor-pointer">
+                            {/* Tip of {post.totalTips} USDC */}
+                            Tip of {totalTipAmount} USDC
+                        </button>
+                    </div>
+                    <div className="flex gap-4 justify-between items-center">
+                        <div className="flex gap-4">
+                            <button
+                                onClick={handleLike}
+                                className="flex gap-2 items-center rounded-lg bg-blue-100 hover:bg-blue-200 px-2 py-1 cursor-pointer transition-all duration-300 text-primary-text text-xl"
                             >
-                                {link}
-                            </a>
-                        ))}
+                                {liked ? (
+                                    <>
+                                        <AiFillLike className="text-blue-500" />
+                                        <span className="text-xs">Liked</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <AiOutlineLike />
+                                        <span className="text-xs">Like</span>
+                                    </>
+                                )}
+                            </button>
+                            <button
+                                onClick={openTipModal}
+                                className="flex gap-2 items-center rounded-lg bg-blue-100 hover:bg-blue-200 px-2 py-1 cursor-pointer transition-all duration-300 text-primary-text text-xl"
+                            >
+                                <PiCoinLight />
+                                <span className="text-xs">Tip</span>
+                            </button>
+                        </div>
                     </div>
+                </div>
+                {showTipModal && (
+                    <TipModal
+                        post={post}
+                        showTipModal={showTipModal}
+                        setShowTipModal={setShowTipModal}
+                        setTotalTipAmount={setTotalTipAmount}
+                    />
                 )}
-                <div className="flex gap-6 items-center h-8 border-b border-blue-100">
-                    <span className="text-primary-text text-xs">
-                        {likeCount} {likeCount > 1 ? "Likes" : "Like"}
-                    </span>
-                    <span className="text-primary-text text-xs">
-                        {post?.tips?.length} {post?.tips?.length > 1 ? "Tips" : "Tip"}
-                    </span>
-                    <button className="text-primary-text text-xs hover:text-primary-text hover:underline cursor-pointer">
-                        Tip of {post.totalTips} USDC
-                    </button>
-                </div>
-                <div className="flex gap-4 justify-between items-center">
-                    <div className="flex gap-4">
-                        <button
-                            onClick={handleLike}
-                            className="flex gap-2 items-center rounded-lg bg-blue-100 hover:bg-blue-200 px-2 py-1 cursor-pointer transition-all duration-300 text-primary-text"
-                        >
-                            {liked ? (
-                                <>
-                                    <AiFillLike className="text-blue-500" />
-                                    <span className="text-xs">Liked</span>
-                                </>
-                            ) : (
-                                <>
-                                    <AiOutlineLike />
-                                    <span className="text-xs">Like</span>
-                                </>
-                            )}
-                        </button>
-                        <button
-                            onClick={openTipModal}
-                            className="flex gap-2 items-center rounded-lg bg-blue-100 hover:bg-blue-200 px-2 py-1 cursor-pointer transition-all duration-300 text-primary-text"
-                        >
-                            <PiCoinLight />
-                            <span className="text-xs">Tip</span>
-                        </button>
-                    </div>
-                </div>
-                {showTipModal && <TipModal post={post} showTipModal={showTipModal} setShowTipModal={setShowTipModal} />}
             </div>
         </div>
     );
