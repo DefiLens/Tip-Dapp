@@ -12,6 +12,7 @@ import axios from "axios";
 import { decreasePowerByDecimals, usdcByChain } from "@/utils/constants";
 import BigNumber from "bignumber.js";
 import { usePrivy } from "@privy-io/react-auth";
+import { IPost } from "@/components/PostList";
 BigNumber.config({ DECIMAL_PLACES: 10 });
 
 export const DataContext = createContext<any | null>(null);
@@ -122,13 +123,11 @@ const DataProvider = ({ children }: any) => {
         const fetchUserData = async () => {
             try {
                 const accessToken = await getAccessToken();
-                const response = await axios.get(`${BASE_URL}/user`, 
-                {
+                const response = await axios.get(`${BASE_URL}/user`, {
                     headers: {
-                      Authorization: `Bearer ${accessToken}`,
+                        Authorization: `Bearer ${accessToken}`,
                     },
-                  }
-                );
+                });
 
                 setUser(response.data);
                 setIsGettingUserData(false);
@@ -144,6 +143,7 @@ const DataProvider = ({ children }: any) => {
     const isPrivyConnected: any =
         authenticated && privyUser?.linkedAccounts.find((account) => account.type === "farcaster");
 
+    const [posts, setPosts] = useState<IPost[]>([]);
     return (
         <DataContext.Provider
             value={{
@@ -161,6 +161,9 @@ const DataProvider = ({ children }: any) => {
                 isLoadingBiconomySession,
                 setIsLoadingBiconomySession,
                 checkSession,
+                getUscdBalance,
+                posts,
+                setPosts,
             }}
         >
             {children}

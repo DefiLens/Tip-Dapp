@@ -5,6 +5,7 @@ import axios from "axios";
 import { BASE_URL } from "@/utils/keys";
 import axiosInstance from "@/utils/axiosInstance";
 import PostSkeleton from "./skeletons/PostSkeleton";
+import { DataState } from "@/context/dataProvider";
 
 interface ILinkedAccount {
     address: string;
@@ -56,6 +57,7 @@ export interface IPost {
     likes: string[]; // Assuming likes are an array of user IDs
     bookmarks: string[]; // Assuming bookmarks are an array of user IDs
     totalTips: number;
+    repost: IPost;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -85,7 +87,9 @@ interface Post {
 }
 
 const PostList: React.FC = () => {
-    const [posts, setPosts] = useState<IPost[]>([]);
+    // const [posts, setPosts] = useState<IPost[]>([]);
+    const { posts, setPosts } = DataState();
+    
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [filters, setFilters] = useState({ userId: "", dappName: "" });
@@ -155,7 +159,7 @@ const PostList: React.FC = () => {
                         <PostSkeleton />
                     </>
                 ) : (
-                    posts.map((post, index) => <PostCard key={index} post={post} />)
+                    posts.map((post, index) => <PostCard key={index} post={post} isRepost={false} />)
                 )}
             </div>
             {page < totalPages && (

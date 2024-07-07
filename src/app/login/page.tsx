@@ -217,7 +217,6 @@ const Login: React.FC = () => {
                 wallet: user.wallet,
                 smartAccountAddress: address,
             };
-
             sendUserDataToBackend(userData);
         },
         onError: (error) => {
@@ -249,6 +248,7 @@ const Login: React.FC = () => {
                 setUser(response.data.user);
                 router.push("/");
             } else {
+                setUser(response.data.user);
                 setIsWalletConnected(true);
             }
         } catch (error) {
@@ -268,7 +268,6 @@ const Login: React.FC = () => {
                     },
                 }
             );
-
             // const res = await axiosInstance.post("/user/link-farcaster", { farcasterAccount: data });
             setUser(res.data.user);
             setIsLinkedFarcaster(true);
@@ -294,10 +293,10 @@ const Login: React.FC = () => {
     }, [authenticated, isBiconomySession]);
     return (
         <AuthLayout>
-            <div className="text-center flex flex-col items-center justify-center relative h-full DM_Mono">
+            <div className="text-center flex flex-col items-center justify-center relative h-full">
                 {!isWalletConnected ? (
                     <div className="text-center flex flex-col items-center">
-                        <h2 className="text-3xl font-semibold mb-8 text-gray-800 ">Login using your wallet</h2>
+                        <h2 className="text-3xl font-semibold mb-8 text-W10 ">Login using your wallet</h2>
                         <button
                             onClick={login}
                             className="bg-B0 hover:bg-B10 text-white text-xl font-medium py-3 px-7 rounded-lg hover:scale-105 transition-all shadow-md hover:shadow-2xl"
@@ -309,7 +308,7 @@ const Login: React.FC = () => {
                     ready &&
                     authenticated && (
                         <div className="text-center flex flex-col items-center">
-                            <h2 className="text-3xl font-semibold mb-4 text-gray-800">
+                            <h2 className="text-3xl font-semibold mb-4 text-W10">
                                 Please link with Farcaster
                                 <br /> to proceed.
                             </h2>
@@ -323,7 +322,7 @@ const Login: React.FC = () => {
                                 onClick={() => {
                                     setIsLinkedFarcaster(true);
                                 }}
-                                className="mt-5 underline text-sm"
+                                className="mt-5 underline text-sm text-W10"
                             >
                                 Skip
                             </button>
@@ -331,12 +330,12 @@ const Login: React.FC = () => {
                     )
                 ) : !isSession ? (
                     <div className="text-center flex flex-col items-center">
-                        <h2 className="text-3xl font-semibold mb-4 text-gray-800">
+                        <h2 className="text-3xl font-semibold mb-4 text-W10">
                             Create a session for a seamless
                             <br /> payment experience
                         </h2>
                         <CreateSessionButton setIsSession={setIsSession} />
-                        <div className="mt-8 text-sm text-gray-700">
+                        <div className="mt-8 text-W10">
                             <p>
                                 After creating a session, your wallet will not need to be opened for sending
                                 transactions.
@@ -347,19 +346,19 @@ const Login: React.FC = () => {
                             onClick={() => {
                                 setIsSession(true);
                             }}
-                            className="mt-5 underline text-sm"
+                            className="mt-5 underline text-sm text-W10"
                         >
                             Skip
                         </button>
                     </div>
                 ) : (
                     <div className="text-center flex flex-col items-center justify-center">
-                        <p className="mb-8 font-semibold text-2xl w-3/4 text-gray-800">
+                        <p className="mb-8 font-semibold text-2xl w-3/4 text-W10">
                             Deposit USDC to your account to start using the platform.
                         </p>
                         <Link
                             href="/deposit"
-                            className="bg-B0 hover:bg-B10 text-white text-xl font-medium py-3 px-7 rounded-lg hover:scale-105 transition-all shadow-md hover:shadow-2xl"
+                            className="bg-B0 hover:bg-B10 text-W10 text-xl font-medium py-3 px-7 rounded-lg hover:scale-105 transition-all shadow-md hover:shadow-2xl "
                         >
                             Deposit USDC
                         </Link>
@@ -367,13 +366,13 @@ const Login: React.FC = () => {
                             onClick={() => {
                                 router.push("/");
                             }}
-                            className="mt-5 underline text-sm"
+                            className="mt-5 underline text-sm text-W10"
                         >
                             Skip
                         </button>
                     </div>
                 )}
-                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 mt-8 text-sm text-gray-700 flex items-center gap-3 w-full justify-center">
+                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 mt-8 text-sm text-W100 flex items-center gap-3 w-full justify-center">
                     <p>Protected by </p>
                     <img src="https://auth.privy.io/logos/privy-logo.png" className="h-5" />
                 </div>
@@ -382,4 +381,4 @@ const Login: React.FC = () => {
     );
 };
 
-export default Login; 
+export default Login;

@@ -45,7 +45,7 @@ const page = () => {
             ) : posts.length === 0 ? (
                 <p className="p-8 text-center w-full">No bookmarked posts found.</p>
             ) : (
-                posts.map((post) => <PostCard post={post} />)
+                posts.map((post) => <PostCard post={post} isRepost={false} />)
             )}
         </NavigationLayout>
     );

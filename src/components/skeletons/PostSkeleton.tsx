@@ -6,8 +6,8 @@ const PostSkeleton = () => {
             <div className="flex gap-4 w-full">
                 <div className="h-12 w-12 animate-pulse rounded-full bg-gray-200"></div>
                 <div className="flex flex-col h-12 justify-center gap-1">
-                    <p className="h-4 rounded-lg w-28 bg-gray-200"></p>
-                    <span className="h-4 rounded-lg w-40 bg-gray-200"></span>
+                    <p className="h-4 rounded-lg w-28 bg-gray-200 animate-pulse"></p>
+                    <span className="h-4 rounded-lg w-40 bg-gray-200 animate-pulse"></span>
                 </div>
             </div>
             <div className="pl-16 flex flex-col gap-2">

@@ -21,9 +21,11 @@ import { usePrivy } from "@privy-io/react-auth";
 import { IoIosArrowBack, IoIosArrowDropleftCircle, IoIosArrowDroprightCircle, IoIosArrowForward } from "react-icons/io";
 import { HiBadgeCheck } from "react-icons/hi";
 import { FaLink } from "react-icons/fa";
-
+import { BsArrowRepeat } from "react-icons/bs";
+import Repost from "../Repost";
 interface PostCardProps {
     post: IPost;
+    isRepost: boolean;
 }
 const ImageGallery = ({ images }: any) => {
     const [selectedImage, setSelectedImage] = useState(images[0]);
@@ -55,7 +57,7 @@ const ImageGallery = ({ images }: any) => {
     return (
         <div className="w-full flex justify-center items-center">
             <div className="relative w-full max-w-5xl">
-                <img src={selectedImage} alt="Selected" className="max-h-screen rounded-xl" />
+                <img src={selectedImage} alt="Selected" className="rounded-xl object-contain w-full" />
                 {currentIndex > 0 && (
                     <button
                         className="absolute top-1/2 left-4 transform -translate-y-1/2 text-white text-lg font-bold bg-white p-0.5 rounded-full"
@@ -77,10 +79,11 @@ const ImageGallery = ({ images }: any) => {
     );
 };
 
-const PostCard: React.FC<PostCardProps> = ({ post }) => {
+const PostCard: React.FC<PostCardProps> = ({ post, isRepost }) => {
     const { getAccessToken } = usePrivy();
     const { user, setUser, usdcBalance, isBiconomySession } = DataState();
     const [showTipModal, setShowTipModal] = useState<boolean>(false);
+    const [showRepost, setShowRepost] = useState<boolean>(false);
     const [likeCount, setLikeCount] = useState<number>(post?.likes?.length);
 
     const [liked, setLiked] = useState<boolean>(post?.likes?.includes(user?._id));
@@ -232,19 +235,21 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
     return (
         <div className="relative">
-            {user?._id !== post?.userId?._id && (
+            {!isRepost && user?._id !== post?.userId?._id && (
                 <button
                     onClick={handleBookmark}
-                    className="cursor-pointer absolute top-4 right-4 text-2xl text-secondary-text"
+                    className="cursor-pointer absolute top-4 right-4 text-xl text-secondary-text"
                 >
-                    {bookmarked ? <FaBookmark className="text-blue-500" /> : <FaRegBookmark />}
+                    {bookmarked ? <FaBookmark className="text-B20" /> : <FaRegBookmark />}
                 </button>
             )}
-            <div className="z-10 bg-white p-4 min-w-full max-w-md flex flex-col gap-4 border-b border-blue-100">
+            <div
+                className={`z-10 bg-white p-4 min-w-full max-w-md flex flex-col gap-4 ${!isRepost && "border-b border-B900"}`}
+            >
                 <div className="flex gap-4 w-full">
-                    {post.userId?.image ? (
+                    {post?.userId?.image ? (
                         <img
-                            src={post.userId?.image || "https://via.placeholder.com/40"}
+                            src={post?.userId?.image || "https://via.placeholder.com/40"}
                             className="h-12 w-12 rounded-full"
                             alt="Profile"
                         />
@@ -256,12 +261,16 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                     <div className="flex flex-col h-12 justify-center text-sm">
                         <p className="text-lg text-primary-text font-semibold flex items-center gap-2">
                             <span className="flex items-center gap-1">
-                                {post.forOther ? post.otherUserProfile.profileName : post.userId?.name}
-                                {post?.userId?.isFarcasterLinked && <HiBadgeCheck className="text-blue-600 text-xl" />}
+                                {post?.forOther
+                                    ? post?.otherUserProfile.profileName
+                                    : post?.userId?.name
+                                      ? post?.userId?.name
+                                      : shorten(post?.userId?.smartAccountAddress)}
+                                {post?.userId?.isFarcasterLinked && <HiBadgeCheck className="text-green-600 text-xl" />}
                             </span>
 
-                            {post.forOther && <span className="text-xs">created by</span>}
-                            {post.forOther && (
+                            {post?.forOther && <span className="text-xs">created by</span>}
+                            {post?.forOther && (
                                 <span className="text-base">
                                     (
                                     {post?.userId?.name
@@ -271,15 +280,13 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                                 </span>
                             )}
                         </p>
-                        <span className="text-xs text-secondary-text">{postDateFormat(post.createdAt)}</span>
+                        <span className="text-xs text-secondary-text">{postDateFormat(post?.createdAt)}</span>
                     </div>
                     <div className="h-12 flex items-center">
-                        {post?.userId?._id !== user?._id && (
+                        {!isRepost && post?.userId?._id !== user?._id && (
                             <button
                                 className={`px-2 py-1 rounded-xl transition-all duration-300 text-sm ${
-                                    isFollowing
-                                        ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                                        : "bg-blue-100 text-blue-800 hover:bg-blue-200"
+                                    isFollowing ? "bg-W50 text-B20 hover:bg-W40" : "bg-W50 text-B20 hover:bg-W40"
                                 }`}
                                 onClick={() => handleToggleFollow(post?.userId?._id)}
                             >
@@ -289,84 +296,94 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                     </div>
                 </div>
                 <div className="pl-16 flex flex-col gap-4">
-                    {/* <pre className="text-base text-gray-500 whitespace-pre-wrap font-sans">{post.content}</pre> */}
-                    <div className="text-base text-gray-700 whitespace-pre-wrap font-sans">
+                    <div className="text-base text-gray-700 whitespace-pre-wrap font-sans space-x-1">
                         {isExpanded
                             ? post?.content
-                            : post?.content.slice(0, 400) + (post?.content.length > 400 ? "..." : "")}
-                        {post?.content.length > 400 && (
+                            : post?.content?.slice(0, 400) + (post?.content?.length > 400 ? "..." : "")}
+                        {post?.content?.length > 400 && (
                             <button onClick={toggleExpanded} className="text-blue-500 text-xs ml-2">
                                 {isExpanded ? "Show less" : "Read more"}
                             </button>
                         )}
                     </div>
-                    {/* <iframe
-                        width="full"
-                        className="rounded-lg"
-                        height="315"
-                        title="YouTube video player"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        referrerpolicy="strict-origin-when-cross-origin"
-                        allowfullscreen
-                    ></iframe> */}
-                    {post?.imgUrl?.length > 0 && <ImageGallery images={post && post?.imgUrl} />}
 
-                    {post.links && post.links.length > 0 && (
-                        <div className="flex flex-col gap-1">
-                            {post.links.map((link: string, index: number) => (
-                                <a
-                                    key={index}
-                                    href={link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-blue-500 flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-0.5 w-fit"
-                                >
-                                    <FaLink className="text-sm" />
-                                    {link}
-                                </a>
-                            ))}
+                    {post && post.repost === null ? (
+                        <>
+                            {post?.imgUrl?.length > 0 && <ImageGallery images={post && post?.imgUrl} />}
+
+                            {post?.links && post.links.length > 0 && (
+                                <div className="flex flex-col gap-1">
+                                    {post.links.map((link: string, index: number) => (
+                                        <a
+                                            key={index}
+                                            href={link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-500 flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-0.5 w-fit"
+                                        >
+                                            <FaLink className="text-sm" />
+                                            {link}
+                                        </a>
+                                    ))}
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <div className="border-2 border-B800 rounded-3xl overflow-hidden">
+                            {post && post.repost && <PostCard post={post.repost} isRepost={true} />}
                         </div>
                     )}
-                    <div className="flex gap-6 items-center h-8 border-b border-blue-100">
-                        <span className="text-primary-text text-xs">
-                            {likeCount} {likeCount > 1 ? "Likes" : "Like"}
-                        </span>
-                        <span className="text-primary-text text-xs">
-                            {post?.tips?.length} {post?.tips?.length > 1 ? "Tips" : "Tip"}
-                        </span>
-                        <button className="text-primary-text text-xs hover:text-primary-text hover:underline cursor-pointer">
-                            {/* Tip of {post.totalTips} USDC */}
-                            Tip of {totalTipAmount} USDC
-                        </button>
-                    </div>
-                    <div className="flex gap-4 justify-between items-center">
-                        <div className="flex gap-4">
-                            <button
-                                onClick={handleLike}
-                                className="flex gap-2 items-center rounded-lg bg-blue-100 hover:bg-blue-200 px-2 py-1 cursor-pointer transition-all duration-300 text-primary-text text-xl"
-                            >
-                                {liked ? (
-                                    <>
-                                        <AiFillLike className="text-blue-500" />
-                                        <span className="text-xs">Liked</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <AiOutlineLike />
-                                        <span className="text-xs">Like</span>
-                                    </>
-                                )}
-                            </button>
-                            <button
-                                onClick={openTipModal}
-                                className="flex gap-2 items-center rounded-lg bg-blue-100 hover:bg-blue-200 px-2 py-1 cursor-pointer transition-all duration-300 text-primary-text text-xl"
-                            >
-                                <PiCoinLight />
-                                <span className="text-xs">Tip</span>
+                    {!isRepost && (
+                        <div className={`flex gap-6 items-center h-8 ${!isRepost && "border-b border-B900"}`}>
+                            <span className="text-primary-text text-xs">
+                                {likeCount} {likeCount > 1 ? "Likes" : "Like"}
+                            </span>
+                            <span className="text-primary-text text-xs">
+                                {post?.tips?.length} {post?.tips?.length > 1 ? "Tips" : "Tip"}
+                            </span>
+                            <button className="text-primary-text text-xs hover:text-primary-text hover:underline cursor-pointer">
+                                Tip of {totalTipAmount} USDC
                             </button>
                         </div>
-                    </div>
+                    )}
+                    {!isRepost && (
+                        <div className="flex gap-4 justify-between items-center">
+                            <div className="flex gap-4">
+                                <button
+                                    onClick={handleLike}
+                                    className="flex gap-2 items-center rounded-lg bg-W50 hover:bg-W40 px-2 py-1 cursor-pointer transition-all duration-300 text-primary-text text-xl"
+                                >
+                                    {liked ? (
+                                        <>
+                                            <AiFillLike className="text-blue-500" />
+                                            <span className="text-xs">Liked</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <AiOutlineLike />
+                                            <span className="text-xs">Like</span>
+                                        </>
+                                    )}
+                                </button>
+                                {post && post.repost === null && (
+                                    <button
+                                        onClick={() => setShowRepost(true)}
+                                        className="flex gap-2 items-center rounded-lg bg-W50 hover:bg-W40 px-2 py-1 cursor-pointer transition-all duration-300 text-primary-text text-xl"
+                                    >
+                                        <BsArrowRepeat />
+                                        <span className="text-xs">Repost</span>
+                                    </button>
+                                )}
+                                <button
+                                    onClick={openTipModal}
+                                    className="flex gap-2 items-center rounded-lg bg-W50 hover:bg-W40 px-2 py-1 cursor-pointer transition-all duration-300 text-primary-text text-xl"
+                                >
+                                    <PiCoinLight />
+                                    <span className="text-xs">Tip</span>
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
                 {showTipModal && (
                     <TipModal
@@ -376,9 +393,22 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                         setTotalTipAmount={setTotalTipAmount}
                     />
                 )}
+                {showRepost && <Repost post={post} showRepost={showRepost} setShowRepost={setShowRepost} />}
             </div>
         </div>
     );
 };
 
 export default PostCard;
+// {
+//     /* <iframe
+//                         width="full"
+//                         className="rounded-lg"
+//                         height="315"
+//                         title="YouTube video player"
+//                         frameborder="0"
+//                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+//                         referrerpolicy="strict-origin-when-cross-origin"
+//                         allowfullscreen
+//                     ></iframe> */
+// }

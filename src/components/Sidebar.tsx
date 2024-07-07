@@ -191,15 +191,20 @@ const Sidebar = () => {
                     <div className="space-y-2">
                         <h1 className="flex items-center justify-center w-full font-bold text-sm md:text-xl h-[5rem]">
                             <Link href="/">
-                                <div className="flex items-center gap-3 w-full justify-center">
+                                <div className="flex items-center gap-1 w-full justify-center">
                                     <Image
                                         src={defiLogo}
                                         alt="Logo"
                                         className="w-12 shadow-sm shadow-white rounded-2xl"
                                     />
-                                    <span className="block sm:hidden lg:block text-2xl text-gray-700 font-bold">
-                                        Social Tip
-                                    </span>
+                                    <div className="flex flex-col">
+                                        <span className="block sm:hidden lg:block text-xl text-gray-700 font-bold">
+                                            Social Tip
+                                        </span>
+                                        <span className="block sm:hidden lg:block text-xs text-gray-700 font-bold">
+                                            Onchain Summer Buildathon
+                                        </span>
+                                    </div>
                                 </div>
                             </Link>
                         </h1>

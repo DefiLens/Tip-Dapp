@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useWriteContract } from "wagmi";
+import { BaseError, useWriteContract } from "wagmi";
 import { Address, erc20Abi } from "viem";
 import NavigationLayout from "@/components/layouts/NavigationLayout";
 import BigNumber from "bignumber.js";
@@ -10,20 +10,19 @@ import CopyButton from "@/components/custom/CopyButton";
 import { shorten } from "@/utils/constants";
 import Link from "next/link";
 import { FiExternalLink } from "react-icons/fi";
+import CustomButton from "@/components/custom/CustomButtons";
 
 BigNumber.config({ DECIMAL_PLACES: 10 });
 
 const Deposit: React.FC = () => {
-    const { smartAccountAddress } = DataState();
+    const { smartAccountAddress, getUscdBalance } = DataState();
 
-    const { data: hash, isPending, writeContract } = useWriteContract();
+    const { data: hash, isPending, error, writeContract } = useWriteContract();
     const [amount, setAmount] = useState<string>("");
     const [transactionHash, setTransactionHash] = useState<Address | undefined>(undefined);
-    const [error, setError] = useState<string | null>(null);
 
     const send = async () => {
         setTransactionHash(undefined);
-        setError(null);
         try {
             const amountInWei = new BigNumber(amount).multipliedBy(1e6).toFixed(); // USDC has 6 decimal places
             writeContract({
@@ -33,17 +32,17 @@ const Deposit: React.FC = () => {
                 args: [smartAccountAddress, BigInt(amountInWei)],
             });
             setTransactionHash(hash);
+            getUscdBalance();
         } catch (err) {
             console.error("Error interacting with contract:", err);
-            setError("Transaction failed. Please try again.");
         }
     };
 
     return (
         <NavigationLayout>
-            <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-2xl border border-blue-100">
+            <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-2xl border border-B800">
                 <h1 className="text-2xl font-bold mb-4">Deposit USDC</h1>
-                <div className="bg-blue-50 mb-4 rounded-xl px-3 py-2">
+                <div className="bg-B800 mb-4 rounded-xl px-3 py-2">
                     <label className="block text-gray-700">To your defi wallet</label>
                     <div className="p-2 rounded flex items-center gap-2">
                         <span className="overflow-hidden text-ellipsis">{smartAccountAddress}</span>{" "}
@@ -58,33 +57,19 @@ const Deposit: React.FC = () => {
                             type="number"
                             value={amount}
                             onChange={(e) => setAmount(e.target.value)}
-                            className="w-full p-2 border border-blue-200 rounded-xl outline-none"
+                            className="w-full p-1.5 border border-B800 rounded-xl outline-none"
                         />
                     </div>
-                    <button
-                        onClick={send}
-                        disabled={isPending}
-                        className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition-all duration-300"
-                    >
-                        {isPending ? "waiting" : "Send"}
-                    </button>
+                    <CustomButton onClick={send} disabled={isPending} isLoading={isPending} className="px-4">
+                        {isPending ? "waiting" : "Deposit"}
+                    </CustomButton>
                 </div>
-                {/* {transactionHash && (
-                    <div className="mt-4 flex items-center text-green-600">
-                        <span>Transaction hash: {transactionHash}</span>
-                    </div>
-                )} */}
-                {/* {hash && (
-                    <div className="mt-4 flex items-center text-green-600">
-                        <span>Transaction hash: {hash}</span>
-                    </div>
-                )} */}
                 {hash && (
                     <div className="mt-4">
-                        <p className="flex gap-2 items-center text-blue-500">
+                        <p className="flex gap-2 items-center text-B20">
                             Success:{" "}
                             <u>
-                                <a className="text-blue-500" href={hash} target="_blank" rel="noopener noreferrer">
+                                <a className="" href={hash} target="_blank" rel="noopener noreferrer">
                                     {shorten(hash)}
                                 </a>
                             </u>
@@ -95,16 +80,15 @@ const Deposit: React.FC = () => {
                             >
                                 <FiExternalLink />
                             </Link>
-                            {/* <CopyButton copy={`https://basescan.org/tx/${hash}`} /> */}
                         </p>
                     </div>
                 )}
+                <p className="text-sm text-gray-700 mt-1">Tip: Giving tip require funds in defi wallet.</p>
                 {error && (
-                    <div className="mt-4 flex items-center text-red-600">
-                        <span>{error}</span>
+                    <div className="text-xs mt-2 text-red-500">
+                        Error: {(error as BaseError).shortMessage || error.message}
                     </div>
                 )}
-                <p className="text-sm text-gray-700 mt-1">Tip: Giving tip require funds in defi wallet.</p>
             </div>
         </NavigationLayout>
     );

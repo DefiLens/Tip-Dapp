@@ -65,7 +65,9 @@ const UserFollowers = ({ url }: any) => {
                         <UserListSkeleton />
                     </div>
                 ) : followers?.length > 0 ? (
-                    followers?.map((follower: any) => <UserList key={follower._id} currentUser={follower} />)
+                    followers?.map((follower: any) => (
+                        <UserList key={follower._id} currentUser={follower} showBtn={url === "/user-following"} />
+                    ))
                 ) : (
                     <>No data found</>
                 )}
@@ -182,7 +184,6 @@ const page = () => {
 
     const { linkFarcaster } = useLinkAccount({
         onSuccess: async (user, linkMethod, linkedAccount) => {
-            // console.log("Farcaster: ", user);
             linkFarcasterApi(user);
         },
         onError: (error) => {
@@ -193,13 +194,15 @@ const page = () => {
     const linkFarcasterApi = async (data: any) => {
         try {
             const accessToken = await getAccessToken();
-            const res = await axios.post(`${BASE_URL}/user/link-farcaster`, data, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            });
-
-            // const res = await axiosInstance.post("/user/link-farcaster", { farcasterAccount: data });
+            const res = await axios.post(
+                `${BASE_URL}/user/link-farcaster`,
+                { farcasterAccount: data },
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
             setUser(res.data.user);
         } catch (error) {
             console.error("Error sending user data:", error);
@@ -294,13 +297,13 @@ const page = () => {
                                 <PostSkeleton />
                             </>
                         ) : (
-                            posts.map((post, index) => <PostCard key={index} post={post} />)
+                            posts.map((post, index) => <PostCard key={index} post={post} isRepost={false} />)
                         )}
                     </div>
                 </div>
                 {showFollowers && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
-                        <div className="rounded-lg relative h-96 max-w-[25%] min-w-[25%] bg-white p-4 overflow-hidden">
+                        <div className="rounded-lg relative h-80 w-80 bg-white p-4 overflow-hidden">
                             <button
                                 onClick={() => setShowFollowers(false)}
                                 className="absolute top-4 right-4 text-xl text-black"
@@ -313,7 +316,7 @@ const page = () => {
                 )}
                 {showFollowing && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
-                        <div className="rounded-lg relative h-96 max-w-[25%] min-w-[25%] bg-white p-4">
+                        <div className="rounded-lg relative h-80 w-80 bg-white p-4">
                             <button
                                 onClick={() => setShowFollowing(false)}
                                 className="absolute top-4 right-4 text-xl text-black"

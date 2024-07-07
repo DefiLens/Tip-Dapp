@@ -7,7 +7,7 @@ import { BASE_URL } from "@/utils/keys";
 import axios from "axios";
 import { usePrivy } from "@privy-io/react-auth";
 
-const UserList = ({ currentUser }: any) => {
+const UserList = ({ currentUser, showBtn }: any) => {
     const { user, setUser } = DataState();
     const { getAccessToken } = usePrivy();
 
@@ -61,7 +61,7 @@ const UserList = ({ currentUser }: any) => {
                 </div>
             </div>
 
-            {user && (
+            {user && showBtn && (
                 <div className="h-10 flex items-center">
                     <button
                         className={`px-2 py-1 rounded-xl transition-all duration-300 text-sm ${
