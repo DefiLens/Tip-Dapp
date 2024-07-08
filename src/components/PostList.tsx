@@ -89,7 +89,7 @@ interface Post {
 const PostList: React.FC = () => {
     // const [posts, setPosts] = useState<IPost[]>([]);
     const { posts, setPosts } = DataState();
-    
+
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [filters, setFilters] = useState({ userId: "", dappName: "" });
@@ -142,7 +142,7 @@ const PostList: React.FC = () => {
                 },
             });
 
-            setPosts((prevPosts) => [...prevPosts, ...response.data.posts]);
+            setPosts((prevPosts: any) => [...prevPosts, ...response.data.posts]);
             setPage(nextPage);
             setTotalPages(response.data.totalPages);
         } catch (error) {
@@ -159,7 +159,7 @@ const PostList: React.FC = () => {
                         <PostSkeleton />
                     </>
                 ) : (
-                    posts.map((post, index) => <PostCard key={index} post={post} isRepost={false} />)
+                    posts.map((post: any, index: number) => <PostCard key={index} post={post} isRepost={false} />)
                 )}
             </div>
             {page < totalPages && (

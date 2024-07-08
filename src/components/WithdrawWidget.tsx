@@ -12,7 +12,7 @@ import {
     getSingleSessionTxParams,
 } from "@biconomy/account";
 import { base } from "viem/chains";
-import { BICONOMY_MAINNET_BUNDLAR_KEY } from "@/utils/keys";
+import { BASE_BICONOMY_AA_KEY, BICONOMY_MAINNET_BUNDLAR_KEY } from "@/utils/keys";
 import { encodeFunctionData, parseAbi } from "viem";
 import Loading from "./Loading";
 import CopyButton from "./custom/CopyButton";
