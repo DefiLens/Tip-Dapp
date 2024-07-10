@@ -108,96 +108,102 @@ const NavigationLayout = ({ children }: any) => {
                     </div>
                     {children}
                 </div>
-                <div className="sticky top-0 h-screen hidden md:flex flex-col w-80 border-B800 justify-between border-l border-r ">
-                    <div className="p-2 w-full flex flex-col gap-3">
-                        <div className="relative flex items-center">
-                            <input
-                                className="w-full px-3 py-2 border rounded-lg border-B800 focus:outline-none focus:ring focus:ring-B700 resize-none"
-                                placeholder="Search for users..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                            <button className="absolute right-4 text-2xl text-B20">
-                                <IoIosSearch />
-                            </button>
-                        </div>
-
-                        {searchResults.length > 0 && (
-                            <div className="p-2 w-full border rounded-lg border-B800 flex flex-col gap-3 relative">
-                                <h1 className="text-xl font-bold text-primary-text">Users</h1>
-
-                                <button
-                                    onClick={() => {
-                                        setSearchQuery("");
-                                        setSearchResults([]);
-                                    }}
-                                    className="absolute top-2 right-2 text-lg text-secondary-text"
-                                >
-                                    <RxCross2 />
+                <div className="hidden md:block sticky top-0 h-screen w-80 border-B800 border-l border-r">
+                    <div className="flex-1 overflow-y-scroll hide_scroll flex flex-col justify-between border h-full">
+                        <div className="p-2 w-full flex flex-col gap-3">
+                            <div className="relative flex items-center">
+                                <input
+                                    className="w-full px-3 py-2 border rounded-lg border-B800 focus:outline-none focus:ring focus:ring-B700 resize-none"
+                                    placeholder="Search for users..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                                <button className="absolute right-4 text-2xl text-B20">
+                                    <IoIosSearch />
                                 </button>
-                                {searchResults.slice(0, 5).map((result) => (
-                                    <div key={result._id} className="flex items-center gap-3">
-                                        {result.image ? (
-                                            <img src={result.image} className="h-10 w-10 rounded-full" alt="Profile" />
-                                        ) : (
-                                            <div className="h-10 w-10">
-                                                <AvatarIcon address={result.smartAccountAddress} />
+                            </div>
+
+                            {searchResults.length > 0 && (
+                                <div className="p-2 w-full border rounded-lg border-B800 flex flex-col gap-3 relative">
+                                    <h1 className="text-xl font-bold text-primary-text">Users</h1>
+
+                                    <button
+                                        onClick={() => {
+                                            setSearchQuery("");
+                                            setSearchResults([]);
+                                        }}
+                                        className="absolute top-2 right-2 text-lg text-secondary-text"
+                                    >
+                                        <RxCross2 />
+                                    </button>
+                                    {searchResults.slice(0, 5).map((result) => (
+                                        <div key={result._id} className="flex items-center gap-3">
+                                            {result.image ? (
+                                                <img
+                                                    src={result.image}
+                                                    className="h-10 w-10 rounded-full"
+                                                    alt="Profile"
+                                                />
+                                            ) : (
+                                                <div className="h-10 w-10">
+                                                    <AvatarIcon address={result.smartAccountAddress} />
+                                                </div>
+                                            )}
+                                            <div>
+                                                <p className="text-base font-bold">
+                                                    {result?.name ? result?.name : shorten(result.smartAccountAddress)}
+                                                </p>
+                                                <p className="text-sm text-gray-500">{result?.bio?.slice(0, 30)}</p>
                                             </div>
-                                        )}
-                                        <div>
-                                            <p className="text-base font-bold">
-                                                {result?.name ? result?.name : shorten(result.smartAccountAddress)}
-                                            </p>
-                                            <p className="text-sm text-gray-500">{result?.bio?.slice(0, 30)}</p>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                                    ))}
+                                </div>
+                            )}
 
-                        {user && searchResults?.length <= 0 && searchQuery === "" && <SuggestedFollows />}
-                    </div>
-                    <div className="p-2">
-                        <div className="max-w-md mx-auto h-fit p-2 border rounded-lg border-B800 mb-2">
-                            <h1 className="text-lg font-bold text-primary-text mb-1">Deposit</h1>
-                            <div className="flex items-end gap-2">
-                                <div className="flex-1">
-                                    <input
-                                        type="number"
-                                        value={amount}
-                                        onChange={(e) => setAmount(e.target.value)}
-                                        className="w-full p-2 border border-B800 rounded-xl outline-none"
-                                        placeholder="Amount of (USDC)"
-                                    />
-                                </div>
-                                <button
-                                    onClick={send}
-                                    disabled={isPending}
-                                    className="bg-B0 hover:bg-B30 text-white px-4 py-2 rounded-xl transition-all duration-300"
-                                >
-                                    {isPending ? "waiting" : "Send"}
-                                </button>
-                            </div>
-                            {transactionHash && (
-                                <div className="mt-4 flex items-center text-green-600">
-                                    <span>Transaction hash: {transactionHash}</span>
-                                </div>
-                            )}
-                            {hash && (
-                                <div className="mt-4 flex items-center text-green-600">
-                                    <span>Transaction hash: {hash}</span>
-                                </div>
-                            )}
-                            {error && (
-                                <div className="text-xs mt-2 text-red-500">
-                                    Error: {(error as BaseError).shortMessage || error.message}
-                                </div>
-                            )}
+                            {user && searchResults?.length <= 0 && searchQuery === "" && <SuggestedFollows />}
                         </div>
-                        <WithdrawWidget />
-                        <div className="flex flex-col gap-1 justify-center p-4">
-                            <p className="text-primary-text font-bold text-lg">Your Balance</p>
-                            <span className="text-secondary-text text-sm">{usdcBalance} • USDC</span>
+                        <div className="p-2">
+                            <div className="max-w-md mx-auto h-fit p-2 border rounded-lg border-B800 mb-2">
+                                <h1 className="text-lg font-bold text-primary-text mb-1">Deposit</h1>
+                                <div className="flex items-end gap-2">
+                                    <div className="flex-1">
+                                        <input
+                                            type="number"
+                                            value={amount}
+                                            onChange={(e) => setAmount(e.target.value)}
+                                            className="w-full p-2 border border-B800 rounded-xl outline-none"
+                                            placeholder="Amount of (USDC)"
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={send}
+                                        disabled={isPending}
+                                        className="bg-B0 hover:bg-B30 text-white px-4 py-2 rounded-xl transition-all duration-300"
+                                    >
+                                        {isPending ? "waiting" : "Send"}
+                                    </button>
+                                </div>
+                                {transactionHash && (
+                                    <div className="mt-4 flex items-center text-green-600">
+                                        <span>Transaction hash: {transactionHash}</span>
+                                    </div>
+                                )}
+                                {hash && (
+                                    <div className="mt-4 flex items-center text-green-600">
+                                        <span>Transaction hash: {hash}</span>
+                                    </div>
+                                )}
+                                {error && (
+                                    <div className="text-xs mt-2 text-red-500">
+                                        Error: {(error as BaseError).shortMessage || error.message}
+                                    </div>
+                                )}
+                            </div>
+                            <WithdrawWidget />
+                            <div className="flex flex-col gap-1 justify-center p-4">
+                                <p className="text-primary-text font-bold text-lg">Your Balance</p>
+                                <span className="text-secondary-text text-sm">{usdcBalance} • USDC</span>
+                            </div>
                         </div>
                     </div>
                 </div>

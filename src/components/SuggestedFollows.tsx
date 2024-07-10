@@ -50,7 +50,7 @@ const SuggestedFollows = () => {
                                 <UserListSkeleton />
                             </>
                         ) : (
-                            users.map((user, index) => <UserList key={index} currentUser={user} showBtn={true}/>)
+                            users.slice(0,3).map((user, index) => <UserList key={index} currentUser={user} showBtn={true}/>)
                         )}
                     </div>
                 </div>

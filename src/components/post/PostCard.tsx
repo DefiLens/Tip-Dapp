@@ -28,52 +28,56 @@ interface PostCardProps {
     isRepost: boolean;
 }
 const ImageGallery = ({ images }: any) => {
-    const [selectedImage, setSelectedImage] = useState(images[0]);
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const handleImageClick = (index: any) => {
-        setSelectedImage(images[index]);
         setCurrentIndex(index);
     };
 
     const handlePrevious = () => {
-        if (currentIndex > 0) {
-            setCurrentIndex((prevIndex) => prevIndex - 1);
-            setSelectedImage(images[currentIndex - 1]);
-        }
+        setCurrentIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : prevIndex));
     };
 
     const handleNext = () => {
-        if (currentIndex < images.length - 1) {
-            setCurrentIndex((prevIndex) => prevIndex + 1);
-            setSelectedImage(images[currentIndex + 1]);
-        }
-    };
-
-    const handleClose = () => {
-        setSelectedImage(null);
+        setCurrentIndex((prevIndex) => (prevIndex < images.length - 1 ? prevIndex + 1 : prevIndex));
     };
 
     return (
         <div className="w-full flex justify-center items-center">
             <div className="relative w-full max-w-5xl">
-                <img src={selectedImage} alt="Selected" className="rounded-xl object-contain w-full" />
+                <img
+                    src={images[currentIndex]}
+                    alt={`Selected ${currentIndex + 1}`}
+                    className="rounded-xl object-contain w-full"
+                />
                 {currentIndex > 0 && (
                     <button
-                        className="absolute top-1/2 left-4 transform -translate-y-1/2 text-white text-lg font-bold bg-white p-0.5 rounded-full"
+                        className="absolute top-1/2 left-4 transform -translate-y-1/2 text-white text-lg font-bold bg-black p-1 rounded-full"
                         onClick={handlePrevious}
+                        aria-label="Previous Image"
                     >
-                        <IoIosArrowBack className="text-black" />
+                        <IoIosArrowBack className="text-white" />
                     </button>
                 )}
                 {currentIndex < images.length - 1 && (
                     <button
-                        className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white text-lg font-bold bg-white p-0.5 rounded-full"
+                        className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white text-lg font-bold bg-black p-1 rounded-full"
                         onClick={handleNext}
+                        aria-label="Next Image"
                     >
-                        <IoIosArrowForward className="text-black" />
+                        <IoIosArrowForward className="text-white" />
                     </button>
                 )}
+                {images?.length > 1 && <div className="flex justify-center mt-4 space-x-2">
+                    {images.map((_: any, index: number) => (
+                        <button
+                            key={index}
+                            className={`w-2 h-2 rounded-full ${index === currentIndex ? "bg-zinc-700" : "bg-gray-300"}`}
+                            onClick={() => handleImageClick(index)}
+                            aria-label={`Select Image ${index + 1}`}
+                        />
+                    ))}
+                </div>}
             </div>
         </div>
     );

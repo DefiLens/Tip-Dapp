@@ -42,7 +42,7 @@ const Repost = ({ post, showRepost, setShowRepost }: IRepostProps) => {
                 }
             );
 
-            setPosts((prev: any) => [...prev, ...response.data.post]);
+            setPosts((prev: any) => [response.data.post, ...prev]);
             setIsLoading(false);
             setShowRepost(false);
         } catch (error) {
